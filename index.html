@@ -192,6 +192,10 @@ const LORE=[
   ['The Parish',"Seven buildings still stand out of a whole parish: chapels, mills, a foundry, a crypt. Every one of them is defiled. The doors hang open and nothing inside is the way it was."],
   ['The Ash-Fields',"Between the ruins the ground is grey ash, cracked open and glowing like a forge. The only things growing are tall black thorns that look like they are waiting for something."],
   ['The Dark',"Daylight stopped being reliable. A thick unnatural dark crawls between the buildings. A lantern shows you a few paces, and the hellfire in the cracks shows you nothing worth seeing."],
+  ['The Tithe',"When the bell tolls, the Breach wants its due. Stand inside the chalk ward-ring and hold your nerve for ten breaths, or it takes something from your pack, or half the bounty you carry."],
+  ['Collapse',"The old exits do not last. Fire, rot or rubble can take a waystation while you are deep in the parish, and no bell warns you. Only the map keeps count of what is left."],
+  ['Hellfire Rain',"Sometimes the sky itself spits. A red ring blooms on the ground and a breath later a meteor lands in it. The craters burn for a long while, and they love doorways."],
+  ['The Fog',"Some nights the ash settles into a wet grey wall. You cannot see your own boots. A flare is a candle in a flooded room, and the horde, which never needed eyes, does not care."],
   ['The Old Waystations',"The Order's wards still hold at a few waystations. Stand in the ring and keep your nerve for three long breaths, and the way home opens. They are never where you remember them."],
   ['Unfinished',"Whatever tore the veil open is not finished. The cracks are still getting wider. Burn what you can and do not trust the quiet."]]},
  {t:'Horde Lore',sub:'Field notes on the pit\'s lesser servants',e:[
@@ -253,8 +257,8 @@ function menu(m){const c=cost(),ok=c<=bank,tl=sel.tools.filter(Boolean).map(t=>T
  else body=`<div class=hub><div class=stage><canvas id=pc width=256 height=288></canvas><div class=cap>${PRI[sel.pri].n} \u00b7 ${SID[sel.side].n} \u00b7 ${tl}</div></div><div class=opts><button id=go ${ok?'':'disabled'}>Enter the Breach</button>${ok?'':'<p class=msg style="font-size:20px">Can\'t afford this loadout.</p>'}<div class=chalk data-v=l_skin>Skins<small>${SKINS[sel.skin].n}</small></div><div class=chalk data-v=stash>Stash & Armory<small>${stash.length} items stored</small></div><div class=chalk data-v=missions>Ledgers<small>${ledSub()}</small></div><div class=chalk data-v=lore>Lore</div><div class=chalk data-v=help>Controls</div></div></div><div class=foot><span>Cash: $${bank} &nbsp;|&nbsp; Loadout: $${c}</span><span>Ledger: ${ledFoot()}</span></div>`;
 ;const drawIcons=()=>document.querySelectorAll('canvas[data-ic]').forEach(c=>{const o=ctx;ctx=c.getContext('2d');try{ctx.clearRect(0,0,34,18);drawWpn(c.dataset.ic,5,9,0,1)}finally{ctx=o}});
  $('#menu').style.display='block';$('#menu').innerHTML=`<div class=board><svg class=str viewBox="0 0 100 100" preserveAspectRatio="none"><polyline points="18,14 50,22 82,12 66,60 30,70" fill="none" stroke="#a02424" stroke-width=".5" opacity=".8"/></svg><h1>\u2620 The Hellbreach Ledger \u2620</h1>${m?`<p class=msg>${m}</p>`:''}${body}</div>`;drawIcons();if(scr=='stash')stashInit();if(scr=='lore'){loreStr();setTimeout(loreStr,120)}}
-$('#menu').onclick=e=>{const t=e.target.closest('[data-l],[data-v],[data-m],[data-f],[data-y],[data-n],[data-w],[data-u],[data-q],[data-r],[data-k],[data-p],[data-s],[data-t],#go');if(!t)return;const d=t.dataset;
- if(d.l!==undefined)lorTab=+d.l;else if(d.v){scr=d.v;if(/^shop_/.test(d.v))shopScr=d.v}else if(d.m){mi=+d.m;const Lx=LEDGERS[mi];if(Lx&&lst(Lx.id).i<Lx.tasks.length){AL=Lx.id;SAVE()}}else if(d.f){curFam=d.f;const f=FAMS[d.f];if(own.includes(d.f)){if(Object.values(SKINS).filter(v=>v.f==d.f).length>1)scr='l_var';else{sel.skin=f.def;SAVE()}}else{pend={t:'f',k:d.f};scr='buy'}}
+$('#menu').onclick=e=>{const t=e.target.closest('[data-so],[data-l],[data-v],[data-m],[data-f],[data-y],[data-n],[data-w],[data-u],[data-q],[data-r],[data-k],[data-p],[data-s],[data-t],#go');if(!t)return;const d=t.dataset;
+ if(d.so!==undefined)note=sortStash();else if(d.l!==undefined)lorTab=+d.l;else if(d.v){scr=d.v;if(/^shop_/.test(d.v))shopScr=d.v}else if(d.m){mi=+d.m;const Lx=LEDGERS[mi];if(Lx&&lst(Lx.id).i<Lx.tasks.length){AL=Lx.id;SAVE()}}else if(d.f){curFam=d.f;const f=FAMS[d.f];if(own.includes(d.f)){if(Object.values(SKINS).filter(v=>v.f==d.f).length>1)scr='l_var';else{sel.skin=f.def;SAVE()}}else{pend={t:'f',k:d.f};scr='buy'}}
  else if(d.k){const v=SKINS[d.k];if(own.includes(d.k)){sel.skin=d.k;SAVE()}else{pend={t:'k',k:d.k};scr='buy'}}
  else if(d.y){const q=pend,it=pit(q);if(q.t=='w'){if(bank>=it.c){if(addItem(q.k)){bank-=it.c;SAVE();note='Bought '+it.n+' \u2014 it is in your stash.'}else note='Not enough room in the stash.'}scr=shopScr;pend=null}else{if(bank>=it.c&&!it.led){bank-=it.c;if(q.t=='f'){own.push(q.k,it.def);sel.skin=it.def}else{own.push(q.k);sel.skin=q.k}SAVE();note='Unlocked '+it.n+'!'}scr=q.t=='f'?'l_skin':'l_var';pend=null}}
  else if(d.n){scr=pend.t=='f'?'l_skin':pend.t=='w'?shopScr:'l_var';pend=null}
@@ -419,7 +423,7 @@ function drawMob(m,x,y,f){const t=m.ty||'imp',sc=t=='skitter'?.75:t=='brute'?1.5
 const CT={s:{a:()=>stash,c:SC,r:SR,e:'#sg'},b:{a:()=>sel.bag,c:4,r:2,e:'#bg'}};
 function stashBody(){const sl=(id,lab,w,h)=>{const it=slotGet(id);return `<div class=slot data-sl=${id} style="width:calc(var(--cs)*${w});height:calc(var(--cs)*${h})"><span>${lab}</span>${it?`<div class=it data-sl=${id} data-ik=${it.k}></div>`:''}</div>`};
  const grid=(arr,ct)=>arr.map((o,i)=>{const[w,h]=isz(o.k);return `<div class=it data-ct=${ct} data-g=${i} data-ik=${o.k} style="left:calc(var(--cs)*${o.x});top:calc(var(--cs)*${o.y});width:calc(var(--cs)*${w});height:calc(var(--cs)*${h})"></div>`}).join('');
- return `<div class=stw><div class=eq><h2>Gear</h2>${sl('p','Primary',4,2)}<div class=eqt>${sl('s','Sidearm',2,2)}${sl('t0','Tool',2,2)}${sl('t1','Tool',2,2)}</div><h2>Backpack <small>(8 squares)</small></h2><div class=sgrid id=bg style="--gc:4;--gr:2">${grid(sel.bag,'b')}</div></div><div><h2>Stash</h2><div class=sgrid id=sg style="--gc:20;--gr:8">${grid(stash,'s')}</div></div></div><div class=foot><span>Cash: $${bank}</span><button data-v=shop>Gunsmith</button>${back}</div>`}
+ return `<div class=stw><div class=eq><h2>Gear</h2>${sl('p','Primary',4,2)}<div class=eqt>${sl('s','Sidearm',2,2)}${sl('t0','Tool',2,2)}${sl('t1','Tool',2,2)}</div><h2>Backpack <small>(8 squares)</small></h2><div class=sgrid id=bg style="--gc:4;--gr:2">${grid(sel.bag,'b')}</div></div><div><h2>Stash</h2><div class=sgrid id=sg style="--gc:20;--gr:8">${grid(stash,'s')}</div></div></div><div class=foot><span>Cash: $${bank}</span><button data-so=1>Auto-sort</button><button data-v=shop>Gunsmith</button>${back}</div>`}
 function stashInit(){$('#menu').querySelectorAll('.it').forEach(el=>{const k=el.dataset.ik,sid=el.dataset.sl,ct=el.dataset.ct,o=sid?slotGet(sid):CT[ct].a()[+el.dataset.g];el.appendChild(itemCv(k,el.offsetWidth*2,el.offsetHeight*2));if(TOOL[k]){const b=document.createElement('b');b.textContent='x'+(o.n||1);el.appendChild(b)}el.onpointerdown=e=>startDrag(e,el,k,sid,ct,el.dataset.g,o)})}
 let drg=null;
 const gRect=id=>{const g=$(id),r=g.getBoundingClientRect();return{l:r.left+g.clientLeft,t:r.top+g.clientTop,w:g.clientWidth,h:g.clientHeight}};
@@ -535,7 +539,7 @@ function update(dt){
   else if(it.t=='tool'){if(TC(it.k)>=MAXST){say(TOOL[it.k].n+' is maxed (3)',1.5);continue}TS(it.k,TC(it.k)+1);say('+'+TOOL[it.k].n,2)}
   else if(it.t=='tonic'){if(P.tn>=MAXST){say('Holy Water is maxed (3)',1.5);continue}P.tn++;say('+Holy Water',2)}else{if(P.bm>=MAXST){say('Blessed Charges are maxed (3)',1.5);continue}P.bm++;say('+Blessed Charge',2)}it.got=1}
  items=items.filter(i=>!i.got);
- const ex=exts.find(e=>D(P.x,P.y,e.x,e.y)<26);if(ex){if(P.ep<=0)say(ex.n+': hold your ground!',2.5);P.ep+=dt}else P.ep=Math.max(0,P.ep-dt*2);if(P.ep>=3)return end(1);
+ const ex=exts.find(e=>!e.sealed&&D(P.x,P.y,e.x,e.y)<26);if(ex){if(P.ep<=0)say(ex.n+': hold your ground!',2.5);P.ep+=dt}else P.ep=Math.max(0,P.ep-dt*2);if(P.ep>=3)return end(1);
  const CLI=mpCli();for(const m of M){if(m.hp<=0||CLI)continue;TG=mpTgt(m);const sx0=m.x,sy0=m.y;m.ig=(m.ig||0)-dt;m.fl-=dt;m.cd-=dt;const d=D(m.x,m.y,TG.x,TG.y),a=Math.atan2(TG.y-m.y,TG.x-m.x),v=los(m.x,m.y,TG.x,TG.y);m.a=a;if(m.boss)m.st=inHouse(m.bb,TG.x,TG.y,0)?'chase':'idle';
   if(m.st=='idle'){m.wt-=dt;if(m.wt<=0){m.wa=R(0,6.28);m.wt=R(1,4);m.go=Math.random()<.6}if(m.go&&!m.boss){mv(m,Math.cos(m.wa)*20*dt,Math.sin(m.wa)*20*dt,5);m.wk+=dt*5}
    if(m.boss){m.al=(m.al||0)-dt;const sp=m.al>0?62:34,h=m.al>0?a+Math.PI+Math.sin(T*3)*.5:m.wa,qx=m.x,qy=m.y;mv(m,Math.cos(h)*sp*dt,Math.sin(h)*sp*dt,9);m.wk+=dt*5;if(Math.hypot(m.x-qx,m.y-qy)<.3*sp*dt)m.wt=0}if(!m.boss&&((d<75&&v)||d<22)&&(m.ig||0)<=0){m.st='chase';m.lt=0}}
@@ -813,7 +817,7 @@ function render(){
  ctx.drawImage(ground,cx,cy,VW,VH,0,0,VW,VH);
 
  ctx.drawImage(blood,cx,cy,VW,VH,0,0,VW,VH);
- exts.forEach(e=>{const x=e.x-cx,y=e.y-cy,near=D(P.x,P.y,e.x,e.y)<26;ctx.strokeStyle=`rgba(255,240,180,${.5+.3*Math.sin(T*3+e.k)})`;ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.lineDashOffset=-T*10;ctx.beginPath();ctx.arc(x,y,17,0,7);ctx.stroke();ctx.setLineDash([]);if(P.ep>0&&near){ctx.strokeStyle='#8fe0a0';ctx.lineWidth=3;ctx.beginPath();ctx.arc(x,y,24,-1.5708,-1.5708+6.2832*P.ep/3);ctx.stroke()}if(D(P.x,P.y,e.x,e.y)<170)tx(e.n+(P.ep>0?'':' - stand in the ring'),x,y-32,'#e8e0b0','center')});
+ exts.forEach(e=>{if(e.sealed)return;const x=e.x-cx,y=e.y-cy,near=D(P.x,P.y,e.x,e.y)<26;ctx.strokeStyle=`rgba(255,240,180,${.5+.3*Math.sin(T*3+e.k)})`;ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.lineDashOffset=-T*10;ctx.beginPath();ctx.arc(x,y,17,0,7);ctx.stroke();ctx.setLineDash([]);if(P.ep>0&&near){ctx.strokeStyle='#8fe0a0';ctx.lineWidth=3;ctx.beginPath();ctx.arc(x,y,24,-1.5708,-1.5708+6.2832*P.ep/3);ctx.stroke()}if(D(P.x,P.y,e.x,e.y)<170)tx(e.n+(P.ep>0?'':' - stand in the ring'),x,y-32,'#e8e0b0','center')});
  clues.forEach(c=>{if(c.got)return;const x=c.x-cx,y=c.y-cy;ctx.strokeStyle='rgba(255,70,40,'+(.6+.3*Math.sin(T*4))+')';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(x,y,6,0,7);ctx.moveTo(x-6,y);ctx.lineTo(x+6,y);ctx.moveTo(x,y-6);ctx.lineTo(x,y+6);ctx.stroke()});
  items.forEach(it=>{const x=it.x-cx|0,y=it.y-cy|0;if(x<-10||x>VW+10||y<-10||y>VH+10)return;shadow(x,y,4);
   if(it.t=='wpn'){drawWpn(it.k,x-6,y,-.3,.8)}
@@ -829,7 +833,7 @@ function render(){
  trees.forEach(t=>L.push([t.y,()=>{shadow(t.x-cx,t.y-cy,7);ctx.fillStyle='#1c0e10';ctx.fillRect(t.x-cx-2,t.y-cy-6,4,8)}]));
  bombs.forEach(b=>L.push([b.y,()=>drawWpn('bomb',b.x-cx,b.y-cy-2,T*9,.7)]));
  lobs.forEach(b=>L.push([b.y,()=>drawWpn(b.k,b.x-cx,b.y-cy-2,T*11,.7)]));
- traps.forEach(tr=>L.push([tr.y,()=>{const x=tr.x-cx,y=tr.y-cy,dx=-Math.sin(tr.a)*9,dy=Math.cos(tr.a)*9,on=tr.ar<=0;ctx.strokeStyle=on?'rgba(230,90,90,.9)':'rgba(180,170,150,.5)';ctx.lineWidth=.8;ctx.beginPath();ctx.moveTo(x-dx,y-dy);ctx.lineTo(x+dx,y+dy);ctx.stroke();ctx.fillStyle='#3a342c';ctx.fillRect(x-dx-1.2,y-dy-1.2,2.4,2.4);ctx.fillRect(x+dx-1.2,y+dy-1.2,2.4,2.4);if(on&&Math.sin(T*8)>0){ctx.fillStyle='#ff5a3a';ctx.fillRect(x-.6,y-.6,1.2,1.2)}}]));flares.forEach(f=>L.push([f.y,()=>{drawWpn('flare',f.x-cx,f.y-cy,-1.2,.7);ctx.fillStyle=`rgba(255,200,90,${.1+.05*Math.sin(T*10)})`;ctx.beginPath();ctx.arc(f.x-cx,f.y-cy,28+3*Math.sin(T*9),0,7);ctx.fill()}]));
+ traps.forEach(tr=>L.push([tr.y,()=>{const x=tr.x-cx,y=tr.y-cy,dx=-Math.sin(tr.a)*9,dy=Math.cos(tr.a)*9,on=tr.ar<=0;ctx.strokeStyle=on?'rgba(230,90,90,.9)':'rgba(180,170,150,.5)';ctx.lineWidth=.8;ctx.beginPath();ctx.moveTo(x-dx,y-dy);ctx.lineTo(x+dx,y+dy);ctx.stroke();ctx.fillStyle='#3a342c';ctx.fillRect(x-dx-1.2,y-dy-1.2,2.4,2.4);ctx.fillRect(x+dx-1.2,y+dy-1.2,2.4,2.4);if(on&&Math.sin(T*8)>0){ctx.fillStyle='#ff5a3a';ctx.fillRect(x-.6,y-.6,1.2,1.2)}}]));flares.forEach(f=>L.push([f.y,()=>{drawWpn('flare',f.x-cx,f.y-cy,-1.2,.7);if(!fgOn()){ctx.fillStyle=`rgba(255,200,90,${.1+.05*Math.sin(T*10)})`;ctx.beginPath();ctx.arc(f.x-cx,f.y-cy,28+3*Math.sin(T*9),0,7);ctx.fill()}}]));
  fires.forEach(f=>L.push([f.y,()=>{const x=f.x-cx,y=f.y-cy,fa=Math.min(1,f.t/1.2);ctx.fillStyle=`rgba(255,110,20,${.22*fa})`;ctx.beginPath();ctx.ellipse(x,y,f.r,f.r*.6,0,0,7);ctx.fill();for(let i=0;i<10;i++){const a=i*2.4+f.s,rr=f.r*.8*((i%4)+1)/4,qx=x+Math.cos(a)*rr,qy=y+Math.sin(a)*rr*.6,h=3+3*Math.abs(Math.sin(T*9+i*1.7)),w=2+Math.abs(Math.sin(T*7+i))*1.5;ctx.fillStyle=`rgba(255,${120+((i*37)%90)},30,${.85*fa})`;ctx.fillRect(qx-w/2,qy-h,w,h);ctx.fillStyle=`rgba(255,230,120,${.8*fa})`;ctx.fillRect(qx-w/4,qy-h*.5,w/2,h*.5)}}]));
  if(P.wd>0)L.push([P.y+1,()=>{ctx.strokeStyle=`rgba(240,208,112,${.45+.3*Math.sin(T*8)})`;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(px,py-3,15+Math.sin(T*6),0,7);ctx.stroke();ctx.fillStyle='rgba(240,208,112,.1)';ctx.fill()}]);
  L.sort((a,b)=>a[0]-b[0]).forEach(l=>l[1]());
@@ -839,8 +843,8 @@ function render(){
  trees.forEach(t=>{const x=t.x-cx,y=t.y-cy-14;if(x<-30||x>VW+30||y<-30||y>VH+30)return;ctx.fillStyle='rgba(22,10,14,.9)';ctx.beginPath();ctx.moveTo(x,y-18);ctx.lineTo(x-10,y+8);ctx.lineTo(x+10,y+8);ctx.closePath();ctx.fill();ctx.fillStyle='rgba(150,36,20,.75)';ctx.beginPath();ctx.moveTo(x,y-18);ctx.lineTo(x-3,y-4);ctx.lineTo(x+3,y-4);ctx.closePath();ctx.fill()});
  // darkness
  dx.globalCompositeOperation='source-over';dx.clearRect(0,0,VW,VH);dx.fillStyle='rgba(2,1,6,.985)';dx.fillRect(0,0,VW,VH);dx.globalCompositeOperation='destination-out';
- visLight(lx,ly,0,6.2832,38*bmv(.6),72,.95);visLight(lx,ly,fa-.4*bmv(.7),fa+.4*bmv(.7),300*bmv(.38),90,.92);
- clues.forEach(c=>{if(!c.got)light(c.x-cx,c.y-cy,26+3*Math.sin(T*6),.6)});items.forEach(it=>light(it.x-cx,it.y-cy,16,.5));bombs.forEach(b=>light(b.x-cx,b.y-cy,40,.7));fires.forEach(f=>light(f.x-cx,f.y-cy,40,.65));flares.forEach(f=>light(f.x-cx,f.y-cy,150+6*Math.sin(T*9),.92));if(P.wd>0)light(P.x-cx,P.y-cy,38,.35);Object.values(mp.rp).forEach(r=>light(r.x-cx,r.y-cy,40,.6));exts.forEach(e=>{light(e.x-cx,e.y-cy,60,.55);light(e.lx-cx,e.ly-cy,55+5*Math.sin(T*9+e.k),.7)});blds.forEach(b=>b.gl.forEach(q=>{const x=q.x-cx,y=q.y-cy;if(x>-90&&x<VW+90&&y>-90&&y<VH+90)light(x,y,q.r*(1+.08*Math.sin(T*5+q.p)),q.a)}));if(P.lf>0)visLight(px,py,0,6.2832,150,72,.7);
+ visLight(lx,ly,0,6.2832,38*bmv(.6)*fgv(.3),72,.95);visLight(lx,ly,fa-.4*bmv(.7),fa+.4*bmv(.7),300*bmv(.38)*fgv(.1),90,.92);
+ clues.forEach(c=>{if(!c.got)light(c.x-cx,c.y-cy,26+3*Math.sin(T*6),.6)});items.forEach(it=>light(it.x-cx,it.y-cy,16,.5));bombs.forEach(b=>light(b.x-cx,b.y-cy,40,.7));fires.forEach(f=>light(f.x-cx,f.y-cy,40,.65));if(!fgOn())flares.forEach(f=>light(f.x-cx,f.y-cy,150+6*Math.sin(T*9),.92));if(P.wd>0)light(P.x-cx,P.y-cy,38,.35);Object.values(mp.rp).forEach(r=>light(r.x-cx,r.y-cy,40,.6));exts.forEach(e=>{light(e.x-cx,e.y-cy,60,.55);light(e.lx-cx,e.ly-cy,55+5*Math.sin(T*9+e.k),.7)});blds.forEach(b=>b.gl.forEach(q=>{const x=q.x-cx,y=q.y-cy;if(x>-90&&x<VW+90&&y>-90&&y<VH+90)light(x,y,q.r*(1+.08*Math.sin(T*5+q.p)),q.a)}));if(P.lf>0)visLight(px,py,0,6.2832,150*fgv(.3),72,.7);
  parts.forEach(p=>{if(!p.s&&p.c!='#aaa')light(p.x-cx,p.y-cy,14,.5)});
  rdLight();ctx.drawImage(dk,0,0);bmDraw();rdDraw();
  if(keys.KeyQ){M.forEach(m=>{if(m.hp>0&&D(m.x,m.y,P.x,P.y)<300){ctx.fillStyle='#ff2a3a';ctx.fillRect(m.x-cx-3,m.y-cy-9,2,2);ctx.fillRect(m.x-cx+1,m.y-cy-9,2,2)}});
@@ -893,7 +897,7 @@ function drawMap(){
  // camp
  const cx0=X(camp.x),cy0=Y(camp.y);ctx.strokeStyle=CH;ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(cx0-6,cy0+4);ctx.lineTo(cx0,cy0-6);ctx.lineTo(cx0+6,cy0+4);ctx.closePath();ctx.stroke();tx('Camp',cx0+9,cy0+3,'#e8e6d8');
  // extraction points
- exts.forEach(e=>{const x=X(e.x),y=Y(e.y);ctx.strokeStyle=`rgba(143,224,160,${.5+.4*pulse})`;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(x,y,8+2*pulse,0,7);ctx.stroke();ctx.strokeStyle='#8fe0a0';ctx.lineWidth=1.2;ctx.beginPath();if(e.k){ctx.moveTo(x-5,y);ctx.quadraticCurveTo(x,y+5,x+5,y);ctx.moveTo(x,y);ctx.lineTo(x,y-5)}else{ctx.rect(x-5,y-3,10,5);ctx.moveTo(x-1,y+4.5);ctx.arc(x-3,y+4.5,2,0,7);ctx.moveTo(x+5,y+4.5);ctx.arc(x+3,y+4.5,2,0,7)}ctx.stroke();tx(e.n,x,y+(y<60?20:-12),'#8fe0a0','center')});
+ exts.forEach(e=>{if(e.sealed){const x=X(e.x),y=Y(e.y);ctx.strokeStyle='rgba(224,80,90,'+(.6+.4*pulse)+')';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,9,0,7);ctx.moveTo(x-6,y-6);ctx.lineTo(x+6,y+6);ctx.moveTo(x+6,y-6);ctx.lineTo(x-6,y+6);ctx.stroke();tx(CLM[e.k]||'It burned.',x,y+(y<60?20:-12),'#ff7a6a','center');return}const x=X(e.x),y=Y(e.y);ctx.strokeStyle=`rgba(143,224,160,${.5+.4*pulse})`;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(x,y,8+2*pulse,0,7);ctx.stroke();ctx.strokeStyle='#8fe0a0';ctx.lineWidth=1.2;ctx.beginPath();if(e.k){ctx.moveTo(x-5,y);ctx.quadraticCurveTo(x,y+5,x+5,y);ctx.moveTo(x,y);ctx.lineTo(x,y-5)}else{ctx.rect(x-5,y-3,10,5);ctx.moveTo(x-1,y+4.5);ctx.arc(x-3,y+4.5,2,0,7);ctx.moveTo(x+5,y+4.5);ctx.arc(x+3,y+4.5,2,0,7)}ctx.stroke();tx(e.n,x,y+(y<60?20:-12),'#8fe0a0','center')});
  // red string through the clues (and on to the lair once revealed)
  ctx.strokeStyle='rgba(176,36,36,.85)';ctx.lineWidth=1;ctx.beginPath();clues.forEach((c,i)=>i?ctx.lineTo(X(c.x),Y(c.y)):ctx.moveTo(X(c.x),Y(c.y)));if(found>=3&&bs.hp>0)ctx.lineTo(X(bs.hx),Y(bs.hy));ctx.stroke();
  clues.forEach(c=>{const x=X(c.x),y=Y(c.y);
@@ -1290,15 +1294,15 @@ function useXT(k){if(!k||(P.xt[k]||0)<=0)return;
  fixSlot()}
 function lobLand(b){
  if(b.k=='flask'){fires.push({x:b.x,y:b.y,r:28,t:5.5,tk:.2,s:Math.random()*6});burst(b.x,b.y,18,90,'#ff7a1a',0);shake=Math.max(shake,3);if(mp.on)mpSend({t:'ff',x:+b.x.toFixed(1),y:+b.y.toFixed(1)})}
- else{flares.push({x:b.x,y:b.y,t:14,tk:0,dec:1,id:-1,hp:1});burst(b.x,b.y,14,80,'#ffd070',0);if(mp.on)mpSend({t:'fl',x:+b.x.toFixed(1),y:+b.y.toFixed(1)})}}
+ else{if(fgOn())say('The fog smothers the flare.',3);flares.push({x:b.x,y:b.y,t:14,tk:0,dec:1,id:-1,hp:1});burst(b.x,b.y,14,80,'#ffd070',0);if(mp.on)mpSend({t:'fl',x:+b.x.toFixed(1),y:+b.y.toFixed(1)})}}
 // imps (not bosses) near a flare go for the flare instead of the hunter, and cannot hurt it
-{const _tg=mpTgt;mpTgt=function(m){const r=_tg(m);if(m.boss||m.ty=='vine'||!flares.length)return r;let b=null,bd=260;for(const f of flares){const d=D(m.x,m.y,f.x,f.y);if(d<bd){bd=d;b=f}}return b&&bd<D(m.x,m.y,r.x,r.y)+60?b:r}}
+{const _tg=mpTgt;mpTgt=function(m){const r=_tg(m);if(m.boss||m.ty=='vine'||!flares.length||fgOn())return r;let b=null,bd=260;for(const f of flares){const d=D(m.x,m.y,f.x,f.y);if(d<bd){bd=d;b=f}}return b&&bd<D(m.x,m.y,r.x,r.y)+60?b:r}}
 {const _ht=hurtTG;hurtTG=function(d){if(TG&&TG.dec)return;_ht(d)}}
 {const _u8=update;update=function(dt){_u8(dt);if(mode!='play')return;
  for(const tr of traps){tr.t-=dt;if(tr.ar>0){tr.ar-=dt;continue}if(M.some(m=>m.hp>0&&D(m.x,m.y,tr.x,tr.y)<(m.boss?16:12))||(P.hp>0&&D(P.x,P.y,tr.x,tr.y)<10)||(mp.on&&Object.values(mp.rp).some(q=>q.hp>0&&D(q.x,q.y,tr.x,tr.y)<10))){tr.t=0;burst(tr.x,tr.y,28,150,'#ff9a30',0);burst(tr.x,tr.y,10,90,'#6a0a10',1);shake=Math.max(shake,4);noise(tr.x,tr.y,260);M.forEach(m=>{if(m.hp>0&&D(m.x,m.y,tr.x,tr.y)<46)hurt(m,55,Math.atan2(m.y-tr.y,m.x-tr.x),'tripwire')});if(P.hp>0&&D(P.x,P.y,tr.x,tr.y)<46)hurtP(55,{s:'tripwire'});if(mp.on)for(const q of Object.values(mp.rp))if(q.hp>0&&D(q.x,q.y,tr.x,tr.y)<46)mpSend({t:'hit',to:q.id,d:55,k:'mob'})}}traps=traps.filter(t=>t.t>0);
  for(const b of lobs){b.m-=dt;b.x+=b.vx*dt;b.y+=b.vy*dt;if(hit(b.x,b.y,2)){b.x-=b.vx*dt;b.y-=b.vy*dt;b.m=0}if(b.m<=0){b.dead=1;lobLand(b)}}lobs=lobs.filter(b=>!b.dead);
- for(const f of fires){f.t-=dt;f.tk-=dt;if(f.tk<=0){f.tk=.5;M.forEach(m=>{if(m.hp>0&&D(m.x,m.y,f.x,f.y)<f.r+(m.boss?8:0))hurt(m,12,Math.atan2(m.y-f.y,m.x-f.x),'fire')});if(D(P.x,P.y,f.x,f.y)<f.r)hurtP(5);burst(f.x+R(-f.r,f.r)*.7,f.y+R(-f.r,f.r)*.4,2,30,'#ff8a20',0)}}fires=fires.filter(f=>f.t>0);
- for(const f of flares){f.t-=dt;f.tk-=dt;if(f.tk<=0){f.tk=2.5;noise(f.x,f.y,300)}if(Math.random()<dt*18)burst(f.x,f.y,1,40,'#ffd070',0)}flares=flares.filter(f=>f.t>0)}}
+ for(const f of fires){f.t-=dt;f.tk-=dt;if(f.tk<=0){f.tk=.5;M.forEach(m=>{if(m.hp>0&&D(m.x,m.y,f.x,f.y)<f.r+(m.boss?8:0))hurt(m,12,Math.atan2(m.y-f.y,m.x-f.x),'fire')});if(D(P.x,P.y,f.x,f.y)<f.r)hurtP(f.pd||5);burst(f.x+R(-f.r,f.r)*.7,f.y+R(-f.r,f.r)*.4,2,30,'#ff8a20',0)}}fires=fires.filter(f=>f.t>0);
+ for(const f of flares){f.t-=dt;f.tk-=dt;if(f.tk<=0){f.tk=2.5;if(!fgOn())noise(f.x,f.y,300)}if(!fgOn()&&Math.random()<dt*18)burst(f.x,f.y,1,40,'#ffd070',0)}flares=flares.filter(f=>f.t>0)}}
 // ---------- THE REAPER: a 60s timer. At zero a colossal winged demon takes you, one of 10 ways ----------
 // Test helpers: add ?timer=5 to shorten the clock, ?death=0..9 to force a specific death.
 const RQ=new URLSearchParams(location.search),RT0=+RQ.get('timer')||450,RFD=RQ.get('death');
@@ -1440,7 +1444,7 @@ function rdHud(){if(P.dead)return;const tm=P.tm===undefined?RT0:P.tm,s=Math.ceil
 // ---------- RANDOM EVENTS (first one: the Blood Moon) ----------
 // ?event=bloodmoon starts it 3s into a run. Otherwise it strikes once at a random (but lobby-synced) moment.
 const SAFEZ=95;let EVN=null;
-const bmf=()=>EVN?sg(EVN.t,0,2.5)*(1-sg(EVN.t,EVN.dur-2.5,EVN.dur)):0,bmv=m=>lp(1,m,bmf()),inSafe=o=>exts.some(e=>D(o.x,o.y,e.x,e.y)<SAFEZ);
+const bmf=()=>EVN?sg(EVN.t,0,2.5)*(1-sg(EVN.t,EVN.dur-2.5,EVN.dur)):0,bmv=m=>lp(1,m,bmf()),inSafe=o=>exts.some(e=>!e.sealed&&D(o.x,o.y,e.x,e.y)<SAFEZ);
 function evSpawn(n){let c=0,al=M.filter(m=>m.hp>0&&!m.boss).length;for(let i=0;i<n*14&&c<n&&al<80;i++){const a=R(0,6.28),r=R(230,560),x=P.x+Math.cos(a)*r,y=P.y+Math.sin(a)*r;
  if(x<40||y<40||x>WW-40||y>WH-40||hit(x,y,6)||exts.some(e=>D(x,y,e.x,e.y)<170))continue;const m=mkMob(x,y,'chase');m.bm=1;M.push(m);burst(x,y,6,60,'#ff2a1a',0);c++;al++}}
 function evTick(dt){const el=RT0-P.tm;
@@ -1455,14 +1459,14 @@ function bmDraw(){const a=bmf();if(a<=.01)return;ctx.save();
  ctx.globalCompositeOperation='source-over';ctx.fillStyle='rgba(140,0,12,'+(.2*a).toFixed(3)+')';ctx.fillRect(0,0,VW,VH);
  const g=ctx.createRadialGradient(VW/2,VH/2,90,VW/2,VH/2,400);g.addColorStop(0,'rgba(90,0,8,0)');g.addColorStop(1,'rgba(90,0,8,'+((.55+.12*Math.sin(T*4))*a).toFixed(3)+')');ctx.fillStyle=g;ctx.fillRect(0,0,VW,VH);
  ctx.font='bold 9px monospace';
- for(const e of exts){const x=e.x-cam.x,y=e.y-cam.y;if(x<-SAFEZ||x>VW+SAFEZ||y<-SAFEZ||y>VH+SAFEZ)continue;ctx.fillStyle='rgba(80,255,140,'+(.08*a).toFixed(3)+')';ctx.beginPath();ctx.arc(x,y,SAFEZ,0,7);ctx.fill();
+ for(const e of exts){if(e.sealed)continue;const x=e.x-cam.x,y=e.y-cam.y;if(x<-SAFEZ||x>VW+SAFEZ||y<-SAFEZ||y>VH+SAFEZ)continue;ctx.fillStyle='rgba(80,255,140,'+(.08*a).toFixed(3)+')';ctx.beginPath();ctx.arc(x,y,SAFEZ,0,7);ctx.fill();
   ctx.strokeStyle='rgba(120,255,160,'+(.6*a).toFixed(3)+')';ctx.lineWidth=1.5;ctx.setLineDash([6,5]);ctx.lineDashOffset=-T*8;ctx.beginPath();ctx.arc(x,y,SAFEZ,0,7);ctx.stroke();ctx.setLineDash([]);tx('SAFE ZONE',x,y-SAFEZ-4,'#8fe0a0','center')}
- if(!P.dead){let b=null,bd=1e9;for(const e of exts){const d=D(P.x,P.y,e.x,e.y);if(d<bd){bd=d;b=e}}
+ if(!P.dead){let b=null,bd=1e9;for(const e of exts){if(e.sealed)continue;const d=D(P.x,P.y,e.x,e.y);if(d<bd){bd=d;b=e}}
   if(b&&bd>SAFEZ){const an=Math.atan2(b.y-P.y,b.x-P.x),px=P.x-cam.x,py=P.y-cam.y,ax=px+Math.cos(an)*46,ay=py+Math.sin(an)*46;ctx.fillStyle='rgba(143,224,160,'+(.9*a).toFixed(3)+')';ctx.beginPath();ctx.moveTo(ax+Math.cos(an)*7,ay+Math.sin(an)*7);ctx.lineTo(ax+Math.cos(an+2.5)*6,ay+Math.sin(an+2.5)*6);ctx.lineTo(ax+Math.cos(an-2.5)*6,ay+Math.sin(an-2.5)*6);ctx.closePath();ctx.fill();tx(Math.round(bd/10)+'m',ax+Math.cos(an)*18,ay+Math.sin(an)*18+3,'#8fe0a0','center')}}
  ctx.font='bold 10px monospace';ctx.restore()}
 // blood moon rules: monsters sprint, are repelled by extraction rings, and cannot hurt anyone standing in one
 {const _mv=mv;mv=function(e,a,b,r){if(EVN&&e!==P&&e.mh){a*=1.9;b*=1.9;
-  for(const x of exts){const d0=D(e.x,e.y,x.x,x.y),d1=D(e.x+a,e.y+b,x.x,x.y);if(d0<SAFEZ){const an=Math.atan2(e.y-x.y,e.x-x.x),s=Math.hypot(a,b)+1.2;a=Math.cos(an)*s;b=Math.sin(an)*s;break}else if(d1<SAFEZ&&d1<d0){a=b=0;break}}}
+  for(const x of exts){if(x.sealed)continue;const d0=D(e.x,e.y,x.x,x.y),d1=D(e.x+a,e.y+b,x.x,x.y);if(d0<SAFEZ){const an=Math.atan2(e.y-x.y,e.x-x.x),s=Math.hypot(a,b)+1.2;a=Math.cos(an)*s;b=Math.sin(an)*s;break}else if(d1<SAFEZ&&d1<d0){a=b=0;break}}}
  return _mv(e,a,b,r)}}
 {const _hp2=hurtP;hurtP=function(d,k){if(EVN&&k&&k.p==null&&k.s!='bomb'&&k.s!='tripwire'&&inSafe(P))return;_hp2(d,k)}}
 // ---- hooks ----
@@ -1474,12 +1478,134 @@ addEventListener('keydown',e=>{if(RD&&mode=='play'&&(e.code=='KeyM'||e.code=='Ke
  if(P.tm===undefined){P.tm=RT0;banner('THE REAPER IS COMING','You have '+(RT0>=60?Math.floor(RT0/60)+' min'+(RT0%60?' '+RT0%60+' sec':''):RT0+' sec')+'. Extract before the timer runs out.','#c01824')}
  if(!P.dead&&!RD&&P.tm>0){const s0=Math.ceil(P.tm);P.tm=Math.max(0,P.tm-dt);if(P.tm<=10&&Math.ceil(P.tm)<s0)try{sfx.beat()}catch(e){}if(P.tm<=0)rdStart()}
  if(EVN&&EVN.P!==P)EVN=null;
- if(!P.evp)P.evp=[['bloodmoon',RQ.get('event')?3:lp(90,Math.max(120,RT0-180),hs(blds[0]?blds[0].x*.37+blds[0].y:1))]];
+ if(!P.evp)P.evp=[['bloodmoon',/^(tithe|collapse|rain|fog)$/.test(RQ.get('event')||'')?1e9:RQ.get('event')?3:lp(90,Math.max(120,RT0-180),hs(blds[0]?blds[0].x*.37+blds[0].y:1))]];
  if(!P.dead)evTick(dt);
  let fr=0;
  if(RD){const Q=RD;Q.t+=dt;if(Q.t>TB+RDUR[Q.k]+OUTD){Q.fm.hp=0;RD=null}else{const O=rdPose(Q);Q.O=O;rdEv(Q,O);if(Q.gone)O.vis=0;if(Q.t<TB)shake=Math.max(shake,1+5*sg(Q.t,0,TA));fr=!P.dead;if(fr)P.ep=0}}
  const k=keys,l=mouse.l,r=mouse.r;if(fr){keys={};mouse.l=mouse.r=0}
  try{return _ur(dt)}finally{if(fr){keys=k;mouse.l=l;mouse.r=r}}}}
+
+// ---------- THE TITHE: the Breach demands payment ----------
+// A bell tolls and a ward ring is chalked into the ground nearby. Hold it for 10s before the window closes,
+// or pay: drop one random item, or lose half your carried bounty. ?event=tithe tolls it 4s into a run.
+const TT_HOLD=10,TT_WIN=32,TT_R=30;let TTH=null,ttAC=null;
+function ttBell(v,f){try{if(!ttAC){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;ttAC=new AC()}if(ttAC.state!='running')ttAC.resume();
+ const t=ttAC.currentTime,g0=ttAC.createGain();g0.gain.value=v;g0.connect(ttAC.destination);
+ [1,2.76,5.4,8.93].forEach((m,i)=>{const s=ttAC.createOscillator(),g=ttAC.createGain();s.type='sine';s.frequency.value=f*m;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.5/(i+1),t+.005);g.gain.exponentialRampToValueAtTime(.0001,t+2.6/(1+i*.6));s.connect(g);g.connect(g0);s.start(t);s.stop(t+2.7)})}catch(e){}}
+function ttSpot(){for(let i=0;i<80;i++){const a=R(0,6.283),r=R(140,280),x=P.x+Math.cos(a)*r,y=P.y+Math.sin(a)*r;
+ if(x<TT_R+20||y<TT_R+20||x>WW-TT_R-20||y>WH-TT_R-20||hit(x,y,TT_R)||(i<60&&!los(P.x,P.y,x,y)))continue;
+ let ok=1;for(let k=0;k<8;k++)if(hit(x+Math.cos(k*.785)*TT_R,y+Math.sin(k*.785)*TT_R,3)){ok=0;break}
+ if(ok)return{x,y}}return{x:P.x,y:P.y}}
+const ttName=k=>(PRI[k]||SID[k]||TOOL[k]||{}).n||k,ttGround=k=>PRI[k]||SID[k]?{t:'wpn',s:SID[k]?1:0,k}:k=='tonic'?{t:'tonic'}:k=='bomb'?{t:'bomb'}:{t:'tool',k};
+function ttToss(it){for(let i=0;i<30;i++){const a=R(0,6.283),r=R(34,85),x=P.x+Math.cos(a)*r,y=P.y+Math.sin(a)*r;
+ if(x<20||y<20||x>WW-20||y>WH-20||hit(x,y,6)||(i<20&&!los(P.x,P.y,x,y)))continue;it.x=x;it.y=y;items.push(it);burst(x,y,8,60,'#d8c890',0);return}
+ it.x=P.x+30;it.y=P.y;items.push(it)}
+function ttPay(){const c=[];for(let s=0;s<2;s++)if(P.w[s])c.push({t:'w',s,n:P.w[s].n});
+ for(const k of TKS)if(TC(k)>0)c.push({t:'t',k,n:ttName(k)});P.bag.forEach(o=>c.push({t:'b',o,n:ttName(o.k)}));
+ const cash=P.carry>0,pick=cash&&c.length?(Math.random()<.5?'cash':'item'):cash?'cash':c.length?'item':'none';shake=Math.max(shake,10);
+ if(pick=='cash'){const l=Math.max(1,Math.floor(P.carry/2));P.carry-=l;burst(P.x,P.y,26,120,'#e0b040',0);banner('THE BREACH TAKES ITS TITHE','Half your bounty is gone: -$'+l+'.','#e0b040')}
+ else if(pick=='item'){const o=c[R(0,c.length)|0];let k;
+  if(o.t=='w'){k=P.w[o.s].k;P.w[o.s]=null;P.mag[o.s]=0;P.res[o.s]=0}
+  else if(o.t=='t'){k=o.k;TS(k,TC(k)-1)}
+  else{k=o.o.k;if(o.o.n>1)o.o.n--;else P.bag.splice(P.bag.indexOf(o.o),1)}
+  P.rl=0;ttToss(ttGround(k));fixSlot();burst(P.x,P.y,16,90,'#a01018',1);banner('THE BREACH TAKES ITS TITHE','You dropped: '+o.n+'. It lies nearby, if you dare.','#d02030')}
+ else banner('THE BREACH FINDS NOTHING','You carry nothing it wants. This time.','#a09080')}
+function ttTick(dt){if(!P||P.dead||RD){TTH=null;return}if(TTH&&TTH.P!==P)TTH=null;
+ P.tt=(P.tt||0)+dt;if(P.ttn===undefined)P.ttn=RQ.get('event')=='tithe'?4:RQ.get('event')?1e9:R(55,85);
+ if(!TTH){if(P.tt<P.ttn)return;if(P.tm<30){P.ttn=1e9;return}if(EVN||HFR||FOG)return;
+  const s=ttSpot();TTH={P,x:s.x,y:s.y,t:0,h:0,w:0};shake=Math.max(shake,7);ttBell(.5,150);
+  banner('THE BELL TOLLS','Hold the ward ring for 10s, or the Breach takes an item or half your bounty.','#d8c070');return}
+ const T0=TTH;T0.t+=dt;const inn=D(P.x,P.y,T0.x,T0.y)<TT_R;T0.h=inn?T0.h+dt:Math.max(0,T0.h-dt*2);const left=TT_WIN-T0.t;
+ if(inn&&Math.floor(T0.h)>Math.floor(T0.h-dt)&&T0.h<TT_HOLD)ttBell(.1,260);
+ if(left<=8&&!T0.w){T0.w=1;ttBell(.3,170)}
+ if(T0.h>=TT_HOLD){TTH=null;P.ttn=P.tt+R(100,140);ttBell(.3,330);burst(T0.x,T0.y,24,80,'#8fe0a0',0);banner('THE BREACH IS SATISFIED','The bell falls silent. You owe nothing.','#8fe0a0')}
+ else if(left<=0){TTH=null;P.ttn=P.tt+R(100,140);ttBell(.55,110);ttPay()}}
+function ttDraw(){if(!TTH||TTH.P!==P||P.dead)return;const x=TTH.x-cam.x,y=TTH.y-cam.y,h=TTH.h/TT_HOLD,left=Math.max(0,TT_WIN-TTH.t),pl=.5+.5*Math.sin(T*(left<=8?10:4));
+ ctx.save();if(x>-60&&x<VW+60&&y>-60&&y<VH+60){
+  const g=ctx.createRadialGradient(x,y,4,x,y,TT_R+16);g.addColorStop(0,'rgba(240,200,90,'+(.1+.08*pl).toFixed(3)+')');g.addColorStop(1,'rgba(240,200,90,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,TT_R+16,0,7);ctx.fill();
+  ctx.strokeStyle='rgba(255,220,120,'+(.55+.35*pl).toFixed(3)+')';ctx.lineWidth=2;ctx.setLineDash([6,5]);ctx.lineDashOffset=-T*12;ctx.beginPath();ctx.arc(x,y,TT_R,0,7);ctx.stroke();ctx.setLineDash([]);
+  ctx.lineWidth=1.5;ctx.beginPath();for(let i=0;i<12;i++){const a=i*.5236;ctx.moveTo(x+Math.cos(a)*(TT_R-6),y+Math.sin(a)*(TT_R-6));ctx.lineTo(x+Math.cos(a)*TT_R,y+Math.sin(a)*TT_R)}ctx.stroke();
+  if(h>0){ctx.strokeStyle='#8fe0a0';ctx.lineWidth=3;ctx.beginPath();ctx.arc(x,y,TT_R+5,-1.5708,-1.5708+6.2832*h);ctx.stroke()}
+  ctx.font='bold 9px monospace';tx('WARD RING',x,y-TT_R-10,'#f0d070','center')}
+ const d=D(P.x,P.y,TTH.x,TTH.y);if(d>TT_R+30){const an=Math.atan2(TTH.y-P.y,TTH.x-P.x),px=P.x-cam.x,py=P.y-cam.y,ax=px+Math.cos(an)*58,ay=py+Math.sin(an)*58;
+  ctx.fillStyle='rgba(240,208,112,'+(.6+.35*pl).toFixed(3)+')';ctx.beginPath();ctx.moveTo(ax+Math.cos(an)*7,ay+Math.sin(an)*7);ctx.lineTo(ax+Math.cos(an+2.5)*6,ay+Math.sin(an+2.5)*6);ctx.lineTo(ax+Math.cos(an-2.5)*6,ay+Math.sin(an-2.5)*6);ctx.closePath();ctx.fill();
+  ctx.font='bold 9px monospace';tx(Math.round(d/10)+'m',ax+Math.cos(an)*18,ay+Math.sin(an)*18+3,'#f0d070','center')}
+ ctx.restore();ctx.font='bold 10px monospace'}
+{const _bd=bmDraw;bmDraw=function(){_bd();ttDraw()};
+ const _rh=rdHud;rdHud=function(){_rh();if(!TTH||TTH.P!==P||P.dead)return;const left=Math.max(0,TT_WIN-TTH.t),y=EVN?52:40,pl=.5+.5*Math.sin(T*(left<=8?10:4)),inn=D(P.x,P.y,TTH.x,TTH.y)<TT_R,w=120,bx=VW/2-w/2,by=y+4;
+  ctx.font='bold 9px monospace';tx('THE TITHE  '+Math.ceil(left)+'s',VW/2,y,left<=8?'rgb(255,'+((90+pl*60)|0)+',70)':'#f0d070','center');
+  ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(bx,by,w,6);ctx.fillStyle='#8fe0a0';ctx.fillRect(bx+1,by+1,(w-2)*TTH.h/TT_HOLD,4);ctx.strokeStyle='#e8e6d8';ctx.lineWidth=1;ctx.strokeRect(bx+.5,by+.5,w-1,6);
+  tx(inn?'Hold your ground: '+TTH.h.toFixed(1)+' / '+TT_HOLD+'s':'Reach the ward ring',VW/2,by+17,inn?'#8fe0a0':'#e8e6d8','center');ctx.font='bold 10px monospace'}
+ const _ut=update;update=function(dt){_ut(dt);if(mode!='play')TTH=null;else ttTick(dt)}}
+
+// ---------- STASH AUTO-SORT ----------
+function sortStash(){const tl={},its=[];stash.forEach(o=>{if(TOOL[o.k])tl[o.k]=(tl[o.k]||0)+(o.n||1);else its.push({k:o.k,n:o.n||0})});
+ for(const k in tl){let n=tl[k];while(n>0){const c=Math.min(MAXST,n);its.push({k,n:c});n-=c}}
+ const gp=k=>PRI[k]&&k!='none'?0:SID[k]?1:2,ar=k=>{const z=isz(k);return z[0]*z[1]};
+ its.sort((a,b)=>gp(a.k)-gp(b.k)||ar(b.k)-ar(a.k)||(a.k<b.k?-1:a.k>b.k?1:0)||b.n-a.n);
+ const out=[];for(const it of its){const f=spotIn(out,SC,SR,it.k);if(!f)return'Could not fit everything - stash left as it was.';out.push({k:it.k,x:f[0],y:f[1],n:it.n})}
+ stash.length=0;out.forEach(o=>stash.push(o));SAVE();return'Stash sorted.'}
+
+// ---------- RANDOM EVENT: COLLAPSE ----------
+// One extraction point is sealed for the rest of the run. No banner, no sound: the only warning is the map [M]. ?event=collapse = 3s in.
+const CLM=['The wagon burned.','The boat burned.'];
+function clSeal(e){e.sealed=1;P.ep=0;const ny=e.y<=61?-1:e.y>=WH-61?1:0,nx=ny?0:e.x<=61?-1:1,vx=e.x+nx*40,vy=e.y+ny*40,hz=!!ny,g=ground.getContext('2d');
+ g.save();g.fillStyle='rgba(8,4,4,.9)';g.beginPath();g.arc(e.x,e.y,31,0,7);g.fill();g.beginPath();g.ellipse(vx,vy,hz?36:22,hz?22:36,0,0,7);g.fill();
+ g.fillStyle='rgba(60,14,8,.7)';g.beginPath();g.ellipse(vx,vy,hz?24:14,hz?14:24,0,0,7);g.fill();
+ for(let i=0;i<14;i++){g.strokeStyle='#2a1a12';g.lineWidth=2;g.beginPath();const x=vx+R(-24,24),y=vy+R(-18,18),a=R(0,6.28);g.moveTo(x,y);g.lineTo(x+Math.cos(a)*R(4,10),y+Math.sin(a)*R(4,10));g.stroke()}
+ for(let i=0;i<10;i++){g.fillStyle='rgba(255,'+((90+R(0,80))|0)+',30,.8)';g.fillRect(vx+R(-22,22),vy+R(-16,16),2,2)}
+ g.restore();fires.push({x:vx,y:vy,r:24,t:1e9,tk:1e9,s:R(0,6)})}
+function clTick(){if(!P||P.dead||RD||P.tm===undefined)return;const el=RT0-P.tm;
+ if(P.clT===undefined){const sd=blds[0]?blds[0].x*.53+blds[0].y:1;P.clT=RQ.get('event')=='collapse'?3:lp(110,Math.max(160,RT0-170),hs(sd+3.1));P.clI=hs(sd+9.7)<.5?0:1}
+ if(P.clD||el<P.clT)return;const e=exts[P.clI]||exts[0];if(!e||exts.filter(x=>!x.sealed).length<2){P.clD=1;return}
+ if(D(P.x,P.y,e.x,e.y)<70||P.ep>0){P.clT=el+4;return}P.clD=1;clSeal(e)}
+function clDraw(){if(P.dead)return;ctx.save();ctx.font='bold 9px monospace';for(const e of exts){if(!e.sealed)continue;const x=e.x-cam.x,y=e.y-cam.y;if(D(P.x,P.y,e.x,e.y)<190&&x>-60&&x<VW+60&&y>-60&&y<VH+60)tx(CLM[e.k]||'It burned.',x,y-34,'#ff8a6a','center')}ctx.restore();ctx.font='bold 10px monospace'}
+
+// ---------- RANDOM EVENT: HELLFIRE RAIN ----------
+// Meteors are telegraphed by a red circle for 1.5s, then crater the ground and leave burning pools, aimed at doorways and corridors.
+let HFR=null,mets=[];const MET_T=1.5,MET_R=24;
+function hfTarget(){const q=Math.random();
+ if(q<.42){const ds=[];blds.forEach(b=>(b.dr||[]).forEach(d=>{const o=d.wg?b.wg:b;if(!o)return;const hz=d.q<2,x=hz?o.x+d.of:d.q?o.x+o.w-6:o.x,y=hz?(d.q?o.y+o.h-6:o.y):o.y+d.of,cx=x+(hz?d.ln:6)/2,cy=y+(hz?6:d.ln)/2,dd=D(cx,cy,P.x,P.y);if(dd>40&&dd<460)ds.push({x:cx,y:cy})}));
+  if(ds.length){const d=ds[R(0,ds.length)|0];return{x:d.x+R(-5,5),y:d.y+R(-5,5)}}}
+ if(q<.67)for(let i=0;i<40;i++){const a=R(0,6.28),r=R(60,340),x=P.x+Math.cos(a)*r,y=P.y+Math.sin(a)*r;if(x<30||y<30||x>WW-30||y>WH-30||hit(x,y,6))continue;
+  if((hit(x-24,y,3)&&hit(x+24,y,3))||(hit(x,y-24,3)&&hit(x,y+24,3)))return{x,y}}
+ for(let i=0;i<30;i++){const a=R(0,6.28),r=R(50,330),x=P.x+Math.cos(a)*r,y=P.y+Math.sin(a)*r;if(x<30||y<30||x>WW-30||y>WH-30||hit(x,y,8))continue;return{x,y}}return null}
+function hfImpact(m){const near=D(P.x,P.y,m.x,m.y);shake=Math.max(shake,near<220?6:2);burst(m.x,m.y,30,150,'#ff9a30',0);burst(m.x,m.y,12,110,'#ffe080',0);noise(m.x,m.y,200);
+ bx.fillStyle='rgba(0,0,0,.55)';bx.beginPath();bx.ellipse(m.x,m.y,20,14,0,0,7);bx.fill();bx.fillStyle='rgba(90,12,6,.6)';bx.beginPath();bx.ellipse(m.x,m.y,12,8,0,0,7);bx.fill();
+ M.forEach(o=>{if(o.hp>0&&D(o.x,o.y,m.x,m.y)<MET_R+2)hurt(o,90,Math.atan2(o.y-m.y,o.x-m.x),'fire')});
+ if(!P.dead&&near<MET_R)hurtP(40,{s:'bomb'});
+ if(fires.filter(f=>f.mt).length<30)fires.push({x:m.x,y:m.y,r:26,t:22,tk:.3,s:R(0,6),pd:9,mt:1})}
+function hfTick(dt){if(!P||P.dead||RD||P.tm===undefined){HFR=null;mets=[];return}if(HFR&&HFR.P!==P){HFR=null;mets=[]}
+ const el=RT0-P.tm;
+ if(P.hfT===undefined){const sd=blds[0]?blds[0].x*.53+blds[0].y:1;P.hfT=RQ.get('event')=='rain'?3:lp(120,Math.max(180,RT0-150),hs(sd+11.3))}
+ if(!HFR&&!P.hfD&&el>=P.hfT){if(P.tm<45)P.hfD=1;else if(!EVN&&!TTH&&!FOG){P.hfD=1;HFR={P,t:0,dur:45,rt:.4};shake=Math.max(shake,6);banner('HELLFIRE RAIN','Red circles mark where the sky falls. Craters burn, and the fires choke corridors and doorways.','#ff6a2a');try{sfx.sigil(3)}catch(e){}}}
+ if(HFR){HFR.t+=dt;if(HFR.t<HFR.dur){HFR.rt-=dt;if(HFR.rt<=0){HFR.rt=R(.35,.75);if(mets.length<10){const t=hfTarget();if(t)mets.push({x:t.x,y:t.y,t:MET_T})}}}else if(!mets.length){HFR=null;say('The rain of fire passes.',4)}}
+ for(const m of mets){m.t-=dt;if(m.t<=0)hfImpact(m)}mets=mets.filter(m=>m.t>0)}
+function hfDraw(){if(!mets.length||P.dead)return;ctx.save();for(const m of mets){const x=m.x-cam.x,y=m.y-cam.y;if(x<-60||x>VW+60||y<-260||y>VH+60)continue;const p=1-m.t/MET_T,pl=.5+.5*Math.sin(T*14);
+ ctx.fillStyle='rgba(255,30,20,'+(.08+.2*p).toFixed(3)+')';ctx.beginPath();ctx.arc(x,y,MET_R,0,7);ctx.fill();
+ ctx.fillStyle='rgba(255,60,30,'+(.15+.3*p).toFixed(3)+')';ctx.beginPath();ctx.arc(x,y,MET_R*p,0,7);ctx.fill();
+ ctx.strokeStyle='rgba(255,70,50,'+(.6+.4*pl).toFixed(3)+')';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,MET_R,0,7);ctx.stroke();
+ if(m.t<.4){const k=m.t/.4,mx=x+70*k,my=y-210*k;ctx.strokeStyle='rgba(255,170,60,.9)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(mx+16,my-48);ctx.lineTo(mx,my);ctx.stroke();ctx.fillStyle='#ff8a20';ctx.beginPath();ctx.arc(mx,my,5,0,7);ctx.fill();ctx.fillStyle='#ffe080';ctx.beginPath();ctx.arc(mx,my,2.5,0,7);ctx.fill()}}
+ ctx.restore()}
+{const _b2=bmDraw;bmDraw=function(){_b2();hfDraw();clDraw()};
+ const _uh=update;update=function(dt){_uh(dt);if(mode!='play'){HFR=null;mets=[];return}clTick();hfTick(dt)}}
+
+// ---------- RANDOM EVENT: THE FOG ROLLS IN ----------
+// Your sight collapses to a few paces and flares are dead (no light, no lure, no noise). Monsters keep their normal senses. ?event=fog = 3s in.
+let FOG=null;
+const fgOn=()=>!!FOG&&FOG.P===P,fgf=()=>fgOn()?sg(FOG.t,0,3)*(1-sg(FOG.t,FOG.dur-3,FOG.dur)):0,fgv=m=>lp(1,m,fgf());
+function fgTick(dt){if(!P||P.dead||RD||P.tm===undefined){FOG=null;return}if(FOG&&FOG.P!==P)FOG=null;const el=RT0-P.tm;
+ if(P.fgT===undefined){const sd=blds[0]?blds[0].x*.53+blds[0].y:1;P.fgT=RQ.get('event')=='fog'?3:lp(130,Math.max(200,RT0-140),hs(sd+17.9))}
+ if(!FOG&&!P.fgD&&el>=P.fgT){if(P.tm<50)P.fgD=1;else if(!EVN&&!TTH&&!HFR){P.fgD=1;FOG={P,t:0,dur:45};shake=Math.max(shake,4);
+  banner('THE FOG ROLLS IN','You can barely see your own hands and flares die in it. The horde still senses you.','#b8c4cc');try{sfx.sigil(1)}catch(e){}}}
+ if(FOG){FOG.t+=dt;if(FOG.t>=FOG.dur){FOG=null;say('The fog lifts.',4)}}}
+function fgDraw(){const a=fgf();if(a<=.01||P.dead)return;ctx.save();const px=P.x-cam.x,py=P.y-cam.y,g=ctx.createRadialGradient(px,py,2,px,py,46);
+ g.addColorStop(0,'rgba(170,185,195,'+(.22*a).toFixed(3)+')');g.addColorStop(1,'rgba(170,185,195,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(px,py,46,0,7);ctx.fill();
+ for(let i=0;i<7;i++){const an=T*(.25+i*.05)+i*1.9,r=14+((i*13)%30)+4*Math.sin(T*.8+i);ctx.fillStyle='rgba(185,198,208,'+(.07*a).toFixed(3)+')';ctx.beginPath();ctx.ellipse(px+Math.cos(an)*r,py+Math.sin(an)*r*.6,18,8,an*.5,0,7);ctx.fill()}
+ ctx.restore();ctx.font='bold 10px monospace'}
+{const _b3=bmDraw;bmDraw=function(){_b3();fgDraw()};
+ const _rh2=rdHud;rdHud=function(){_rh2();if(!fgOn()||P.dead)return;ctx.font='bold 9px monospace';tx('THE FOG  '+Math.ceil(FOG.dur-FOG.t)+'s',VW/2,EVN?52:40,'#b8c4cc','center');ctx.font='bold 10px monospace'};
+ const _uf=update;update=function(dt){_uf(dt);if(mode!='play'){FOG=null;return}fgTick(dt)}}
 
 menu();requestAnimationFrame(loop);
 </script></body></html>
