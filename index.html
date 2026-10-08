@@ -64,7 +64,7 @@ svg.str{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-i
 .nt.ch h3{text-decoration:underline;text-decoration-color:#ff8a7a}
 .nt::before{content:'';position:absolute;top:-6px;left:50%;width:11px;height:11px;margin-left:-5px;border-radius:50%;background:#b01c1c;box-shadow:0 2px 3px #000;z-index:3}
 .nt.ch::before{background:#e8e6d8}
-.pol{float:right;font-size:34px;line-height:1;background:#e8e6d8;padding:6px 8px 14px;margin:0 0 4px 8px;transform:rotate(4deg);box-shadow:2px 3px 6px #000a}
+.ico{background:#241c24;border:2px solid #14101a;line-height:0;min-width:48px}.pol.sp{font-size:0;padding:6px 6px 14px}.pol{float:right;font-size:34px;line-height:1;background:#e8e6d8;padding:6px 8px 14px;margin:0 0 4px 8px;transform:rotate(4deg);box-shadow:2px 3px 6px #000a}
 svg.lstr{position:absolute;left:0;top:0;pointer-events:none;z-index:0}
 /* ---- main menu ---- */
 #menu.ttl{padding:0;overflow:hidden;background:#05020a}
@@ -270,7 +270,7 @@ function loreStr(){const sl=document.querySelector('.slate');if(!sl)return;const
  sv.innerHTML='<path d="'+d+'" fill="none" stroke="#a02424" stroke-width="1.8" opacity=".9"/>';sl.insertBefore(sv,sl.firstChild)}
 addEventListener('resize',()=>{if(mode=='menu'&&scr=='lore')loreStr()});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(mode=='menu'&&scr=='lore')loreStr()});
-const HELP='WASD move · Shift sprint · Mouse aim/fire · RMB melee · R reload · Wheel or 1-8 switch weapons/tools · LMB uses tools · H holy water · G blessed charge · Z hellfire flask · X signal flare · C saint\'s ward · V tripwire · Loot weapons, ammo & tools in the buildings · Q darksight · Tab inventory (the backpack survives your escape) · M map · E interact (sigils, banish, loot) · stand in an exit ring to escape · N toggle ambient sound';
+const HELP='WASD move · Shift sprint · Mouse aim/fire · RMB melee · R reload · Wheel or 1-8 switch weapons/tools · LMB uses tools · Loot weapons, ammo & tools in the buildings · Q darksight · Tab inventory (the backpack survives your escape) · M map · E interact (sigils, banish, loot) · stand in an exit ring to escape · N toggle ambient sound';
 const back='<button data-v=hub>\u2190 Back</button>',backTo=v=>`<button data-v=${v}>\u2190 Back</button>`;
 function menu(m){const c=cost(),ok=c<=bank,tl=sel.tools.filter(Boolean).map(t=>TOOL[t.k].n.replace(' x2','')+' x'+t.n).join(', ')||'no tools';
  const col=(h,r)=>`<div class=col><h2>${h}</h2>${r}</div>`;let body;
@@ -1645,27 +1645,39 @@ const TT_ITEMS=[{l:'Play',v:'hub'},{l:'Tutorial',v:'tut'}]; // add more main-men
 const kc=k=>`<span class=kc>${k}</span>`;
 const TUT=[
  {t:'The Hunt',sub:'Every raid has one goal: kill the demon and walk out alive',e:[
-  ['1. Gear up',"At camp, pick your skin, loadout and stash, then press <b>Enter the Breach</b>. A loadout costs cash up front, so choose what you can afford.",'\u{1F392}'],
-  ['2. Burn the sigils',"Find and burn <b>3 sigils</b> hidden around the ruined parish. Walk up to one and press "+kc('E')+". Loot the buildings as you search.",'\u{1F525}'],
-  ['3. Kill the demon',"Then hunt the archdemon that sits in the Breach. Its minions will swarm you, so keep moving and keep shooting.",'\u{1F479}'],
-  ['4. Banish & escape',"Hold "+kc('E')+" on the corpse for 5 seconds to banish it and claim the bounty. It is noisy work. Then reach a glowing <b>exit ring</b>. The bounty only pays if you extract alive.",'\u{1FA78}']]},
+  ['1. Gear up',"At camp, pick your skin, loadout and stash, then press <b>Enter the Breach</b>. A loadout costs cash up front, so choose what you can afford.",'loot'],
+  ['2. Burn the sigils',"Find and burn <b>3 sigils</b> hidden around the ruined parish. Walk up to one and press "+kc('E')+". Loot the buildings as you search.",'flare'],
+  ['3. Kill the demon',"Then hunt the archdemon that sits in the Breach. Its minions will swarm you, so keep moving and keep shooting.",'moon'],
+  ['4. Banish & escape',"Hold "+kc('E')+" on the corpse for 5 seconds to banish it and claim the bounty. It is noisy work. Then reach a glowing <b>exit ring</b>. The bounty only pays if you extract alive.",'reaper']]},
  {t:'Move & Fight',sub:'Aim with the mouse, keep your distance, never stop moving',e:[
-  ['Move',kc('W')+kc('A')+kc('S')+kc('D')+" to move. Hold "+kc('Shift')+" to sprint, but sprinting costs stamina.",'\u{1F6B6}'],
-  ['Shoot',"Aim with the <b>mouse</b>, hold <b>left click</b> to fire, and press "+kc('R')+" to reload. Watch your magazine. Shotguns hit hard up close.",'\u{1F52B}'],
-  ['Melee',"<b>Right click</b> swings in close quarters. It saves ammo when an imp gets inside your guard.",'\u{1FA93}'],
-  ['Switch weapons',"Scroll the <b>mouse wheel</b> or press "+kc('1')+" to "+kc('8')+" to swap between weapons and tools.",'\u{1F501}']]},
- {t:'Tools',sub:'Stack up to 3 of each. Left click uses the selected tool',e:[
-  ['Holy Water '+kc('H'),"Heals <b>50 HP</b>. It does nothing at full health, so save it for when it hurts.",'\u{1F4A7}'],
-  ['Blessed Charge '+kc('G'),"A big explosion. Great for clearing a doorway full of imps, bad for standing next to.",'\u{1F4A5}'],
-  ['Hellfire Flask '+kc('Z'),"Throws a burning pool that lasts 5 seconds. Block a corridor and let them run through it.",'\u{1F9EA}'],
-  ['Flare '+kc('X')+' & Ward '+kc('C'),"The flare lights the dark and <b>lures imps</b>. Saint's Ward cuts damage by 60% for 10 seconds. "+kc('V')+" sets a tripwire and "+kc('Q')+" is darksight.",'\u{1F6E1}\uFE0F']]},
+  ['Move',kc('W')+kc('A')+kc('S')+kc('D')+" to move. Hold "+kc('Shift')+" to sprint, but sprinting costs stamina.",'walk'],
+  ['Shoot',"Aim with the <b>mouse</b>, hold <b>left click</b> to fire, and press "+kc('R')+" to reload. Watch your magazine. Shotguns hit hard up close.",'shoot'],
+  ['Melee',"<b>Right click</b> swings in close quarters. It saves ammo when an imp gets inside your guard.",'melee'],
+  ['Switch weapons',"Scroll the <b>mouse wheel</b> or press "+kc('1')+" to "+kc('8')+" to swap between weapons and tools.",'shotgun,tonic']]},
+ {t:'Tools',sub:'Stack up to 3 of each. Pick one with 1-8 or the mouse wheel, then left click',e:[
+  ['Holy Water',"Heals <b>50 HP</b>. It does nothing at full health, so save it for when it hurts.",'tonic'],
+  ['Blessed Charge',"A big explosion. Great for clearing a doorway full of imps, bad for standing next to.",'bomb'],
+  ['Hellfire Flask',"Throws a burning pool that lasts 5 seconds. Block a corridor and let them run through it.",'flask'],
+  ['Flare & Ward',"The flare lights the dark and <b>lures imps</b>. Saint's Ward cuts damage by 60% for 10 seconds. The tripwire plants a blast trap, and "+kc('Q')+" is darksight.",'flare,ward']]},
  {t:'Survive',sub:'The Breach is not fair. Know its tricks',e:[
-  ['Loot everything',"Weapons, ammo and tools sit in the buildings. Press "+kc('E')+" to loot. "+kc('Tab')+" opens your inventory and the backpack survives your escape.",'\u{1F4E6}'],
-  ['Read the map',kc('M')+" opens the map. Exit rings are the only safe ground, so learn where they are before you need them.",'\u{1F5FA}\uFE0F'],
-  ['Random events',"The <b>Blood Moon</b> sends monsters sprinting, the <b>Fog</b> blinds you, <b>Hellfire Rain</b> falls where red circles mark, and the <b>Bell</b> demands a toll.",'\u{1F319}'],
-  ['Time runs out',"Wait too long and <b>the Reaper</b> comes and nothing escapes it. Press "+kc('N')+" to toggle ambient sound.",'\u231B']]}
+  ['Loot everything',"Weapons, ammo and tools sit in the buildings. Press "+kc('E')+" to loot. "+kc('Tab')+" opens your inventory and the backpack survives your escape.",'loot'],
+  ['Read the map',kc('M')+" opens the map. Exit rings are the only safe ground, so learn where they are before you need them.",'map'],
+  ['Random events',"The <b>Blood Moon</b> sends monsters sprinting, the <b>Fog</b> blinds you, <b>Hellfire Rain</b> falls where red circles mark, and the <b>Bell</b> demands a toll.",'moon'],
+  ['Time runs out',"Wait too long and <b>the Reaper</b> comes and nothing escapes it. Press "+kc('N')+" to toggle ambient sound.",'reaper']]}
 ];
 let tutP=0,TART=null;
+function icoSpecial(k){const c=document.createElement('canvas');c.width=c.height=48;c.style.cssText='width:48px;height:48px;image-rendering:pixelated;display:block';
+ const x=c.getContext('2d'),o=ctx,sk=sel.skin;ctx=x;sel.skin='warden';
+ try{if(k=='walk'||k=='shoot'||k=='melee'){x.save();x.translate(k=='walk'?24:18,32);x.scale(1.6,1.6);warden(0,0,.15,0,k=='walk'?1.3:0,k=='shoot'?'shotgun':k=='melee'?'fists':null,0,null,k=='melee'?1:0);x.restore()}
+  else if(k=='loot'){x.fillStyle='rgba(0,0,0,.4)';x.beginPath();x.ellipse(24,41,16,4,0,0,7);x.fill();fR(x,8,16,32,24,'#6a4326');fR(x,8,16,32,3,'#8a5a32');fR(x,8,28,32,2,'#3a2512');fR(x,8,16,3,24,'#4a2e18');fR(x,37,16,3,24,'#4a2e18');fR(x,22,22,4,6,'#c8a050');fR(x,23,24,2,2,'#2a1c10')}
+  else if(k=='map'){fR(x,0,0,48,48,'#120d12');for(const b of [[4,4,16,12],[26,6,18,14],[6,28,14,14],[28,30,16,12]]){fR(x,b[0],b[1],b[2],b[3],'#241a20');x.strokeStyle='rgba(232,230,216,.3)';x.strokeRect(b[0]+.5,b[1]+.5,b[2]-1,b[3]-1)}
+   x.strokeStyle='rgba(176,36,36,.9)';x.lineWidth=1;x.beginPath();x.moveTo(12,10);x.lineTo(34,13);x.lineTo(13,35);x.lineTo(36,36);x.stroke();x.strokeStyle='#e05a5a';x.lineWidth=2;x.beginPath();x.moveTo(31,33);x.lineTo(41,43);x.moveTo(41,33);x.lineTo(31,43);x.stroke()}
+  else if(k=='moon'){const g=x.createRadialGradient(24,24,6,24,24,24);g.addColorStop(0,'rgba(255,80,30,.55)');g.addColorStop(1,'rgba(255,80,30,0)');x.fillStyle=g;x.fillRect(0,0,48,48);x.fillStyle='#c0392b';x.beginPath();x.arc(24,24,14,0,7);x.fill();x.fillStyle='#e8643a';x.beginPath();x.arc(20,19,9,0,7);x.fill();x.fillStyle='rgba(70,6,8,.45)';for(const q of [[18,26,4],[29,20,3],[27,31,3]]){x.beginPath();x.arc(q[0],q[1],q[2],0,7);x.fill()}}
+  else if(k=='reaper'){x.fillStyle='#14101a';x.beginPath();x.moveTo(24,3);x.lineTo(7,45);x.lineTo(41,45);x.closePath();x.fill();x.strokeStyle='#3a2a44';x.lineWidth=1;x.stroke();fS(x,24,25,2.2)}}
+ finally{ctx=o;sel.skin=sk}return c}
+function tutIcons(root){root.querySelectorAll('.ico').forEach(el=>{const ks=(el.dataset.ic||'').split(',').filter(Boolean);
+ if(ks.length==1&&['walk','shoot','melee','loot','map','moon','reaper'].includes(ks[0]))el.appendChild(icoSpecial(ks[0]));
+ else ks.forEach(k=>{const d=document.createElement('div');d.style.cssText='width:48px;height:'+(ks.length>1?24:48)+'px';d.appendChild(itemCv(k,48,ks.length>1?24:48));el.appendChild(d)})})}
 // ---- The Hunt: six animated panels, drawn with the same sprites the raids use
 const SBS=[
  ['Load in','Gear up at camp, then step into the breach. Your loadout is paid for up front.'],
@@ -1763,7 +1775,8 @@ function tutShow(){
  const S=TUT[tutP],M=$('#menu');
  if(TART){TART.stop();TART=null}
  M.classList.remove('ttl');M.style.display='block';
- M.innerHTML=`<div class=board><h1>\u2620 Tutorial \u2620</h1><div class="slate tut"><div class=tabs>${TUT.map((s,i)=>`<div class="tb ${i==tutP?'on':''}" data-tp=${i}>${s.t}</div>`).join('')}</div><h2 class=lt>${S.t}</h2><p class=sub>${S.sub}</p><div class=notes>${S.e.map((n,i)=>`<div class="nt ${i%2?'ch':'pp'}" style="--r:${(((i*37)%7)-3)*.55}deg"><div class=pol>${n[2]}</div><h3>${n[0]}</h3><p>${n[1]}</p></div>`).join('')}</div></div><div class=foot><button data-v=title>\u2190 Main Menu</button><span class=hint style="margin:0">Page ${tutP+1} of ${TUT.length}</span><span><button data-tp=${tutP-1} ${tutP==0?'disabled':''}>\u2190 Prev</button> <button data-tp=${tutP+1>=TUT.length?'play':tutP+1}>${tutP+1>=TUT.length?'Play':'Next \u2192'}</button></span></div></div>`;
+ M.innerHTML=`<div class=board><h1>\u2620 Tutorial \u2620</h1><div class="slate tut"><div class=tabs>${TUT.map((s,i)=>`<div class="tb ${i==tutP?'on':''}" data-tp=${i}>${s.t}</div>`).join('')}</div><h2 class=lt>${S.t}</h2><p class=sub>${S.sub}</p><div class=notes>${S.e.map((n,i)=>`<div class="nt ${i%2?'ch':'pp'}" style="--r:${(((i*37)%7)-3)*.55}deg"><div class="pol sp"><div class=ico data-ic="${n[2]}"></div></div><h3>${n[0]}</h3><p>${n[1]}</p></div>`).join('')}</div></div><div class=foot><button data-v=title>\u2190 Main Menu</button><span class=hint style="margin:0">Page ${tutP+1} of ${TUT.length}</span><span><button data-tp=${tutP-1} ${tutP==0?'disabled':''}>\u2190 Prev</button> <button data-tp=${tutP+1>=TUT.length?'play':tutP+1}>${tutP+1>=TUT.length?'Play':'Next \u2192'}</button></span></div></div>`;
+ tutIcons(M);
  if(tutP==0){const nb=M.querySelector('.notes');if(nb){nb.outerHTML=sbHTML();TART=tutArt(M)}}
  M.scrollTop=0}
 function titleShow(){
@@ -1787,8 +1800,8 @@ function titleArt(cv){
  const mkc=(w,h)=>{const o=document.createElement('canvas');o.width=w;o.height=h;return o};
  let g=4,LW=0,LH=0,alive=1,last=0,TT=0,rec=0,fl=0,cd=1,circ=0,cast=0,shk=0,spT=.2,kills=0,aim=0,port=false;
  let hp={x:0,y:0},bp={x:0,y:0},cc={x:0,y:0},Rc=36,gr=null,crk=null,bl=null,blx=null,dkc=mkc(2,2),dkx=dkc.getContext('2d'),vg=null;
- let mins=[],pt=[],bits=[],puffs=[],trs=[],shells=[],sps=[],emb=[],tree=[],fires=[];
- const ang=(a,b)=>Math.atan2(b.y-a.y,b.x-a.x),wrap=a=>{while(a>Math.PI)a-=TAU;while(a<-Math.PI)a+=TAU;return a};
+ let mins=[],pt=[],bits=[],puffs=[],trs=[],shells=[],sps=[],emb=[],tree=[],fires=[],spurts=[];
+ const lp0=(a,b,u)=>a+(b-a)*u,ang=(a,b)=>Math.atan2(b.y-a.y,b.x-a.x),wrap=a=>{while(a>Math.PI)a-=TAU;while(a<-Math.PI)a+=TAU;return a};
  // ---- ground, ruins and lava veins (same recipe as the raid map)
  const wall=(q,x,y,w,h,p)=>{const hz=w>h,L=hz?w:h;fR(q,x,y+h,w,5,'#1e1015');fR(q,x,y,w,h,p[1]);fR(q,x,y,w,1,p[2]);
   for(let u=R(2,8);u<L;u+=R(7,14))hz?fR(q,x+u,y+1,1,h-1,'rgba(0,0,0,.35)'):fR(q,x+1,y+u,w-1,1,'rgba(0,0,0,.35)');
@@ -1828,19 +1841,32 @@ function titleArt(cv){
   cc={x:bp.x-(port?6:16),y:bp.y+(port?30:34)};
   tree=[[.06,.9],[.95,.2],[.22,.12],[.52,.93]].map(([a,b])=>({x:LW*a,y:LH*b}));
   fires=[{x:LW*(port?.28:.58),y:LH*(port?.5:.78),r:15,s:1.3},{x:LW*(port?.62:.3),y:LH*(port?.8:.43),r:12,s:4.1}];
-  mins=[];pt=[];bits=[];puffs=[];trs=[];shells=[];sps=[];
+  mins=[];pt=[];bits=[];puffs=[];trs=[];shells=[];sps=[];spurts=[];
   emb=[];for(let i=0;i<Math.ceil(LW*LH/700);i++)emb.push({x:R(0,LW),y:R(0,LH),vx:R(2,12),vy:-R(6,18),p:R(0,9)});
-  aim=ang(hp,bp);paintGround()}
+  aim=ang(hp,bp);paintGround();
+  for(let i=0;i<(port?9:16);i++){const t=Math.random(),x=lp0(hp.x+30,cc.x-Rc,t)+R(-26,26),y=lp0(hp.y,cc.y,t)+R(-34,34);remains(x,y,MC[['imp','skitter','brute'][i%3]],i%4==0)}
+  for(let i=0;i<6;i++)remains(hp.x+R(10,60),hp.y+R(-20,24),MC.imp,false);
+  for(let i=0;i<5;i++){const x=R(0,LW),y=R(0,LH);remains(x,y,MC.imp,false)}
+  pool(hp.x-6,hp.y+6,10)}
  // ---- gore, in the raid's own style (2px blood, body chunks, ground splats)
  const MC={imp:['#8a1c1c','#4a0c0c'],skitter:['#b8a070','#6a5a38'],brute:['#4a2a30','#1a0c10'],bloat:['#6a8a30','#9aba50']};
  function splat(x,y,n,r){for(let i=0;i<n;i++){blx.fillStyle=`rgba(${40+R(0,40)|0},6,${30+R(0,40)|0},${R(.4,.8)})`;blx.beginPath();blx.ellipse(x+R(-r,r),y+R(-r,r),R(1,r/3+1),R(1,r/4+1),R(0,3),0,7);blx.fill()}}
  function spray(x,y,dx,dy,n,sp){for(let i=0;i<n;i++){const t=Math.atan2(dy,dx)+R(-.9,.9),v=R(.25,1)*sp;pt.push({x,y,z:R(2,9),vx:Math.cos(t)*v,vy:Math.sin(t)*v,vz:R(30,110),l:2,c:Math.random()<.6?'#b01820':'#7a0c14'})}}
- function gib(m){const sc=m.ty=='brute'?1.5:m.ty=='skitter'?.75:1,x=m.x,y=m.y-4*sc,d=Math.atan2(m.y-hp.y,m.x-hp.x),dx=Math.cos(d),dy=Math.sin(d),cl2=MC[m.ty||'imp'];
-  spray(x,y,dx,dy,16,150);splat(x,m.y,9,7*sc);
-  for(let i=0;i<7;i++){const t=d+R(-.9,.9),v=R(30,120);bits.push({x:x+R(-3,3),y:y+R(-3,3),z:R(2,8),vx:Math.cos(t)*v,vy:Math.sin(t)*v,vz:R(50,150),s:Math.random()<.4?3:2,c:i<2&&m.ty!='bloat'?'#e8d8b0':cl2[i%2]})}
-  for(let i=0;i<8;i++)sps.push({x,y,vx:dx*R(40,200)+R(-60,60),vy:dy*R(40,200)+R(-80,30),l:R(.2,.5),m:.5});
-  if(m.ty=='bloat')for(let i=0;i<4;i++)puffs.push({x:x+R(-4,4),y:y+R(-4,4),vx:R(-8,8),vy:R(-14,0),r:R(4,8),l:R(.6,1),m:1,c:'110,150,50'});
-  if(++kills%10==0){blx.globalCompositeOperation='destination-out';blx.fillStyle='rgba(0,0,0,.28)';blx.fillRect(0,0,LW,LH);blx.globalCompositeOperation='source-over'}}
+ function pool(x,y,r){for(let i=0;i<5;i++){blx.fillStyle=i%2?'rgba(110,8,16,.75)':'rgba(66,4,10,.8)';blx.beginPath();blx.ellipse(x+R(-r/2,r/2),y+R(-r/3,r/3),R(r/3,r),R(r/4,r/2),R(0,3),0,7);blx.fill()}blx.fillStyle='rgba(190,30,40,.35)';blx.beginPath();blx.ellipse(x-r*.15,y-r*.1,r*.3,r*.15,0,0,7);blx.fill()}
+ function remains(x,y,cl2,big){pool(x,y,big?13:8);
+  for(let i=0;i<(big?7:4);i++){const bx2=x+R(-9,9),by2=y+R(-5,5),w=R(2,5),h=R(2,4);blx.fillStyle=['#a01820','#6a0c14','#c0506a',cl2[i%2]][i%4];blx.fillRect(bx2|0,by2|0,w|0,h|0);blx.fillStyle='rgba(0,0,0,.35)';blx.fillRect(bx2|0,(by2+h)|0,w|0,1)}
+  blx.strokeStyle='#e8d8b0';blx.lineWidth=1;for(let i=0;i<3;i++){const rx=x+R(-6,6),ry=y+R(-4,4);blx.beginPath();blx.moveTo(rx,ry);blx.quadraticCurveTo(rx+R(-3,3),ry-3,rx+R(2,6),ry+R(-1,2));blx.stroke()}
+  if(Math.random()<(big?.7:.35)){blx.fillStyle='#e8d8b0';blx.fillRect((x+R(-5,5))|0,(y+R(-3,3))|0,1,3);blx.fillRect((x+R(-5,5))|0,(y+R(-3,3))|0,3,1)}
+  if(Math.random()<.3)fS(blx,x+R(-6,6),y+R(-3,3),.7)}
+ function gib(m){const sc=m.ty=='brute'?1.5:m.ty=='skitter'?.75:1,x=m.x,y=m.y-4*sc,d=Math.atan2(m.y-hp.y,m.x-hp.x),dx=Math.cos(d),dy=Math.sin(d),cl2=MC[m.ty||'imp'],bl2=m.ty=='bloat';
+  spray(x,y,dx,dy,34,170);spray(x,y,dx,dy,14,70);spray(x,y,0,0,10,90);splat(x,m.y,24,12*sc);pool(x+dx*8,m.y+dy*4,9*sc);remains(m.x,m.y,cl2,m.ty=='brute');
+  const meat=bl2?['#6a8a30','#9aba50','#4a6020']:['#a01820','#6a0c14','#c0506a'];
+  for(let i=0;i<16;i++){const t=d+R(-1.1,1.1),v=R(30,150);bits.push({x:x+R(-3,3),y:y+R(-3,3),z:R(2,9),vx:Math.cos(t)*v,vy:Math.sin(t)*v,vz:R(50,170),s:2+(Math.random()*3|0),c:i<3&&!bl2?'#e8d8b0':i<8?cl2[i%2]:meat[i%3],tr:i%3==0})}
+  spurts.push({x,y,dx,dy,l:.6,m:.6});
+  for(let i=0;i<12;i++)sps.push({x,y,vx:dx*R(40,220)+R(-70,70),vy:dy*R(40,220)+R(-90,30),l:R(.2,.55),m:.55});
+  if(bl2)for(let i=0;i<5;i++)puffs.push({x:x+R(-4,4),y:y+R(-4,4),vx:R(-8,8),vy:R(-14,0),r:R(4,8),l:R(.6,1),m:1,c:'110,150,50'});
+  for(let i=0;i<3;i++)puffs.push({x:x+R(-3,3),y:y+R(-3,3),vx:R(-10,10),vy:R(-12,0),r:R(3,6),l:R(.5,.9),m:.9,c:'150,12,16'});
+  if(++kills%30==0){blx.globalCompositeOperation='destination-out';blx.fillStyle='rgba(0,0,0,.16)';blx.fillRect(0,0,LW,LH);blx.globalCompositeOperation='source-over'}}
  const hunterPos=()=>{const ca=Math.cos(aim),sa=Math.sin(aim);return{x:hp.x-ca*rec*1.6,y:hp.y-sa*rec*1.6,ca,sa}};
  const muzzle=()=>{const h=hunterPos();return{x:h.x+h.ca*(5+11.6),y:h.y-3+h.sa*(5+11.6)}};
  function fire(ar){const mz=muzzle(),a0=aim;fl=1;rec=1;shk=2;cd=R(.95,1.5);
@@ -1850,7 +1876,7 @@ function titleArt(cv){
   const tg=[ar[0]];for(const m of ar.slice(1))if(tg.length<4&&Math.abs(wrap(ang(hp,m)-ang(hp,ar[0])))<.24)tg.push(m);
   for(const m of tg){for(let i=0;i<3;i++)trs.push({x0:mz.x,y0:mz.y,x1:m.x+R(-3,3),y1:m.y-5+R(-4,4),l:.1,m:.1});
    const dir=ang(hp,m);m.fl=.07;
-   if(--m.hp<=0)m.dead=1;else{m.kx=Math.cos(dir)*110;m.ky=Math.sin(dir)*110;m.kb=.25;spray(m.x,m.y-5,Math.cos(dir),Math.sin(dir),8,110)}}
+   if(--m.hp<=0)m.dead=1;else{m.kx=Math.cos(dir)*110;m.ky=Math.sin(dir)*110;m.kb=.25;spray(m.x,m.y-5,Math.cos(dir),Math.sin(dir),20,140);splat(m.x,m.y,8,6)}}
   for(let i=0;i<3;i++)trs.push({x0:mz.x,y0:mz.y,x1:mz.x+Math.cos(a0+R(-.2,.2))*R(120,220),y1:mz.y+Math.sin(a0+R(-.2,.2))*R(120,220),l:.1,m:.1})}
  function spawn(){const r=Math.random(),ty=r<.58?'imp':r<.78?'skitter':r<.88?'brute':'bloat',an=R(0,TAU),rr=Math.sqrt(Math.random())*Rc*.7;
   const sp={imp:R(40,52),skitter:R(78,95),brute:R(26,32),bloat:R(20,26)}[ty];
@@ -1869,7 +1895,8 @@ function titleArt(cv){
   const des=live.length?ang(hp,live[0]):ang(hp,bp);aim+=wrap(des-aim)*Math.min(1,dt*9);
   cd-=dt;if(cd<=0){const ar=live.filter(m=>D(m.x,m.y,hp.x,hp.y)<RANGE);if(ar.length)fire(ar);else cd=.1}
   const phys=(a,gv)=>{for(let i=a.length-1;i>=0;i--){const p=a[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.vz-=gv*dt;p.z+=p.vz*dt;p.vx*=1-1.5*dt;p.vy*=1-1.5*dt;
-    if(p.z<=0){if(a==pt){blx.fillStyle='rgba(100,8,12,.7)';blx.fillRect(p.x|0,p.y|0,2,2)}else if(a==bits){blx.fillStyle=p.c;blx.fillRect(p.x|0,p.y|0,p.s,p.s)}else{blx.fillStyle='#c8a040';blx.fillRect(p.x|0,p.y|0,2,1)}a.splice(i,1)}}};
+    if(p.z<=0){if(a==pt){blx.fillStyle='rgba(100,8,12,.7)';const z2=Math.random()<.25?3:2;blx.fillRect(p.x|0,p.y|0,z2,z2)}else if(a==bits){blx.fillStyle='rgba(90,6,12,.55)';blx.fillRect((p.x-1)|0,(p.y-1)|0,p.s+2,p.s+2);blx.fillStyle=p.c;blx.fillRect(p.x|0,p.y|0,p.s,p.s);if(p.tr){blx.strokeStyle='rgba(100,8,12,.6)';blx.lineWidth=1;blx.beginPath();blx.moveTo(p.x,p.y);blx.lineTo(p.x-p.vx*.12,p.y-p.vy*.12);blx.stroke()}}else{blx.fillStyle='#c8a040';blx.fillRect(p.x|0,p.y|0,2,1)}a.splice(i,1)}}};
+  for(let i=spurts.length-1;i>=0;i--){const q=spurts[i];q.l-=dt;if(q.l<=0){spurts.splice(i,1);continue}for(let k=0;k<3;k++){const t=Math.atan2(q.dy,q.dx)+R(-1.2,1.2)+(Math.random()<.5?Math.PI:0),v=R(20,90)*(q.l/q.m+.3);pt.push({x:q.x,y:q.y,z:R(2,7),vx:Math.cos(t)*v,vy:Math.sin(t)*v,vz:R(40,120),l:2,c:Math.random()<.6?'#b01820':'#7a0c14'})}}
   phys(pt,520);phys(bits,520);phys(shells,420);
   for(const a of [puffs,sps,trs]){for(let i=a.length-1;i>=0;i--){const p=a[i];p.l-=dt;if(p.l<=0){a.splice(i,1);continue}if(a!=trs){p.x+=p.vx*dt;p.y+=p.vy*dt;if(a==puffs){p.vx*=.97;p.vy-=3*dt}else p.vy+=120*dt}}}
   for(const e of emb){e.x+=(e.vx+Math.sin(TT+e.p)*6)*dt;e.y+=e.vy*dt;if(e.y<-4||e.x>LW+4){e.x=R(0,LW);e.y=LH+R(0,10)}}}
