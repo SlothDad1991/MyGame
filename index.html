@@ -12,8 +12,21 @@
     <canvas id="g"></canvas>
     <div id="menu"></div>
 
-    <!-- Load Data and Constants First, then Engine/Logic -->
-    <script src="data.js"></script>
-    <script src="js/js/engine.js"></script>
+    <!-- Scripts share one global scope, so ORDER MATTERS. Keep this order. -->
+    <script src="js/base.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/missions.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/world.js"></script>
+    <script src="js/actions.js"></script>
+    <script src="js/buildings.js"></script>
+    <script src="js/render.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/multiplayer.js"></script>
+    <script src="js/tools.js"></script>
+    <script src="js/reaper.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
