@@ -81,15 +81,26 @@ const SKINS={plain:{f:'hunter',c:0,pl:1,n:'Plain Hunter',d:'Drab coat, bare face
  penitent:{f:'warden',c:450,n:'Crimson Penitent',d:'Robed in the blood of the fallen.',coat:'#5a1620',coat2:'#7a2230',hood:'#3a0c14',mask:'#e8e0d4',beak:'#d8cfc0',eye:'#ffffff',eyeg:'#ff7a7a',rune:'#ffd23a',band:'#2a1a1a'},
  ashen:{f:'warden',c:450,n:'Ashen Doctor',d:'Grey as the ash-fields. Eyes like marsh fire.',coat:'#3a3d40',coat2:'#505458',hood:'#26292b',mask:'#bfc4b8',beak:'#a9afa2',eye:'#a8ff70',eyeg:'#70e040',rune:'#70ff90',band:'#4a4a3a'},
  gravedigger:{f:'warden',c:550,n:'The Gravedigger',d:'Mud, rust and a long night of shovel work.',coat:'#4a3622',coat2:'#654a2e',hood:'#2e2012',mask:'#b89a78',beak:'#a4875f',eye:'#ffa040',eyeg:'#ff8a20',rune:'#ff8a20',band:'#2a1c10'},
- saint:{f:'warden',c:800,n:'Bone Saint',d:'Pale vestments. Heaven has not forgotten you.',coat:'#cfc8b8',coat2:'#e8e2d2',hood:'#a89f8a',mask:'#fff6dc',beak:'#efe4c4',eye:'#70c0ff',eyeg:'#4a9aff',rune:'#60b0ff',band:'#b89a50'}};
+ saint:{f:'warden',c:800,n:'Bone Saint',d:'Pale vestments. Heaven has not forgotten you.',coat:'#cfc8b8',coat2:'#e8e2d2',hood:'#a89f8a',mask:'#fff6dc',beak:'#efe4c4',eye:'#70c0ff',eyeg:'#4a9aff',rune:'#60b0ff',band:'#b89a50'},
+ knight:{f:'knight',v:'knight',c:900,n:'Iron Crusader',d:'Plate, plume and a visor slit. Walks like a wall.',coat:'#8a8f9a',coat2:'#b4bac6',hood:'#5a5f6c',mask:'#000',beak:'',eye:'#ff5030',eyeg:'#ff3010',rune:'#7a1c24',band:'#d8b050'},
+ gun:{f:'gun',v:'gun',c:700,n:'Dusk Gunslinger',d:'Duster, bandana and a hat that has seen worse nights.',coat:'#7a5a38',coat2:'#98704a',hood:'#3a2a1c',mask:'#d9b894',beak:'',eye:'#ffffff',eyeg:'#ffffff',rune:'#b02a2a',band:'#c8a050'},
+ bones:{f:'bones',v:'bones',c:650,n:'Rattlebones',d:'Died once. Disliked it. Came back to hunt.',coat:'#e8e4d0',coat2:'#b8b4a0',hood:'#14101a',mask:'#f0ecd8',beak:'',eye:'#70ffd0',eyeg:'#30ffa0',rune:'#3a2a4a',band:'#6a5a8a'},
+ witch:{f:'witch',v:'witch',c:750,n:'Bog Witch',d:'Tall hat, sharp nose, and a bottle of something awful.',coat:'#3a1a5a',coat2:'#5a2a82',hood:'#1c0e2e',mask:'#9ac47a',beak:'',eye:'#ffe040',eyeg:'#ffcc00',rune:'#ff5ad8',band:'#e0b040'},
+ wolf:{f:'wolf',v:'wolf',c:800,n:'Wolfhide Stalker',d:'Pelt, paint and fangs. The wild hunts the breach.',coat:'#6a5a4a',coat2:'#9a8a74',hood:'#4a3e32',mask:'#d8b890',beak:'',eye:'#ffd040',eyeg:'#ffb000',rune:'#c02020',band:'#3a2a1c'}};
 const TOOL={tonic:{n:'Holy Water',c:20,d:'+50 HP (H) \u00b7 stacks to 3'},bomb:{n:'Blessed Charge',c:25,d:'big boom (G) \u00b7 stacks to 3'},flask:{n:'Hellfire Flask',c:35,d:'burning pool, 5s (Z) \u00b7 stacks to 3'},flare:{n:'Signal Flare',c:20,d:'lights the dark, lures imps (X) \u00b7 stacks to 3'},ward:{n:"Saint's Ward",c:40,d:'-60% damage for 10s (C) \u00b7 stacks to 3'}};
-const XT=['flask','flare','ward'],XL=['Flask','Flare','Ward'],TKS=['tonic','bomb',...XT];
+const XT=['flask','flare','ward','tripwire'],XL=['Flask','Flare','Ward','Wire'],TKS=['tonic','bomb',...XT];
+TOOL.tripwire={n:'Tripwire',c:30,d:'plant a wire; imps that trip it take a blast (V) \u00b7 stacks to 3'};
 const BOSS={gorrath:{n:'Gorrath the Maw',i:'\u{1F525}',d:'Charging brute of the pit.',bh:'charge',hp:900,bo:450},nyxara:{n:'Nyxara, Cinder Witch',i:'\u{1F608}',d:'Hurls hellfire from afar.',bh:'ranged',hp:650,bo:400},mordrek:{n:'Mordrek the Choir-Eater',i:'\u{1F47F}',d:'Calls the horde to his side.',bh:'summon',hp:750,bo:500}};
 let bank=500,sel={skin:'plain',pri:'repeater',side:'pistol',tools:[{k:'tonic',n:2},null],bag:[]},boss='gorrath',mode='menu',walls=[],blds=[],trees=[],M=[],bul=[],eb=[],bombs=[],parts=[],clues=[],items=[],exts=[],P,cam={x:0,y:0},ground,blood,bx,keys={},mouse={x:320,y:180,l:0,r:0},msg='',msgT=0,shake=0,T=0,last=0,found=0,banished=0,corpse=null,bty=null,bn=null,mpHB=null,mpKB=null;
-const FAMS={hunter:{n:'The Hunter',d:'The plain issue kit. Always yours.',c:0,def:'plain'},warden:{n:'The Warden',d:'Hooded plague doctor. 5 variations.',c:1000,def:'warden'}};
+const FAMS={hunter:{n:'The Hunter',d:'The plain issue kit. Always yours.',c:0,def:'plain'},warden:{n:'The Warden',d:'Hooded plague doctor. 5 variations.',c:1000,def:'warden'},
+ knight:{n:'Iron Crusader',d:'Plate, plume and a visor slit. Walks like a wall.',c:900,def:'knight'},
+ gun:{n:'Dusk Gunslinger',d:'Duster, bandana and a hat that has seen worse nights.',c:700,def:'gun'},
+ bones:{n:'Rattlebones',d:'Died once. Disliked it. Came back to hunt.',c:650,def:'bones'},
+ witch:{n:'Bog Witch',d:'Tall hat, sharp nose, and a bottle of something awful.',c:750,def:'witch'},
+ wolf:{n:'Wolfhide Stalker',d:'Pelt, paint and fangs. The wild hunts the breach.',c:800,def:'wolf'}};
 const pit=q=>q.t=='f'?FAMS[q.k]:q.t=='w'?(SID[q.k]||PRI[q.k]||TOOL[q.k]):SKINS[q.k];
-let own=['hunter','plain'],curFam='hunter',note='',pend=null,stash=[],invOpen=0;
-const ISZ={rifle:[4,2],shotgun:[4,2],repeater:[3,2],crossbow:[3,2],pistol:[2,2],revolver:[2,2],tonic:[1,1],bomb:[2,1],smg:[3,2],musket:[4,2],flamer:[3,2],handcannon:[2,2],whisper:[2,2],flask:[1,1],flare:[1,1],ward:[1,1]},SC=20,SR=8,MAXST=3,isz=k=>ISZ[k]||[1,1];
+let LS={},AL=null,shopScr='shop',traps=[],own=['hunter','plain'],curFam='hunter',note='',pend=null,stash=[],invOpen=0;
+const ISZ={rifle:[4,2],shotgun:[4,2],repeater:[3,2],crossbow:[3,2],pistol:[2,2],revolver:[2,2],tonic:[1,1],bomb:[2,1],smg:[3,2],musket:[4,2],flamer:[3,2],handcannon:[2,2],whisper:[2,2],flask:[1,1],flare:[1,1],ward:[1,1],tripwire:[1,1]},SC=20,SR=8,MAXST=3,isz=k=>ISZ[k]||[1,1];
 const fitsIn=(arr,C,R_,x,y,w,h,ex)=>x>=0&&y>=0&&x+w<=C&&y+h<=R_&&!arr.some(o=>{if(o===ex)return 0;const z=isz(o.k);return x<o.x+z[0]&&x+w>o.x&&y<o.y+z[1]&&y+h>o.y});
 const spotIn=(arr,C,R_,k,ex)=>{const[w,h]=isz(k);for(let y=0;y<=R_-h;y++)for(let x=0;x<=C-w;x++)if(fitsIn(arr,C,R_,x,y,w,h,ex))return[x,y];return null};
 const addTo=(arr,C,R_,k,n)=>{if(TOOL[k]){const t=arr.find(o=>o.k==k&&o.n<MAXST);if(t){t.n=Math.min(MAXST,t.n+(n||1));return 1}}const f=spotIn(arr,C,R_,k);if(!f)return 0;arr.push({k,x:f[0],y:f[1],n:n||(TOOL[k]?1:0)});return 1};
@@ -100,8 +111,8 @@ const slotSet=(id,it)=>{if(id=='p')sel.pri=it?it.k:'none';else if(id=='s')sel.si
 const dsc=k=>TOOL[k]?TOOL[k].d:st(SID[k]||PRI[k]);
 const SPX={rifle:[21,6.5,6],shotgun:[20,5,6],repeater:[19,5.5,7],crossbow:[19,5.5,17],pistol:[10,3,6],revolver:[17,6,7],tonic:[9,4.5,5],bomb:[12,6,5],smg:[18,5,8],musket:[24,7,6],flamer:[21,6.5,7],handcannon:[16,5.5,7],whisper:[15,6,6],flask:[11,5.5,5],flare:[13,6,4],ward:[10,4,8]};
 function itemCv(k,W,H){const c=document.createElement('canvas');c.width=W;c.height=H;c.style.cssText='width:100%;height:100%;image-rendering:pixelated;pointer-events:none';const[l,cx,h]=SPX[k]||[10,5,5],sc=Math.min(W*.86/l,H*.8/h),o=ctx;ctx=c.getContext('2d');try{drawWpn(k,W/2-cx*sc,H/2-.5*sc,0,sc)}finally{ctx=o}return c}
-const SAVE=run=>{try{localStorage.setItem('bh_save',JSON.stringify({bank,own,skin:sel.skin,stash,pri:sel.pri,side:sel.side,bag:sel.bag,tools:sel.tools,run:run?1:0}))}catch(e){}};
-try{const d=JSON.parse(localStorage.getItem('bh_save')||'null');if(d&&Array.isArray(d.own)){own=[...new Set(['hunter','plain',...d.own.filter(k=>FAMS[k]||SKINS[k])])];bank=Math.max(120,d.bank|0);sel.skin=SKINS[d.skin]&&own.includes(d.skin)?d.skin:'plain';
+const SAVE=run=>{try{localStorage.setItem('bh_save',JSON.stringify({bank,own,led:LS,al:AL,skin:sel.skin,stash,pri:sel.pri,side:sel.side,bag:sel.bag,tools:sel.tools,run:run?1:0}))}catch(e){}};
+try{const d=JSON.parse(localStorage.getItem('bh_save')||'null');if(d&&Array.isArray(d.own)){own=[...new Set(['hunter','plain',...d.own.filter(k=>FAMS[k]||SKINS[k])])];bank=Math.max(120,d.bank|0);if(d.led)LS=d.led;AL=d.al||null;sel.skin=SKINS[d.skin]&&own.includes(d.skin)?d.skin:'plain';
  const ok=k=>k&&k!='none'&&(PRI[k]||SID[k]);stash=[];(d.stash||[]).forEach(o=>{const k=typeof o=='string'?o:o&&o.k;if(!(ok(k)||TOOL[k]))return;const z=isz(k);if(typeof o=='object'&&Number.isInteger(o.x)&&Number.isInteger(o.y)&&fits(o.x,o.y,z[0],z[1]))stash.push({k,x:o.x,y:o.y,n:o.n||(TOOL[k]?2:0)});else addItem(k,o&&o.n)});
  if(d.run){sel.pri='none';sel.side='none';sel.bag=[];sel.tools=[null,null]}else{if(PRI[d.pri])sel.pri=d.pri;if(SID[d.side])sel.side=d.side;sel.bag=[];(Array.isArray(d.bag)?d.bag:d.bag?[d.bag]:[]).forEach(o=>{const k=typeof o=='string'?o:o&&o.k;if(!(ok(k)||TOOL[k]))return;const z=isz(k);if(typeof o=='object'&&Number.isInteger(o.x)&&Number.isInteger(o.y)&&fitsIn(sel.bag,4,2,o.x,o.y,z[0],z[1]))sel.bag.push({k,x:o.x,y:o.y,n:o.n||(TOOL[k]?1:0)});else addTo(sel.bag,4,2,k,o&&o.n)});if(Array.isArray(d.tools))sel.tools=[0,1].map(i=>{const t=d.tools[i];if(!t)return null;const k=typeof t=='string'?t:t.k;return TOOL[k]?{k,n:t.n||2}:null})}}}catch(e){}
 // ---------- MISSIONS ----------
@@ -118,11 +129,52 @@ function genMissions(){const ty=['kills','wkills','bdmg','bfin'].sort(()=>Math.r
   return{t,w,n:0,bo:250}})}
 genMissions();
 function prog(m,dd,src,dead){if(mis.done||mis.fail)return;
- if(m.boss){if(mis.t=='bdmg'&&src==mis.w)mis.p=Math.min(mis.n,mis.p+dd);if(mis.t=='bfin'&&dead){if(src==mis.w)done();else mis.fail=1}}
+ if(m.boss){if(mis.t=='bdmg'&&(!mis.w||src==mis.w))mis.p=Math.min(mis.n,mis.p+dd);if(mis.t=='bfin'&&dead){if(!mis.w||src==mis.w)done();else mis.fail=1}}
  else if(dead&&(mis.t=='kills'||(mis.t=='wkills'&&src==mis.w)))mis.p++;
- if(['kills','wkills','bdmg'].includes(mis.t)&&mis.p>=mis.n)done()}
-function done(){if(mis.done)return;mis.done=1;P.carry+=mis.bo;say('Bonus mission complete! +$'+mis.bo,5)}
-const hudm=()=>mis.t=='kills'?`Imps ${mis.p}/${mis.n}`:mis.t=='wkills'?`Imps (${wph(mis.w).replace('the ','')}) ${mis.p}/${mis.n}`:mis.t=='bdmg'?`Demon dmg (${wph(mis.w).replace('the ','')}) ${mis.p}/${mis.n}`:`Finish the demon: ${wph(mis.w).replace('the ','')}`;
+ if(['kills','wkills','bdmg'].includes(mis.t)&&mis.b+mis.p>=mis.n)done()}
+function done(){if(mis.done)return;mis.done=1;say('Ledger task complete! Extract alive to claim it.',5)}
+const hudm=()=>{const g=mis.b+mis.p,w=mis.w?wph(mis.w).replace('the ',''):'';return mis.t=='kills'?`Imps ${g}/${mis.n}`:mis.t=='wkills'?`Imps (${w}) ${g}/${mis.n}`:mis.t=='bdmg'?`Demon dmg${w?' ('+w+')':''} ${g}/${mis.n}`:mis.t=='bfin'?`Finish the demon${w?': '+w:''}`:mis.t=='esc'?`Extract alive ${mis.b}/${mis.n}`:'Banish the demon, then extract'};
+// ---------- LEDGERS: story arcs with tasks; progress is banked on a clean extraction; the last task unlocks a skin that cannot be bought ----------
+const LEDGERS=[
+{id:'crusade',t:'The Last Crusade',skin:'knight',h:"Sir Aldric Vane led one hundred knights into the Hellbreach to seal it. Only his armor walked back out, empty, still marching. Finish the crusade he could not.",tasks:[
+ {t:'kills',n:10,bo:150,h:'Clear the Gatehouse',s:"Aldric's banner still hangs in the gatehouse ash. The imps nest beneath it. Burn them out."},
+ {t:'wkills',w:'melee',n:6,bo:250,h:'Steel Before Powder',s:"The crusade swore never to fire on the damned, only to cut them down. Honor the vow with melee attacks."},
+ {t:'bdmg',n:300,bo:350,h:'Break the Archdemon',s:"A squire scratched a warning into a dented shield: the archdemon fears nothing but its own blood. Make it bleed."},
+ {t:'ban',n:1,bo:600,h:'Lay the Knight to Rest',s:"Banish the archdemon's corpse and carry Aldric's banner out. The empty armor will finally stand down."}]},
+{id:'draw',t:"Dead Man's Draw",skin:'gun',h:"Marshal Cole Haddan owed the Breach one last duel and lost it at high noon. His hat still hangs on a hitching post beside the sigils, waiting for a new owner.",tasks:[
+ {t:'wkills',w:'pistol',n:6,bo:150,h:'Warm Up the Hand',s:"Cole never trusted a rifle. Six imps with the plain Pistol will show you how he thought."},
+ {t:'esc',n:2,bo:250,h:'Ride Out Twice',s:"Haddan's rule: a gunslinger is only as good as his exits. Leave the Breach alive, twice."},
+ {t:'bfin',n:1,bo:350,h:'The Killing Shot',s:"His last duel ended on a single bullet that missed. Land the killing blow on the archdemon yourself."},
+ {t:'kills',n:20,bo:600,h:'High Noon',s:"Twenty imps, one long afternoon. Finish what the marshal started, and the hat is yours."}]},
+{id:'choir',t:'The Bone Choir',skin:'bones',h:"Cantor Ossian sang the damned to sleep for forty years. When the Breach swallowed his choir he kept singing, long after his voice was gone. The song still needs a singer.",tasks:[
+ {t:'kills',n:15,bo:150,h:'Quiet the Verses',s:"The first verse is a chorus of imps. Silence fifteen of them."},
+ {t:'wkills',w:'bomb',n:5,bo:250,h:'Percussion',s:"Every hymn needs a drum. Kill five imps with blessed charges."},
+ {t:'esc',n:3,bo:350,h:'Three Silent Exits',s:"The choir fell silent one by one. Leave the Breach alive three times, and be heard by none."},
+ {t:'bfin',n:1,bo:600,h:'The Last Verse',s:"Land the killing blow on the archdemon. Ossian finally gets his rest, and you get his bones."}]},
+{id:'bargain',t:"The Bog Witch's Bargain",skin:'witch',h:"Old Marrow brews cures from hellfire and wants a fresh supply. She pays in coin first, and in something worse later. The cauldron is always hungry.",tasks:[
+ {t:'kills',n:12,bo:150,h:'Fresh Ingredients',s:"Marrow wants imp horns, twelve of them, still warm."},
+ {t:'wkills',w:'crossbow',n:6,bo:250,h:'Silver for the Pot',s:"Silver bolts leave the meat clean. Six imps with the Silver Crossbow."},
+ {t:'bdmg',n:350,bo:350,h:'A Pinch of Archdemon',s:"The recipe calls for a pinch of the archdemon itself. Take it with a few hundred damage."},
+ {t:'esc',n:3,bo:600,h:'Never Tip the Witch',s:"Marrow does not tip, and does not wait. Bring your wares out alive, three times, and the hat and broth are yours."}]},
+{id:'pack',t:'The Pack Under the Hill',skin:'wolf',h:"The Skarn wolf-clan hunted the Breach for a hundred winters. Now the pack is gone and only Ulf, the last stalker, still howls from the hill. Answer him.",tasks:[
+ {t:'esc',n:2,bo:150,h:'Run With the Wind',s:"A wolf survives by knowing when to leave. Escape the Breach alive twice."},
+ {t:'kills',n:14,bo:250,h:'Thin the Herd',s:"Imps follow the scent of the dead. Cull fourteen of them before they track the clan's cubs."},
+ {t:'bdmg',w:'melee',n:150,bo:350,h:'Tooth and Claw',s:"The Skarn never killed from afar. Deal damage to the archdemon with melee attacks."},
+ {t:'ban',n:1,bo:600,h:'Avenge the Pack',s:"Banish the archdemon's corpse and carry its pelt home. Ulf will lay down the howl."}]}];
+LEDGERS.forEach(L=>{FAMS[L.skin].led=1;SKINS[L.skin].led=1});
+const lst=id=>LS[id]||(LS[id]={i:0,p:0});
+function curL(){let L=LEDGERS.find(l=>l.id==AL);if(!L||lst(L.id).i>=L.tasks.length){L=LEDGERS.find(l=>lst(l.id).i<l.tasks.length);AL=L?L.id:null}return L||null}
+const ledSub=()=>{const L=curL();return L?L.t+' \u2014 task '+(lst(L.id).i+1)+'/'+L.tasks.length:'All Ledgers complete'},ledFoot=()=>{const L=curL();return L?L.t:'all complete'};
+const tText=T=>T.t=='kills'?`Kill ${T.n} imps`:T.t=='wkills'?`Kill ${T.n} imps with ${wph(T.w)}`:T.t=='bdmg'?`Deal ${T.n} damage to the archdemon${T.w?' with '+wph(T.w):''}`:T.t=='bfin'?`Land the killing blow on the archdemon${T.w?' with '+wph(T.w):''}`:T.t=='esc'?`Escape the breach alive${T.n>1?' '+T.n+' times':''}`:'Banish the archdemon\'s corpse, then reach an exit';
+function ledgerTask(){const L=curL();if(!L)return{t:'none',n:0,p:0,b:0,done:0,fail:0,bo:0};const s=lst(L.id);return Object.assign({},L.tasks[s.i],{p:0,b:s.p,done:0,fail:0})}
+function ledgerCommit(){const L=curL();if(!L||mis.t=='none')return'';const s=lst(L.id),T=L.tasks[s.i];if(!T||mis.t!=T.t)return'';let ok=0;
+ if(T.t=='esc'){s.p++;ok=s.p>=T.n}else if(T.t=='ban')ok=!!banished;else if(T.t=='bfin')ok=!!mis.done;else{s.p+=mis.p;ok=s.p>=T.n}
+ if(!ok)return'';bank+=T.bo;let m='Ledger task complete: '+T.h+' (+$'+T.bo+'). ';s.i++;s.p=0;
+ if(s.i>=L.tasks.length){own.push(L.skin);m+='LEDGER COMPLETE! You unlocked the '+SKINS[L.skin].n+' skin. '}return m}
+const ledList=()=>LEDGERS.map((L,k)=>{const s=lst(L.id),dn=s.i>=L.tasks.length;return `<div class="paper ${mi==k?'on':''}" data-m=${k}>\u2620 ${L.t}<br><small>${dn?'Complete \u2014 skin unlocked':'Task '+(s.i+1)+' of '+L.tasks.length+(AL==L.id?' \u2014 ACTIVE':'')}</small><br>Reward: ${SKINS[L.skin].n} skin</div>`}).join('');
+function ledStory(){const L=LEDGERS[mi]||LEDGERS[0],s=lst(L.id),k=L.tasks.length;
+ return `<div class=chalk>${L.t}<small>${L.h}</small></div><div class=chalk>How it works<small>Tap a Ledger to make it active. Progress is banked when you extract alive; dying loses that run's progress.</small></div>`+L.tasks.map((T,i)=>{const dn=i<s.i,cur=i==s.i,pr=cur&&['kills','wkills','bdmg','esc'].includes(T.t)?` (${s.p}/${T.n})`:'';
+  return `<div class="paper ${cur?'on':''}" style="cursor:default">${dn?'\u2714':cur?'\u25B6':'\u25CB'} ${dn||cur?T.h:'???'}${i==k-1?' \u2014 skin: '+SKINS[L.skin].n:''}<br><small>${dn||cur?tText(T)+pr+'<br>'+T.s:'Locked'}</small><br>Reward $${T.bo}${i==k-1?' + the skin':''}</div>`}).join('')}
 let showMap=0,camp={x:60,y:WH-60};
 const edgePt=()=>{const m=60,w=WW-2*m,h=WH-2*m;let t=R(0,2*(w+h));if(t<w)return{x:m+t,y:m};t-=w;if(t<h)return{x:WW-m,y:m+t};t-=h;if(t<w)return{x:WW-m-t,y:WH-m};t-=w;return{x:m,y:WH-m-t}};
 const say=(s,t)=>{msg=s;msgT=t||3};
@@ -181,30 +233,31 @@ function loreStr(){const sl=document.querySelector('.slate');if(!sl)return;const
  sv.innerHTML='<path d="'+d+'" fill="none" stroke="#a02424" stroke-width="1.8" opacity=".9"/>';sl.insertBefore(sv,sl.firstChild)}
 addEventListener('resize',()=>{if(mode=='menu'&&scr=='lore')loreStr()});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(mode=='menu'&&scr=='lore')loreStr()});
-const HELP='WASD move · Shift sprint · Mouse aim/fire · RMB melee · R reload · Wheel or 1-7 switch weapons/tools · LMB uses tools · H holy water · G blessed charge · Z hellfire flask · X signal flare · C saint\'s ward · Loot weapons, ammo & tools in the buildings · Q darksight · Tab inventory (the backpack survives your escape) · M map · E interact (sigils, banish, loot) · stand in an exit ring to escape · N toggle ambient sound';
+const HELP='WASD move · Shift sprint · Mouse aim/fire · RMB melee · R reload · Wheel or 1-8 switch weapons/tools · LMB uses tools · H holy water · G blessed charge · Z hellfire flask · X signal flare · C saint\'s ward · V tripwire · Loot weapons, ammo & tools in the buildings · Q darksight · Tab inventory (the backpack survives your escape) · M map · E interact (sigils, banish, loot) · stand in an exit ring to escape · N toggle ambient sound';
 const back='<button data-v=hub>\u2190 Back</button>',backTo=v=>`<button data-v=${v}>\u2190 Back</button>`;
 function menu(m){const c=cost(),ok=c<=bank,tl=sel.tools.filter(Boolean).map(t=>TOOL[t.k].n.replace(' x2','')+' x'+t.n).join(', ')||'no tools';
  const col=(h,r)=>`<div class=col><h2>${h}</h2>${r}</div>`;let body;
  const stage=()=>`<div class=stage><canvas id=pc width=256 height=288></canvas><div class=cap>${SKINS[sel.skin].n} \u00b7 ${PRI[sel.pri].n} \u00b7 ${SID[sel.side].n} \u00b7 ${tl}</div></div>`,fo=b=>`<div class=foot><span>Cash: $${bank} &nbsp;|&nbsp; Loadout: $${c}</span>${b}</div>`,pg=(h,list,b)=>`<div class=hub>${stage()}<div class="opts list"><h2>${h}</h2>${list}</div></div>${fo(b)}`;
  if(scr=='load')body=`<div class=hub>${stage()}<div class=opts><div class=chalk data-v=l_skin>Player Skin<small>${SKINS[sel.skin].n}</small></div></div></div>${fo(back)}`;
  else if(scr=='stash')body=stashBody();
- else if(scr=='shop')body=pg('Gunsmith',[...Object.entries(PRI),...Object.entries(SID),...Object.entries(TOOL)].filter(([k])=>k!='none').map(([k,w])=>`<div class=chalk data-w=${k}><canvas class=ic data-ic=${k} width=34 height=18></canvas>${w.n} \u2014 $${w.c}<small>${dsc(k)}</small></div>`).join(''),backTo('stash'));
- else if(scr=='buy'){const q=pend,it=pit(q),ok2=bank>=it.c;body=`<div class=hub><div class=stage><canvas id=pc width=256 height=288></canvas><div class=cap>${it.n}</div></div><div class="opts list"><h2>Buy ${it.n}?</h2><p>${q.t=='w'?dsc(q.k):it.d}</p><p>Price: $${it.c} \u2014 Cash: $${bank}</p>${ok2?'':'<p class=msg>Not enough cash.</p>'}<button data-y=1 ${ok2?'':'disabled'}>Buy for $${it.c}</button> <button data-n=1>Cancel</button></div></div>`}
- else if(scr=='l_skin')body=pg('Skins',Object.entries(FAMS).map(([k,f])=>`<div class="chalk ${SKINS[sel.skin].f==k?'on':''}" data-f=${k}>${f.n}${own.includes(k)?'':' \u2014 $'+f.c+' \u{1F512}'}<small>${f.d}</small></div>`).join(''),backTo('hub'));
+ else if(scr=='shop')body=pg('Gunsmith',`<div class=chalk data-v=shop_p>Primary Weapons<small>Rifles, shotguns, SMGs and more \u2014 ${Object.keys(PRI).length-1} on the rack</small></div><div class=chalk data-v=shop_s>Secondary Weapons<small>Sidearms for close work \u2014 ${Object.keys(SID).length-1} on the rack</small></div><div class=chalk data-v=shop_t>Tools<small>Holy water, charges, flasks, flares, wards and tripwires \u2014 ${Object.keys(TOOL).length} on the rack</small></div>`,backTo('stash'));
+ else if(scr.startsWith('shop_')){const src=scr=='shop_p'?PRI:scr=='shop_s'?SID:TOOL,ti=scr=='shop_p'?'Primary Weapons':scr=='shop_s'?'Secondary Weapons':'Tools';body=pg('Gunsmith \u2014 '+ti,Object.entries(src).filter(([k])=>k!='none').map(([k,w])=>`<div class=chalk data-w=${k}><canvas class=ic data-ic=${k} width=34 height=18></canvas>${w.n} \u2014 $${w.c}<small>${dsc(k)}</small></div>`).join(''),backTo('shop'))}
+ else if(scr=='buy'){const q=pend,it=pit(q),ok2=bank>=it.c;body=`<div class=hub><div class=stage><canvas id=pc width=256 height=288></canvas><div class=cap>${it.n}</div></div><div class="opts list"><h2>${it.led?it.n:'Buy '+it.n+'?'}</h2><p>${q.t=='w'?dsc(q.k):it.d}</p>${it.led?`<p>Ledger reward \u2014 this skin cannot be bought. Complete "${(LEDGERS.find(L=>FAMS[L.skin]===it||SKINS[L.skin]===it)||{}).t}" to unlock it.</p>`:`<p>Price: $${it.c} \u2014 Cash: $${bank}</p>${ok2?'':'<p class=msg>Not enough cash.</p>'}<button data-y=1 ${ok2?'':'disabled'}>Buy for $${it.c}</button>`} <button data-n=1>${it.led?'Back':'Cancel'}</button></div></div>`}
+ else if(scr=='l_skin')body=pg('Skins',Object.entries(FAMS).map(([k,f])=>`<div class="chalk ${SKINS[sel.skin].f==k?'on':''}" data-f=${k}>${f.n}${own.includes(k)?'':f.led?' \u2014 Ledger reward \u{1F512}':' \u2014 $'+f.c+' \u{1F512}'}<small>${f.d}</small></div>`).join(''),backTo('hub'));
  else if(scr=='l_var')body=pg(FAMS[curFam].n+' \u2014 Variations',Object.entries(SKINS).filter(([k,v])=>v.f==curFam).map(([k,v])=>`<div class="chalk ${sel.skin==k?'on':''}" data-k=${k}>${v.n}${own.includes(k)?'':' \u2014 $'+v.c+' \u{1F512}'}<small>${v.d}</small></div>`).join(''),backTo('l_skin'));
  else if(scr=='l_pri')body=pg('Primary Weapon',Object.entries(PRI).map(([k,w])=>`<div class="chalk ${sel.pri==k?'on':''}" data-p=${k}><canvas class=ic data-ic=${k} width=34 height=18></canvas>${w.n} \u2014 $${w.c}<small>${st(w)}</small></div>`).join(''),backTo('load'));
  else if(scr=='l_side')body=pg('Sidearm',Object.entries(SID).map(([k,w])=>`<div class="chalk ${sel.side==k?'on':''}" data-s=${k}>${k=='none'?'':`<canvas class=ic data-ic=${k} width=34 height=18></canvas>`}${w.n} \u2014 $${w.c}<small>${st(w)}</small></div>`).join(''),backTo('load'));
  else if(scr=='l_tools')body=pg('Tools (max 2)',Object.entries(TOOL).map(([k,t])=>`<div class="chalk ${sel.tools.includes(k)?'on':''}" data-t=${k}><canvas class=ic data-ic=${k} width=34 height=18></canvas>${t.n} \u2014 $${t.c}<small>${t.d}</small></div>`).join(''),backTo('load'));
- else if(scr=='missions')body=`<div class=cols>${col('Bonus Missions',offers.map((m,k)=>`<div class="paper ${mi==k?'on':''}" data-m=${k}>\u2620 ${MT[m.t]}<br><small>${mtxt(m)}</small><br>Extra bounty $${m.bo}</div>`).join(''))}${col('The Job',`<div class=chalk>Always: slay the archdemon<small>Burn 3 sigils, kill it, banish the corpse for its bounty</small></div><div class=chalk>Optional: a bonus mission<small>Tap a paper to pick one for extra pay</small></div><div class=chalk>Then reach an exit<small>Bounties are paid on extraction</small></div>`)}</div><div class=foot><span>Bonus: ${MT[offers[mi].t]}</span>${back}</div>`;
+ else if(scr=='missions')body=`<div class=cols>${col('Ledgers',ledList())}${col((LEDGERS[mi]||LEDGERS[0]).t,ledStory())}</div><div class=foot><span>Active: ${ledFoot()}</span>${back}</div>`;
  else if(scr=='lore'){const S=LORE[lorTab]||LORE[0];body=`<div class=slate><div class=tabs>${LORE.map((s,i)=>`<div class="tb ${i==lorTab?'on':''}" data-l=${i}>${s.t.replace(' Lore','')}</div>`).join('')}</div><h2 class=lt>${S.t}</h2><p class=sub>${S.sub}</p><div class=notes>${S.e.map((n,i)=>`<div class="nt ${i%2?'ch':'pp'}" style="--r:${(((i*37)%7)-3)*.55}deg">${n[2]?`<div class=pol>${n[2]}</div>`:''}<h3>${n[0]}</h3><p>${n[1]}</p></div>`).join('')}</div></div><div class=foot><span>${S.e.length} notes pinned</span>${back}</div>`} else if(scr=='help')body=`<div class=lore><h2>Controls</h2><ul>${HELP.split(' \u00b7 ').map(l=>`<li>${l}</li>`).join('')}</ul></div><div class=foot><span></span>${back}</div>`;
- else body=`<div class=hub><div class=stage><canvas id=pc width=256 height=288></canvas><div class=cap>${PRI[sel.pri].n} \u00b7 ${SID[sel.side].n} \u00b7 ${tl}</div></div><div class=opts><button id=go ${ok?'':'disabled'}>Enter the Breach</button>${ok?'':'<p class=msg style="font-size:20px">Can\'t afford this loadout.</p>'}<div class=chalk data-v=l_skin>Skins<small>${SKINS[sel.skin].n}</small></div><div class=chalk data-v=stash>Stash & Armory<small>${stash.length} items stored</small></div><div class=chalk data-v=missions>Bonus Missions<small>${MT[offers[mi].t]} \u2014 +$${offers[mi].bo}</small></div><div class=chalk data-v=lore>Lore</div><div class=chalk data-v=help>Controls</div></div></div><div class=foot><span>Cash: $${bank} &nbsp;|&nbsp; Loadout: $${c}</span><span>Bonus: ${MT[offers[mi].t]}</span></div>`;
+ else body=`<div class=hub><div class=stage><canvas id=pc width=256 height=288></canvas><div class=cap>${PRI[sel.pri].n} \u00b7 ${SID[sel.side].n} \u00b7 ${tl}</div></div><div class=opts><button id=go ${ok?'':'disabled'}>Enter the Breach</button>${ok?'':'<p class=msg style="font-size:20px">Can\'t afford this loadout.</p>'}<div class=chalk data-v=l_skin>Skins<small>${SKINS[sel.skin].n}</small></div><div class=chalk data-v=stash>Stash & Armory<small>${stash.length} items stored</small></div><div class=chalk data-v=missions>Ledgers<small>${ledSub()}</small></div><div class=chalk data-v=lore>Lore</div><div class=chalk data-v=help>Controls</div></div></div><div class=foot><span>Cash: $${bank} &nbsp;|&nbsp; Loadout: $${c}</span><span>Ledger: ${ledFoot()}</span></div>`;
 ;const drawIcons=()=>document.querySelectorAll('canvas[data-ic]').forEach(c=>{const o=ctx;ctx=c.getContext('2d');try{ctx.clearRect(0,0,34,18);drawWpn(c.dataset.ic,5,9,0,1)}finally{ctx=o}});
  $('#menu').style.display='block';$('#menu').innerHTML=`<div class=board><svg class=str viewBox="0 0 100 100" preserveAspectRatio="none"><polyline points="18,14 50,22 82,12 66,60 30,70" fill="none" stroke="#a02424" stroke-width=".5" opacity=".8"/></svg><h1>\u2620 The Hellbreach Ledger \u2620</h1>${m?`<p class=msg>${m}</p>`:''}${body}</div>`;drawIcons();if(scr=='stash')stashInit();if(scr=='lore'){loreStr();setTimeout(loreStr,120)}}
 $('#menu').onclick=e=>{const t=e.target.closest('[data-l],[data-v],[data-m],[data-f],[data-y],[data-n],[data-w],[data-u],[data-q],[data-r],[data-k],[data-p],[data-s],[data-t],#go');if(!t)return;const d=t.dataset;
- if(d.l!==undefined)lorTab=+d.l;else if(d.v)scr=d.v;else if(d.m)mi=+d.m;else if(d.f){curFam=d.f;const f=FAMS[d.f];if(own.includes(d.f)){if(Object.values(SKINS).filter(v=>v.f==d.f).length>1)scr='l_var';else{sel.skin=f.def;SAVE()}}else{pend={t:'f',k:d.f};scr='buy'}}
+ if(d.l!==undefined)lorTab=+d.l;else if(d.v){scr=d.v;if(/^shop_/.test(d.v))shopScr=d.v}else if(d.m){mi=+d.m;const Lx=LEDGERS[mi];if(Lx&&lst(Lx.id).i<Lx.tasks.length){AL=Lx.id;SAVE()}}else if(d.f){curFam=d.f;const f=FAMS[d.f];if(own.includes(d.f)){if(Object.values(SKINS).filter(v=>v.f==d.f).length>1)scr='l_var';else{sel.skin=f.def;SAVE()}}else{pend={t:'f',k:d.f};scr='buy'}}
  else if(d.k){const v=SKINS[d.k];if(own.includes(d.k)){sel.skin=d.k;SAVE()}else{pend={t:'k',k:d.k};scr='buy'}}
- else if(d.y){const q=pend,it=pit(q);if(q.t=='w'){if(bank>=it.c){if(addItem(q.k)){bank-=it.c;SAVE();note='Bought '+it.n+' \u2014 it is in your stash.'}else note='Not enough room in the stash.'}scr='shop';pend=null}else{if(bank>=it.c){bank-=it.c;if(q.t=='f'){own.push(q.k,it.def);sel.skin=it.def}else{own.push(q.k);sel.skin=q.k}SAVE();note='Unlocked '+it.n+'!'}scr=q.t=='f'?'l_skin':'l_var';pend=null}}
- else if(d.n){scr=pend.t=='f'?'l_skin':pend.t=='w'?'shop':'l_var';pend=null}
+ else if(d.y){const q=pend,it=pit(q);if(q.t=='w'){if(bank>=it.c){if(addItem(q.k)){bank-=it.c;SAVE();note='Bought '+it.n+' \u2014 it is in your stash.'}else note='Not enough room in the stash.'}scr=shopScr;pend=null}else{if(bank>=it.c&&!it.led){bank-=it.c;if(q.t=='f'){own.push(q.k,it.def);sel.skin=it.def}else{own.push(q.k);sel.skin=q.k}SAVE();note='Unlocked '+it.n+'!'}scr=q.t=='f'?'l_skin':'l_var';pend=null}}
+ else if(d.n){scr=pend.t=='f'?'l_skin':pend.t=='w'?shopScr:'l_var';pend=null}
  else if(d.w){pend={t:'w',k:d.w};scr='buy'}
  else if(d.u){const k=d.u=='p'?sel.pri:d.u=='s'?sel.side:sel.bag;if(k&&k!='none'){if(stash.length>=12)note='Stash is full.';else{stash.push(k);if(d.u=='p')sel.pri='none';else if(d.u=='s')sel.side='none';else sel.bag=null;SAVE()}}}
  else if(d.r!==undefined){const i=+d.r,k=stash[i],o=sel.bag;stash.splice(i,1);if(o)stash.push(o);sel.bag=k;SAVE()}
@@ -300,7 +353,7 @@ function dragEnd(){const d=drg;if(!d)return;drg=null;removeEventListener('pointe
 function newGame(){
  boss=Object.keys(BOSS)[Math.random()*Object.keys(BOSS).length|0];showMap=0;genGround();walls=[];blds=[];
  camp=edgePt();exts=[];for(let t=0;exts.length<2&&t<500;t++){const p=edgePt();if(D(p.x,p.y,camp.x,camp.y)>1000&&exts.every(e=>D(p.x,p.y,e.x,e.y)>800))exts.push(p)}
-mis=Object.assign({},offers[mi],{p:0,done:0,fail:0});trees=[];M=[];bul=[];eb=[];bombs=[];lobs=[];fires=[];flares=[];parts=[];found=0;banished=0;corpse=null;bty=null;bn=null;
+mis=ledgerTask();trees=[];M=[];bul=[];eb=[];bombs=[];lobs=[];fires=[];flares=[];parts=[];traps=[];found=0;banished=0;corpse=null;bty=null;bn=null;
  for(let t=0;blds.length<7&&t<2500;t++){const w=R(210,300)|0,h=R(150,210)|0,x=R(120,WW-w-120)|0,y=R(120,WH-h-120)|0,b={x,y,w,h};planWing(b);const e=bExt(b);
   if(blds.some(o=>{const q=bExt(o);return e.x<q.x+q.w+50&&e.x+e.w+50>q.x&&e.y<q.y+q.h+50&&e.y+e.h+50>q.y})||D(cl(camp.x,e.x,e.x+e.w),cl(camp.y,e.y,e.y+e.h),camp.x,camp.y)<220)continue;blds.push(b)}
  blds.forEach((b,i)=>{b.ty=i%7;b.cx=b.x+b.w/2;b.cy=b.y+b.h/2;WK=b.ty;buildWalls(b);WK=-1});
@@ -314,7 +367,7 @@ mis=Object.assign({},offers[mi],{p:0,done:0,fail:0});trees=[];M=[];bul=[];eb=[];
  blds.forEach(b=>{for(let i=0;i<3;i++)pk(b.x+R(25,b.w-25),b.y+R(25,b.h-25))});for(let i=0;i<16;i++){const x=R(60,WW-60),y=R(60,WH-60);if(!hit(x,y,8))pk(x,y)}
  const pw=[sel.pri!='none'?PRI[sel.pri]:null,sel.side!='none'?SID[sel.side]:null];
  P={x:sp.x,y:sp.y,hp:100,st:100,w:pw,bag:(sel.bag||[]).map(o=>({...o})),cur:pw[0]?0:1,mag:pw.map(w=>w?w.m:0),res:pw.map(w=>w?w.m*3:0),rl:0,cd:0,mc:0,tn:(sel.tools.find(t=>t&&t.k=='tonic')||{n:0}).n,bm:(sel.tools.find(t=>t&&t.k=='bomb')||{n:0}).n,xt:Object.fromEntries(XT.map(k=>[k,(sel.tools.find(t=>t&&t.k==k)||{n:0}).n])),wd:0,hf:0,wk:0,sl:0,carry:0,bp:0,ep:0,face:0,sa:0,nz:0,lf:0};
- invOpen=0;mode='play';$('#menu').style.display='none';say('Burn 3 sigils and hunt the demon. Bonus: '+mtxt(mis)+'.',6)}
+ invOpen=0;mode='play';$('#menu').style.display='none';say('Burn 3 sigils and hunt the demon.'+(mis.t=='none'?'':' Ledger: '+tText(mis)+'.'),6)}
 // ---------- ACTIONS ----------
 function noise(x,y,r){M.forEach(m=>{if(m.hp>0&&D(m.x,m.y,x,y)<r&&(!m.boss||D(m.x,m.y,x,y)<160)){m.st='chase';m.lt=0}})}
 function shoot(){if(P.cur>1){if(P.cd<=0){P.cd=.5;mouse.l=0;P.cur==2?useTonic():P.cur==3?throwBomb():useXT(XT[P.cur-4])}return}const w=P.w[P.cur];if(!w&&P.cur<2){if(P.cd<=0&&P.mc<=0){P.cd=.5;melee()}return}if(!w||!w.d||P.rl>0||P.cd>0)return;if(P.mag[P.cur]<=0)return reload();
@@ -323,14 +376,14 @@ function shoot(){if(P.cur>1){if(P.cd<=0){P.cd=.5;mouse.l=0;P.cur==2?useTonic():P
 function reload(){const w=P.w[P.cur];if(w&&w.d&&P.rl<=0&&P.mag[P.cur]<w.m&&P.res[P.cur]>0){P.rl=w.rl;say('Reloading...',w.rl)}}
 function melee(){P.mc=.6;P.sa=.18;const a=P.face;let h=0;M.forEach(m=>{if(m.hp>0&&D(m.x,m.y,P.x,P.y)<30){let d=Math.abs(Math.atan2(m.y-P.y,m.x-P.x)-a);d=Math.min(d,6.28-d);if(d<1){hurt(m,30,a,'melee');mv(m,Math.cos(a)*6,Math.sin(a)*6,6);h=1}}});if(h)shake=3}
 function hurt(m,d,a,src){const dd=Math.min(d,Math.max(m.hp,0));m.hp-=d;prog(m,dd,src,m.hp<=0);m.fl=.1;burst(m.x,m.y,6,70,'#8a0f18',1,a);m.st='chase';if(m.boss)m.al=2.5;if(m.hp<=0)kill(m)}
-function kill(m){splat(m.x,m.y,m.boss?30:14,m.boss?30:14);burst(m.x,m.y,m.boss?30:14,110,'#ff6a1a',1);m.hp=-1;if(m.ty=='bloat')boom(m);if(m.boss){corpse={x:m.x,y:m.y};if(!mis.done&&mis.t=='bdmg')mis.fail=1;say('The demon falls! Hold E on the corpse to banish it for the bounty.'+(mis.fail?' Bonus mission failed.':''),6)}}
+function kill(m){splat(m.x,m.y,m.boss?30:14,m.boss?30:14);burst(m.x,m.y,m.boss?30:14,110,'#ff6a1a',1);m.hp=-1;if(m.ty=='bloat')boom(m);if(m.boss){corpse={x:m.x,y:m.y};say('The demon falls! Hold E on the corpse to banish it for the bounty.'+(mis.fail?' Ledger task failed.':''),6)}}
 function hurtP(d){if(P.wd>0)d*=.4;P.hp-=d;P.hf=.25;shake=5;burst(P.x,P.y,8,80,'#a01018',1);if(P.hp<=0)end(0)}
-function end(w){mode='menu';scr='hub';if(w){bank+=P.carry;sel.pri=P.w[0]?P.w[0].k:'none';sel.side=P.w[1]?P.w[1].k:'none';sel.bag=P.bag;{const a=TKS.map(k=>TC(k)>0&&{k,n:TC(k)}).filter(Boolean);sel.tools=[a[0]||null,a[1]||null];a.slice(2).forEach(o=>addItem(o.k,o.n))}}else{sel.pri='none';sel.side='none';sel.bag=[];sel.tools=[null,null]}invOpen=0;genMissions();bank=Math.max(bank,120);SAVE();menu(w?(P.carry?`Escaped with the bounty! +$${P.carry}`:'You escaped... empty-handed.'):'You died. Everything your character carried is lost. Your stash is safe.')}
+function end(w){mode='menu';scr='hub';const lm=w?ledgerCommit():'';if(w){bank+=P.carry;sel.pri=P.w[0]?P.w[0].k:'none';sel.side=P.w[1]?P.w[1].k:'none';sel.bag=P.bag;{const a=TKS.map(k=>TC(k)>0&&{k,n:TC(k)}).filter(Boolean);sel.tools=[a[0]||null,a[1]||null];a.slice(2).forEach(o=>addItem(o.k,o.n))}}else{sel.pri='none';sel.side='none';sel.bag=[];sel.tools=[null,null]}invOpen=0;genMissions();{const c=curL();mi=Math.max(0,LEDGERS.findIndex(l=>c&&l.id==c.id))}bank=Math.max(bank,120);SAVE();menu(w?(lm+(P.carry?`Escaped with the bounty! +$${P.carry}`:'You escaped... empty-handed.')):'You died. Everything your character carried is lost. Your stash is safe.')}
 addEventListener('keydown',e=>{if(e.code=='Tab'&&mode=='play')e.preventDefault();if(e.repeat)return;keys[e.code]=1;if(mode!='play')return;const c=e.code;
  if(c=='KeyM'){showMap=!showMap;mouse.l=mouse.r=0}if(c=='KeyI'||c=='Tab'){invOpen=!invOpen;showMap=0;mouse.l=mouse.r=0;refocus()}if(c=='Escape')showMap=0;
- if(c=='KeyR')reload();if(c>='Digit1'&&c<='Digit7')setSlot(+c[5]-1);
+ if(c=='KeyR')reload();if(c>='Digit1'&&c<='Digit8')setSlot(+c[5]-1);
  if(c=='KeyH')useTonic();
- if(c=='KeyG')throwBomb();if(c=='KeyZ')useXT('flask');if(c=='KeyX')useXT('flare');if(c=='KeyC')useXT('ward');
+ if(c=='KeyG')throwBomb();if(c=='KeyZ')useXT('flask');if(c=='KeyX')useXT('flare');if(c=='KeyC')useXT('ward');if(c=='KeyV')useXT('tripwire');
  if(['Space','Tab'].includes(c))e.preventDefault()});
 addEventListener('keyup',e=>keys[e.code]=0);
 const TC=k=>k=='tonic'?P.tn:k=='bomb'?P.bm:(P.xt[k]||0),TS=(k,n)=>{if(k=='tonic')P.tn=n;else if(k=='bomb')P.bm=n;else P.xt[k]=n};
@@ -356,11 +409,11 @@ function drawInv(){ctx.fillStyle='rgba(0,0,0,.7)';ctx.fillRect(0,0,VW,VH);ctx.fi
 function refocus(){try{window.focus();cv.focus({preventScroll:true})}catch(e){}}
 cv.tabIndex=0;cv.style.outline='none';addEventListener('blur',()=>{keys={}});
 function setSlot(i){if(!has(i))return say('Slot empty',1.5);P.cur=i;P.rl=0}
-function fixSlot(){if(!has(P.cur)){const f=[0,1,2,3,4,5,6].find(has);P.cur=f===undefined?0:f}}
+function fixSlot(){if(!has(P.cur)){const f=[0,1,2,3,4,5,6,7].find(has);P.cur=f===undefined?0:f}}
 function useTonic(){if(P.tn<=0)return;if(P.hp>=100)return say('Already healthy',1.5);P.tn--;P.hp=Math.min(100,P.hp+50);burst(P.x,P.y,10,40,'#c03040',0);fixSlot()}
 function throwBomb(){if(P.bm<=0)return;P.bm--;const a=Math.atan2(mouse.y+cam.y-P.y,mouse.x+cam.x-P.x),d=Math.min(170,D(P.x,P.y,mouse.x+cam.x,mouse.y+cam.y));bombs.push({x:P.x,y:P.y,vx:Math.cos(a)*d/.4,vy:Math.sin(a)*d/.4,t:1.5,m:.4});fixSlot()}
 function takeW(it){const s=it.s,w=(s?SID:PRI)[it.k];if(P.w[s]===w){P.res[s]+=w.m*2;say('+ammo ('+w.n+')',2)}else{if(P.w[s])items.push({t:'wpn',s,k:P.w[s].k,x:P.x+R(-6,6),y:P.y+R(-6,6)});keys.KeyE=0;P.w[s]=w;P.mag[s]=w.m;P.res[s]=w.m*2;P.rl=0;P.cur=s;say('Picked up '+w.n,3)}it.got=1}
-addEventListener('wheel',e=>{if(mode!='play')return;const d=e.deltaY>0?1:6;for(let k=1;k<=7;k++){const n=(P.cur+d*k)%7;if(has(n)){P.cur=n;P.rl=0;break}}e.preventDefault()},{passive:false});
+addEventListener('wheel',e=>{if(mode!='play')return;const d=e.deltaY>0?1:7;for(let k=1;k<=8;k++){const n=(P.cur+d*k)%8;if(has(n)){P.cur=n;P.rl=0;break}}e.preventDefault()},{passive:false});
 addEventListener('mousemove',e=>{const r=cv.getBoundingClientRect(),s=Math.min(r.width/VW,r.height/VH);mouse.x=(e.clientX-r.left-(r.width-VW*s)/2)/s;mouse.y=(e.clientY-r.top-(r.height-VH*s)/2)/s});
 cv.addEventListener('mousedown',e=>{if(invOpen){if(e.button==0)invClick();return}if(e.button==0)mouse.l=1;if(e.button==2)mouse.r=1});addEventListener('mouseup',e=>{if(e.button==0)mouse.l=0;if(e.button==2)mouse.r=0});cv.addEventListener('contextmenu',e=>e.preventDefault());
 // ---------- UPDATE ----------
@@ -527,11 +580,64 @@ function drawWpn(k,hx,hy,a,sc){const r=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRec
  else if(k=='whisper'){r(-1.5,.4,2.6,4,'#2a2a30');r(-1.5,-1.4,8,2.2,'#3a3a46');r(-1.5,-1.4,8,.6,'#6a6a78');r(6.5,-1.2,7,2,'#1e1e24');r(6.5,-1.2,7,.5,'#4a4a56');r(9,-1.3,.7,2.2,'#6a6a78');r(11.5,-1.3,.7,2.2,'#6a6a78')}
  else if(k=='flask'){r(0,-2.4,5,4.8,'#c0481c');r(.6,-2.4,1.2,4.8,'#ff9a50');r(5,-1,2.4,2,'#e8c8a0');r(7.4,-1.1,1.6,2.2,'#e8e0c8');r(1.8,-.4,2.4,.9,'#ffe070');r(2.5,-1.3,.9,2.6,'#ffe070');if(Math.sin(performance.now()/60)>-.3)r(9,-1.2,1.8,2.4,'#ffa030')}
  else if(k=='flare'){r(0,-1.2,9,2.4,'#c02828');r(0,-1.2,9,.7,'#e86060');r(9,-1.4,1.6,2.8,'#e8e0c8');r(3,-1.3,1.2,2.6,'#e8c860');r(5.6,-1.3,.8,2.6,'#e8c860');if(Math.sin(performance.now()/50)>-.5){r(10.6,-1.4,2.2,2.8,'#ffe070');r(11.4,-.7,1.4,1.4,'#fff')}}
+ else if(k=='tripwire'){r(-9,-3,2,6,'#7a6a58');r(7,-3,2,6,'#7a6a58');r(-7,-.4,14,.8,'#d05050');r(-2,-2.5,4,4,'#4a4640');r(-.5,-3.5,1,1.2,'#ff5a3a')}
  else if(k=='ward'){r(-2,-.3,2.4,.6,'#cfc8b8');r(8,-.3,2.2,.6,'#cfc8b8');ctx.fillStyle='#e8c860';ctx.beginPath();ctx.arc(4,0,3.8,0,7);ctx.fill();ctx.fillStyle='#8a6a20';ctx.beginPath();ctx.arc(4,0,2.6,0,7);ctx.fill();r(3.6,-1.9,.8,3.8,'#fff6dc');r(2.1,-.4,3.8,.8,'#fff6dc')}
  ctx.restore()}
 const BC={smg:['#ffe070',1,.02],musket:['#fff6c0',1.8,.04],flamer:['#ff8a20',3,.025],handcannon:['#ffd860',2,.022],whisper:['#c8d0e0',1,.02],rifle:['#fff6c0',1.6,.03],shotgun:['#ff9a40',1.2,.012],repeater:['#ffe070',1.2,.018],crossbow:['#e8ecff',1.4,.045],pistol:['#ffe9a0',1.2,.014],revolver:['#ffd860',1.8,.02]};
+const SKB={
+knight(x,y,a,fl,wk,hurt,b,t,ca,sa,K){const Z=(c,X,Y,w,h)=>{ctx.fillStyle=fl?'#fff':c;ctx.fillRect(X,Y,w,h)},H=c=>hurt?'#8a2a2a':c;
+ Z('#3a3d46',x-3.5,y+3+b,3,4);Z('#3a3d46',x+.5,y+3-b,3,4);Z(K.coat2,x-3.5,y+3+b,3,1.3);Z(K.coat2,x+.5,y+3-b,3,1.3);
+ Z(H(K.rune),x-3.5,y-3,7,9);Z(K.band,x-.5,y-2,1,6);Z(K.band,x-2.2,y-.5,4.4,1);
+ Z(H(K.coat),x-6,y-7,12,5);Z(K.coat2,x-6,y-7,12,1.3);Z(K.coat2,x-8,y-8,4,4.5);Z(K.coat2,x+4,y-8,4,4.5);Z(K.band,x-7.5,y-8,3,1);Z(K.band,x+4.5,y-8,3,1);
+ Z('#2a1c10',x-4.5,y+.8,9,1.3);Z(K.band,x-1,y+.8,2,1.3);
+ if(!fl){ctx.fillStyle=K.rune;ctx.beginPath();ctx.moveTo(x-ca*1.5,y-15);ctx.quadraticCurveTo(x-ca*8,y-21+Math.sin(t*4),x-ca*9,y-14+Math.sin(t*3));ctx.lineTo(x-ca,y-12.5);ctx.fill()}
+ Z(K.hood,x-4,y-14.5,8,8);Z(K.hood,x-3,y-16,6,2);Z(K.coat2,x-4,y-14.5,1,8);Z(K.coat2,x-.5,y-16,1,3.5);
+ Z('#0a0a10',x-3.5,y-11,7,1.8);if(!fl){ctx.globalAlpha=.35;ctx.fillStyle=K.eyeg;ctx.fillRect(x-4+ca*.8,y-12,8,3.6);ctx.globalAlpha=1;ctx.fillStyle=K.eye;ctx.fillRect(x-3+ca*.8,y-10.6,2,1);ctx.fillRect(x+1+ca*.8,y-10.6,2,1)}
+ Z(K.coat,x-3.5,y-8.5,7,1.5)},
+gun(x,y,a,fl,wk,hurt,b,t,ca,sa,K){const Z=(c,X,Y,w,h)=>{ctx.fillStyle=fl?'#fff':c;ctx.fillRect(X,Y,w,h)},H=c=>hurt?'#8a2a2a':c;
+ Z('#2a1c10',x-3.5,y+3+b,3,4);Z('#2a1c10',x+.5,y+3-b,3,4);Z(K.band,x-3.8,y+6.2+b,1,1);Z(K.band,x+2.8,y+6.2-b,1,1);
+ ctx.fillStyle=fl?'#fff':H(K.coat);ctx.beginPath();ctx.moveTo(x-5,y-6);ctx.lineTo(x+5,y-6);ctx.lineTo(x+7.5,y+5.5+Math.sin(wk)*.5);ctx.lineTo(x-7.5,y+5.5-Math.sin(wk)*.5);ctx.closePath();ctx.fill();
+ Z('#14101a',x-.4,y-4,.8,9.5);Z(K.coat2,x-7.5,y+4.2,15,1.3);Z('#2a1c10',x-5,y-.8,10,1.4);Z(K.band,x-1,y-.8,2,1.4);
+ if(!fl){ctx.fillStyle='#d8b050';for(let i=0;i<4;i++)ctx.fillRect(x-4.5+i*2.4,y-.6,1,1)}
+ Z(H(K.coat2),x-7,y-7.5,14,3.2);
+ Z(K.mask,x-3,y-12.2,6,5.8);Z(K.rune,x-3,y-9.2,6,3.3);Z(K.rune,x-ca*3.8-1,y-8.5,2,2.2);
+ Z('#1a120a',x-3,y-12,6,.9);Z(K.eye,x-2+ca*.7,y-10.8,1.5,1.2);Z(K.eye,x+.7+ca*.7,y-10.8,1.5,1.2);
+ if(!fl){ctx.fillStyle='#14101a';ctx.fillRect(x-1.5+ca,y-10.6,.7,.8);ctx.fillRect(x+1.2+ca,y-10.6,.7,.8)}
+ Z(K.hood,x-8.5,y-13,17,1.8);Z(K.hood,x-4,y-18,8,5.4);Z(K.band,x-4,y-14.3,8,1.1)},
+bones(x,y,a,fl,wk,hurt,b,t,ca,sa,K){const Z=(c,X,Y,w,h)=>{ctx.fillStyle=fl?'#fff':c;ctx.fillRect(X,Y,w,h)},H=c=>hurt?'#8a2a2a':c,ex=ca*.7;
+ Z(K.coat,x-2.7,y+2+b,1,5);Z(K.coat,x+1.7,y+2-b,1,5);Z(K.coat,x-3.5,y+6.4+b,2.6,1);Z(K.coat,x+1,y+6.4-b,2.6,1);Z(K.coat2,x-3.2,y+4.2+b,1.7,.8);Z(K.coat2,x+1.4,y+4.2-b,1.7,.8);
+ Z(K.coat,x-3.2,y+.8,6.4,2);Z(K.hood,x-4,y-6.8,8,7);Z(K.coat,x-.5,y-7,1,8);
+ for(let i=0;i<4;i++){const w=8-i;Z(H(K.coat),x-w/2,y-6.2+i*1.6,w,.8)}
+ ctx.fillStyle=fl?'#fff':H(K.rune);ctx.beginPath();ctx.moveTo(x-6,y-7.5);ctx.lineTo(x+6,y-7.5);ctx.lineTo(x+5,y-3);ctx.lineTo(x+3,y-4.5);ctx.lineTo(x+1,y-1.5);ctx.lineTo(x-1,y-4.5);ctx.lineTo(x-3,y-2);ctx.lineTo(x-5,y-4);ctx.closePath();ctx.fill();
+ Z(K.mask,x-3.5,y-14.5,7,6.5);Z(K.mask,x-2.5,y-8.2,5,2);Z('#14101a',x-1.5,y-7.5,.6,1.3);Z('#14101a',x+.9,y-7.5,.6,1.3);
+ Z('#14101a',x-2.8+ex,y-12.5,2.3,2.5);Z('#14101a',x+.5+ex,y-12.5,2.3,2.5);Z('#14101a',x-.4+ex,y-10,.8,1.2);
+ if(!fl){ctx.globalAlpha=.4+.3*Math.sin(t*5);ctx.fillStyle=K.eyeg;ctx.fillRect(x-3.2+ex,y-12.9,3.1,3.3);ctx.fillRect(x+.1+ex,y-12.9,3.1,3.3);ctx.globalAlpha=1;ctx.fillStyle=K.eye;ctx.fillRect(x-2.1+ex,y-11.8,1,1);ctx.fillRect(x+1.2+ex,y-11.8,1,1)}},
+witch(x,y,a,fl,wk,hurt,b,t,ca,sa,K){const Z=(c,X,Y,w,h)=>{ctx.fillStyle=fl?'#fff':c;ctx.fillRect(X,Y,w,h)},H=c=>hurt?'#8a2a2a':c,ex=ca*.7,sw=Math.sin(wk)*.8;
+ ctx.fillStyle=fl?'#fff':H(K.coat);ctx.beginPath();ctx.moveTo(x-4,y-6);ctx.lineTo(x+4,y-6);ctx.lineTo(x+8,y+6.5);ctx.lineTo(x+4,y+5.2+sw);ctx.lineTo(x,y+6.6);ctx.lineTo(x-4,y+5.2-sw);ctx.lineTo(x-8,y+6.5);ctx.closePath();ctx.fill();
+ Z(K.coat2,x-5,y-6,2,5);Z(K.coat2,x+3,y-6,2,5);Z(K.band,x-4,y-1.5,8,1.3);Z(K.rune,x+3,y-.3,2,2.5);Z(K.coat2,x-7,y+5,14,1);
+ Z('#d8d8e8',x-4.2,y-12,1.6,7);Z('#d8d8e8',x+2.6,y-12,1.6,7);
+ Z(K.mask,x-3,y-11.5,6,5.5);
+ ctx.fillStyle=fl?'#fff':'#7aa05a';ctx.beginPath();ctx.moveTo(x,y-9.8);ctx.lineTo(x+ca*5,y-8.3+sa*2.5);ctx.lineTo(x+.8,y-7.8);ctx.closePath();ctx.fill();
+ Z(K.eye,x-2+ex,y-10.4,1.4,1.2);Z(K.eye,x+.8+ex,y-10.4,1.4,1.2);
+ if(!fl){ctx.globalAlpha=.3;ctx.fillStyle=K.eyeg;ctx.fillRect(x-3+ex,y-11.4,3,3);ctx.fillRect(x+ex,y-11.4,3,3);ctx.globalAlpha=1}
+ Z(K.hood,x-7.5,y-12.8,15,1.6);
+ ctx.fillStyle=fl?'#fff':K.hood;ctx.beginPath();ctx.moveTo(x-4.5,y-12.6);ctx.lineTo(x+Math.sin(t*2)*1.2,y-23);ctx.lineTo(x+4.5,y-12.6);ctx.closePath();ctx.fill();
+ Z(K.band,x-4.4,y-14.6,8.8,1.3)},
+wolf(x,y,a,fl,wk,hurt,b,t,ca,sa,K){const Z=(c,X,Y,w,h)=>{ctx.fillStyle=fl?'#fff':c;ctx.fillRect(X,Y,w,h)},H=c=>hurt?'#8a2a2a':c,ex=ca*.7;
+ ctx.fillStyle=fl?'#fff':K.coat;ctx.beginPath();ctx.moveTo(x-ca*3,y+1);ctx.quadraticCurveTo(x-ca*8,y+Math.sin(t*5)*1.5,x-ca*11,y+4+Math.sin(t*5+1)*1.5);ctx.quadraticCurveTo(x-ca*7,y+5,x-ca*3,y+3);ctx.fill();
+ Z(K.band,x-3,y+3+b,2.5,4);Z(K.band,x+.5,y+3-b,2.5,4);Z(K.coat2,x-3.3,y+3+b,3.1,1.6);Z(K.coat2,x+.2,y+3-b,3.1,1.6);
+ Z(H(K.mask),x-4,y-6,8,7);Z(K.rune,x-2.5,y-5,.9,3.5);Z(K.rune,x+1.6,y-4.5,.9,3);
+ Z(K.band,x-4.5,y+.4,9,3.2);for(let i=0;i<5;i++)Z(K.coat,x-4.5+i*1.9,y+3,1.4,1.6);
+ for(let i=0;i<4;i++)Z('#f0ecd8',x-2.4+i*1.6,y-6.2+(i%2?.7:0),.8,1.6);
+ Z(H(K.coat),x-7.5,y-8,15,4);for(let i=0;i<6;i++)Z(K.coat2,x-7.5+i*2.6,y-8.8+(i%2)*.9,2.2,1.4);
+ Z(K.mask,x-3,y-12.5,6,6);Z(K.hood,x-4.5,y-15,9,3.6);Z(K.hood,x-4.5,y-15,1.6,7.5);Z(K.hood,x+2.9,y-15,1.6,7.5);
+ for(const s of[-1,1]){ctx.fillStyle=fl?'#fff':K.hood;ctx.beginPath();ctx.moveTo(x+s*4.6,y-14.5);ctx.lineTo(x+s*3.6,y-19.5);ctx.lineTo(x+s*1.4,y-14.5);ctx.closePath();ctx.fill();Z('#d8a0a0',x+s*2.8-.5,y-17,1,2)}
+ Z(K.rune,x-3,y-10.8,6,1.1);Z(K.rune,x-2.6,y-8.6,.8,1.6);Z(K.rune,x+1.8,y-8.6,.8,1.6);
+ Z(K.eye,x-2+ex,y-10.6,1.5,.9);Z(K.eye,x+.8+ex,y-10.6,1.5,.9);Z('#2a1c10',x-.5+ex,y-8.2,1,.9)}
+};
 function warden(x,y,a,fl,wk,gun,hurt,hol,pun){shadow(x,y,6);const K=SKINS[sel.skin]||SKINS.warden,b=Math.sin(wk)*1.5,t=performance.now()/1000,ca=Math.cos(a),sa=Math.sin(a),
   coat=fl?'#fff':hurt?'#8a2a2a':K.coat,coat2=fl?'#fff':hurt?'#6a1c1c':K.coat2,dark=fl?'#fff':'#14101a',bone=fl?'#fff':K.mask;
+ if(K.v)SKB[K.v](x,y,a,fl,wk,hurt,b,t,ca,sa,K);else{
  // boots
  ctx.fillStyle=dark;ctx.fillRect(x-3,y+3+b,2,4);ctx.fillRect(x+1,y+3-b,2,4);ctx.fillStyle=fl?'#fff':'#3a2a22';ctx.fillRect(x-3,y+3+b,2,1);ctx.fillRect(x+1,y+3-b,2,1);
  // tattered coat tails
@@ -552,10 +658,12 @@ function warden(x,y,a,fl,wk,gun,hurt,hol,pun){shadow(x,y,6);const K=SKINS[sel.sk
  ctx.fillStyle=coat2;ctx.fillRect(x-6,y-6,2,1.5);ctx.fillRect(x+4,y-6,2,1.5);
  // cracked bone mask with a beak that follows the aim
  ctx.fillStyle=bone;ctx.fillRect(x-3,y-12.5,6,6);
- if(!K.pl){ctx.beginPath();ctx.moveTo(x-2,y-9.5);ctx.lineTo(x+ca*6,y-8+sa*4);ctx.lineTo(x+2,y-7);ctx.closePath();ctx.fillStyle=fl?'#fff':K.beak;ctx.fill()}
+ if(!K.pl&&!K.nb){ctx.beginPath();ctx.moveTo(x-2,y-9.5);ctx.lineTo(x+ca*6,y-8+sa*4);ctx.lineTo(x+2,y-7);ctx.closePath();ctx.fillStyle=fl?'#fff':K.beak;ctx.fill()}
  if(!fl&&!K.pl){ctx.fillStyle='#8a8070';ctx.fillRect(x-1,y-12.5,1,3);ctx.fillRect(x,y-9.5,1,1);ctx.fillStyle='#7a0c14';ctx.fillRect(x-2.5,y-7,1,2);ctx.fillRect(x+1.5,y-7,.8,1.2)}
+ if(K.hat){ctx.fillStyle=fl?'#fff':K.hat;ctx.fillRect(x-8,y-13.6,16,1.6);ctx.fillRect(x-4,y-18,8,4.6);ctx.fillStyle=fl?'#fff':K.hatb;ctx.fillRect(x-4,y-14.6,8,1)}
  // glowing eye slits
  if(!fl&&K.pl){ctx.fillStyle='#2a1c14';ctx.fillRect(x-2+ca*.7,y-10.5,1,1);ctx.fillRect(x+1+ca*.7,y-10.5,1,1)}if(!fl&&!K.pl){const ex=ca*.7;ctx.globalAlpha=.3;ctx.fillStyle=K.eyeg;ctx.fillRect(x-3.5+ex,y-11.5,3,3);ctx.fillRect(x+.5+ex,y-11.5,3,3);ctx.globalAlpha=1;ctx.fillStyle=K.eye;ctx.fillRect(x-2.5+ex,y-10.5,1.5,1);ctx.fillRect(x+1+ex,y-10.5,1.5,1)}
+}
  // holstered sidearm on the hip
  if(hol&&!fl){ctx.fillStyle='#2a1c10';ctx.fillRect(x-6.5,y,3,3.5);drawWpn(hol,x-5,y+.5,1.57,.6)}
  // arm and weapon
@@ -620,7 +728,7 @@ function render(){
  trees.forEach(t=>L.push([t.y,()=>{shadow(t.x-cx,t.y-cy,7);ctx.fillStyle='#1c0e10';ctx.fillRect(t.x-cx-2,t.y-cy-6,4,8)}]));
  bombs.forEach(b=>L.push([b.y,()=>drawWpn('bomb',b.x-cx,b.y-cy-2,T*9,.7)]));
  lobs.forEach(b=>L.push([b.y,()=>drawWpn(b.k,b.x-cx,b.y-cy-2,T*11,.7)]));
- flares.forEach(f=>L.push([f.y,()=>{drawWpn('flare',f.x-cx,f.y-cy,-1.2,.7);ctx.fillStyle=`rgba(255,200,90,${.1+.05*Math.sin(T*10)})`;ctx.beginPath();ctx.arc(f.x-cx,f.y-cy,28+3*Math.sin(T*9),0,7);ctx.fill()}]));
+ traps.forEach(tr=>L.push([tr.y,()=>{const x=tr.x-cx,y=tr.y-cy,dx=-Math.sin(tr.a)*9,dy=Math.cos(tr.a)*9,on=tr.ar<=0;ctx.strokeStyle=on?'rgba(230,90,90,.9)':'rgba(180,170,150,.5)';ctx.lineWidth=.8;ctx.beginPath();ctx.moveTo(x-dx,y-dy);ctx.lineTo(x+dx,y+dy);ctx.stroke();ctx.fillStyle='#3a342c';ctx.fillRect(x-dx-1.2,y-dy-1.2,2.4,2.4);ctx.fillRect(x+dx-1.2,y+dy-1.2,2.4,2.4);if(on&&Math.sin(T*8)>0){ctx.fillStyle='#ff5a3a';ctx.fillRect(x-.6,y-.6,1.2,1.2)}}]));flares.forEach(f=>L.push([f.y,()=>{drawWpn('flare',f.x-cx,f.y-cy,-1.2,.7);ctx.fillStyle=`rgba(255,200,90,${.1+.05*Math.sin(T*10)})`;ctx.beginPath();ctx.arc(f.x-cx,f.y-cy,28+3*Math.sin(T*9),0,7);ctx.fill()}]));
  fires.forEach(f=>L.push([f.y,()=>{const x=f.x-cx,y=f.y-cy,fa=Math.min(1,f.t/1.2);ctx.fillStyle=`rgba(255,110,20,${.22*fa})`;ctx.beginPath();ctx.ellipse(x,y,f.r,f.r*.6,0,0,7);ctx.fill();for(let i=0;i<10;i++){const a=i*2.4+f.s,rr=f.r*.8*((i%4)+1)/4,qx=x+Math.cos(a)*rr,qy=y+Math.sin(a)*rr*.6,h=3+3*Math.abs(Math.sin(T*9+i*1.7)),w=2+Math.abs(Math.sin(T*7+i))*1.5;ctx.fillStyle=`rgba(255,${120+((i*37)%90)},30,${.85*fa})`;ctx.fillRect(qx-w/2,qy-h,w,h);ctx.fillStyle=`rgba(255,230,120,${.8*fa})`;ctx.fillRect(qx-w/4,qy-h*.5,w/2,h*.5)}}]));
  if(P.wd>0)L.push([P.y+1,()=>{ctx.strokeStyle=`rgba(240,208,112,${.45+.3*Math.sin(T*8)})`;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(px,py-3,15+Math.sin(T*6),0,7);ctx.stroke();ctx.fillStyle='rgba(240,208,112,.1)';ctx.fill()}]);
  L.sort((a,b)=>a[0]-b[0]).forEach(l=>l[1]());
@@ -641,9 +749,9 @@ function render(){
  // HUD
  ctx.font='bold 10px monospace';ctx.fillStyle='#000a';ctx.fillRect(8,VH-24,104,8);ctx.fillStyle='#b01c1c';ctx.fillRect(9,VH-23,102*P.hp/100,6);ctx.fillStyle='#000a';ctx.fillRect(8,VH-14,104,4);ctx.fillStyle=P.exh?'#886':'#6a9a4a';ctx.fillRect(9,VH-13,102*P.st/100,2);
  const w=P.w[P.cur];tx(P.cur<2&&w?`${w.n}  ${P.mag[P.cur]}/${P.res[P.cur]}${P.rl>0?' (reload)':''}`:'',VW-8,VH-24,'#e8e6d8','right');
- ctx.font='bold 8px monospace';for(let i=0;i<7;i++){const x=VW/2-158+i*45,y=VH-22;ctx.fillStyle=i==P.cur?'#7a2a2ab0':'#000a';ctx.fillRect(x,y,41,16);if(i==P.cur){ctx.strokeStyle='#e8e6d8';ctx.lineWidth=1;ctx.strokeRect(x+.5,y+.5,40,15)}
+ ctx.font='bold 8px monospace';for(let i=0;i<8;i++){const x=VW/2-180+i*45,y=VH-22;ctx.fillStyle=i==P.cur?'#7a2a2ab0':'#000a';ctx.fillRect(x,y,41,16);if(i==P.cur){ctx.strokeStyle='#e8e6d8';ctx.lineWidth=1;ctx.strokeRect(x+.5,y+.5,40,15)}
   const lb=i<2?(P.w[i]?P.w[i].n.slice(0,7):i==P.cur?'Fists':''):i==2?(P.tn>0?'Water '+P.tn:''):i==3?(P.bm>0?'Charge '+P.bm:''):((P.xt[XT[i-4]]||0)>0?XL[i-4]+' '+P.xt[XT[i-4]]:'');if(lb)tx((i+1)+' '+lb,x+3,y+11,'#e8e6d8')}ctx.font='bold 10px monospace';
- tx(banished?'Reach extraction!':bty?(bty.h===mp.me?'Reach extraction!':bty.h==null?'Grab the dropped bounty! (see map)':'Hunter '+(bty.h+1)+' holds the bounty (see map)'):corpse?'Banish the corpse (hold E)':found>=3?`Hunt ${BOSS[boss].n} (red X)`:`Sigils ${found}/3 (E to burn)`,8,14,'#d8c890');tx(mis.done?'Bonus mission done!':mis.fail?'Bonus mission failed':'Bonus: '+hudm(),8,26,mis.done?'#8fe0a0':mis.fail?'#a06a60':'#c0a070');if(P.carry)tx('Bounty: $'+P.carry,8,38,'#e0b040');if(P.wd>0)tx("Saint's Ward "+Math.ceil(P.wd)+'s',8,50,'#f0d070');tx('[M] Map',VW-8,14,'#d8c890','right');if(mp.on)tx('Hunters alive: '+(1+Object.keys(mp.rp).length),VW-8,26,'#d89090','right');
+ tx(banished?'Reach extraction!':bty?(bty.h===mp.me?'Reach extraction!':bty.h==null?'Grab the dropped bounty! (see map)':'Hunter '+(bty.h+1)+' holds the bounty (see map)'):corpse?'Banish the corpse (hold E)':found>=3?`Hunt ${BOSS[boss].n} (red X)`:`Sigils ${found}/3 (E to burn)`,8,14,'#d8c890');tx(mis.t=='none'?'':mis.done?'Ledger task done - extract to claim':mis.fail?'Ledger task failed this run':'Ledger: '+hudm(),8,26,mis.done?'#8fe0a0':mis.fail?'#a06a60':'#c0a070');if(P.carry)tx('Bounty: $'+P.carry,8,38,'#e0b040');if(P.wd>0)tx("Saint's Ward "+Math.ceil(P.wd)+'s',8,50,'#f0d070');tx('[M] Map',VW-8,14,'#d8c890','right');if(mp.on)tx('Hunters alive: '+(1+Object.keys(mp.rp).length),VW-8,26,'#d89090','right');
  if(P.ep>0)tx('Escaping in '+Math.ceil(3-P.ep)+'...',VW/2,VH/2+34,'#8fe0a0','center');
  if(P.pk)tx('[E] take '+(P.pk.s?SID:PRI)[P.pk.k].n,VW/2,VH/2+48,'#ffd27a','center');if(msgT>0)tx(msg,VW/2,48,'#fff','center')}
 // ---------- MAP ----------
@@ -956,16 +1064,16 @@ const MQ=['wss://mqtt.eclipseprojects.io:443/mqtt','wss://broker.emqx.io:8084/mq
 const MPMAX=6,MPWAIT=60,mp={on:0,me:0,n:1,rp:{},ic:0,cl:[],room:null,subs:[],seen:{},sc:0,uc:0,onS:null,id:Math.random().toString(36).slice(2,10)};let mpb=[],mpBy=null,mpST=0,mpOv=null,mpTimer=null,mpBusy=0;
 const mpMB=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 function mpPub(topic,o){const s=JSON.stringify(o);mp.cl.forEach(c=>c.connected&&c.publish(topic,s))}
-function mpSend(o){if(!mp.on||!mp.room)return;o.f=mp.me;o.v=2;o.u=mp.id+(mp.uc++);mpPub('hb1/room/'+mp.room,o)}
+function mpSend(o){if(!mp.on||!mp.room)return;o.f=mp.me;o.v=3;o.u=mp.id+(mp.uc++);mpPub('hb1/room/'+mp.room,o)}
 function mpMsg(topic,buf){let o;try{o=JSON.parse(buf.toString())}catch(e){return}
- if(o.u){if(mp.seen[o.u])return;mp.seen[o.u]=1;if(++mp.sc>800){mp.seen={};mp.sc=0}}
+ if(o.u){if(mp.seen[o.u])return;mp.seen[o.u]=1;if(++mp.sc>4000){const ks=Object.keys(mp.seen);for(let i=0;i<2000;i++)delete mp.seen[ks[i]];mp.sc=2000}}
  if(topic=='hb1/search'){if(mp.onS)mp.onS(o)}else if(mp.on&&o.f!==mp.me)mpRecv(o)}
 function mpRecv(o){if(o.to!=null&&o.to!=mp.me)return;mpHandle(o)}
 function mpConnect(){mp.cl=MQ.map(u=>{const c=mqtt.connect(u,{clientId:'hb_'+mp.id+'_'+(Math.random()*1e5|0),reconnectPeriod:3000,connectTimeout:8000,clean:true});c.on('connect',()=>c.subscribe(mp.subs));c.on('message',mpMsg);c.on('error',()=>{});return c})}
-function mpHandle(o){const r=mp.rp,f=o.f,nm='Hunter '+(f+1);mp.ls[f]=Date.now();if(o.v!==2&&!mp.old[f]){mp.old[f]=1;say(nm+' is running an OLDER Hellbreach.html - everyone must reload the new file or monsters will not sync.',10)}
+function mpHandle(o){const r=mp.rp,f=o.f,nm='Hunter '+(f+1);mp.ls[f]=Date.now();if(o.v!==3&&!mp.old[f]){mp.old[f]=1;say(nm+' is running an OLDER Hellbreach.html - everyone must reload the new file or monsters will not sync.',10)}
  if(o.t=='p'){const q=r[f]||(r[f]={x:o.x,y:o.y});Object.assign(q,{id:f,tx:o.x,ty:o.y,a:o.a,hp:o.hp,g:o.g,h:o.h,wk:o.wk,sk:o.sk,sa:o.sa,hf:o.hf,ts:Date.now()});if(o.bt)btyTake(f)}
  else if(o.t=='sh')o.b.forEach(b=>mpb.push({x:b[0],y:b[1],vx:b[2],vy:b[3],l:b[4],d:b[5],wk:b[6],by:f}));
- else if(o.t=='hit'){if(mode=='play'&&P.hp>0){mpBy=o.k=='mob'?null:f;shake=3;hurtP(o.d);mpBy=null}}
+ else if(o.t=='hit'){if(o.k=='mob'&&o.i!=null){const mm=M.find(q=>q.id===o.i);if(!mm||mm.hp<=0||D(mm.x,mm.y,P.x,P.y)>170)return}if(mode=='play'&&P.hp>0){mpBy=o.k=='mob'?null:f;shake=3;hurtP(o.d);mpBy=null}}
  else if(o.t=='bx'){burst(o.x,o.y,40,170,'#ff9a30',0);shake=Math.max(shake,5);if(mode=='play'&&P.hp>0&&D(P.x,P.y,o.x,o.y)<55){mpBy=f;hurtP(60);mpBy=null}}
  else if(o.t=='ms')mpGetSnap(o);
  else if(o.t=='mh'){if(!mpCli()){const m=M.find(q=>q.id===o.i);if(m&&m.hp>0){mpNP=1;mpHB=f;try{hurt(m,o.d,o.a,o.s)}finally{mpNP=0;mpHB=null}}}}
@@ -1004,14 +1112,15 @@ const MKS=Object.keys(MOBS);let mpFx=0,mpNP=0;
 const mpCli=()=>mp.on&&mp.host!=mp.me;
 function mpTgt(m){if(!mp.on)return P;let pl=mp.pool||[P];if(m.boss){const i=pl.filter(q=>inHouse(m.bb,q.x,q.y,0));if(i.length)pl=i}
  let b=pl[0],bd=1e9;for(const q of pl){const d=D(m.x,m.y,q.x,q.y);if(d<bd){bd=d;b=q}}return b}
-function hurtTG(d){if(TG===P||!mp.on)hurtP(d);else mpSend({t:'hit',to:TG.id,d,k:'mob'})}
+let MCUR=null;{const _t0=mpTgt;mpTgt=function(m){MCUR=m;return _t0(m)}}
+function hurtTG(d){if(TG===P||!mp.on)hurtP(d);else mpSend({t:'hit',to:TG.id,d,k:'mob',i:MCUR?MCUR.id:undefined})}
 function mpHostCheck(){if(mp.host==mp.me)return;const now=Date.now();if(!mp.out[mp.host]&&now-mp.hs<3000)return;
  const alive=i=>i==mp.me||(!mp.out[i]&&now-(mp.ls[i]||mp.t0)<6000);let c=-1;for(let i=0;i<mp.n;i++)if(alive(i)){c=i;break}
  if(c==mp.me){mp.host=mp.me;mp.ep++;mp.hs=now}else if(c>=0){mp.host=c;mp.hs=now}}
 function mpPre(dt){mpHostCheck();
  if(mpCli()){const k=Math.min(1,dt*12);for(const m of M){m.fl-=dt;if(m.hp<=0||m.gx===undefined)continue;const dx=m.gx-m.x,dy=m.gy-m.y;if(Math.abs(dx)+Math.abs(dy)>.4)m.wk+=dt*(m.ty=='skitter'?12:8);m.x+=dx*k;m.y+=dy*k}}
  else mp.pool=[P,...Object.values(mp.rp).filter(q=>q.hp>0)]}
-function mpPost(dt){if(!mpCli()&&(mp.mt-=dt)<=0){mp.mt=.125;mpSendSnap()}}
+function mpPost(dt){if(!mpCli()&&(mp.mt-=dt)<=0){mp.mt=.1;mpSendSnap()}}
 function mpPause(dt){const k=keys,l=mouse.l,r=mouse.r;keys={};mouse.l=mouse.r=0;try{update(dt)}finally{keys=k;mouse.l=l;mouse.r=r}}
 function mpSendSnap(){const full=(++mp.fc)%8==0,pl=[P,...Object.values(mp.rp)].filter(q=>q.hp>0),m=[],k=[];
  for(const x of M){if(x.id===undefined)x.id=++mp.mid;if(x.hp<=0){k.push(x.id);continue}
@@ -1075,7 +1184,7 @@ function btyTake(f){if(f===mp.me||mp.out[f]||bty&&bty.h===mp.me)return;if(bty&&b
 function lob(k){const a=Math.atan2(mouse.y+cam.y-P.y,mouse.x+cam.x-P.x),d=Math.min(160,D(P.x,P.y,mouse.x+cam.x,mouse.y+cam.y));lobs.push({k,x:P.x,y:P.y,vx:Math.cos(a)*d/.4,vy:Math.sin(a)*d/.4,m:.4})}
 function useXT(k){if(!k||(P.xt[k]||0)<=0)return;
  if(k=='ward'){if(P.wd>0)return say("Saint's Ward is already active",1.5);P.xt.ward--;P.wd=10;burst(P.x,P.y,18,70,'#f0d070',0);say("Saint's Ward: damage reduced for 10s",2.5);try{sfx.heal()}catch(e){}}
- else{P.xt[k]--;lob(k);try{sfx.thr()}catch(e){}}
+ else if(k=='tripwire'){P.xt[k]--;traps.push({x:P.x+Math.cos(P.face)*10,y:P.y+Math.sin(P.face)*10,t:60,ar:.8,a:P.face});say('Tripwire set',1.5);try{sfx.thr()}catch(e){}}else{P.xt[k]--;lob(k);try{sfx.thr()}catch(e){}}
  fixSlot()}
 function lobLand(b){
  if(b.k=='flask'){fires.push({x:b.x,y:b.y,r:28,t:5.5,tk:.2,s:Math.random()*6});burst(b.x,b.y,18,90,'#ff7a1a',0);shake=Math.max(shake,3);if(mp.on)mpSend({t:'ff',x:+b.x.toFixed(1),y:+b.y.toFixed(1)})}
@@ -1084,6 +1193,7 @@ function lobLand(b){
 {const _tg=mpTgt;mpTgt=function(m){const r=_tg(m);if(m.boss||m.ty=='vine'||!flares.length)return r;let b=null,bd=260;for(const f of flares){const d=D(m.x,m.y,f.x,f.y);if(d<bd){bd=d;b=f}}return b&&bd<D(m.x,m.y,r.x,r.y)+60?b:r}}
 {const _ht=hurtTG;hurtTG=function(d){if(TG&&TG.dec)return;_ht(d)}}
 {const _u8=update;update=function(dt){_u8(dt);if(mode!='play')return;
+ for(const tr of traps){tr.t-=dt;if(tr.ar>0){tr.ar-=dt;continue}if(M.some(m=>m.hp>0&&D(m.x,m.y,tr.x,tr.y)<(m.boss?16:12))){tr.t=0;burst(tr.x,tr.y,28,150,'#ff9a30',0);burst(tr.x,tr.y,10,90,'#6a0a10',1);shake=Math.max(shake,4);noise(tr.x,tr.y,260);M.forEach(m=>{if(m.hp>0&&D(m.x,m.y,tr.x,tr.y)<46)hurt(m,55,Math.atan2(m.y-tr.y,m.x-tr.x),'tripwire')})}}traps=traps.filter(t=>t.t>0);
  for(const b of lobs){b.m-=dt;b.x+=b.vx*dt;b.y+=b.vy*dt;if(hit(b.x,b.y,2)){b.x-=b.vx*dt;b.y-=b.vy*dt;b.m=0}if(b.m<=0){b.dead=1;lobLand(b)}}lobs=lobs.filter(b=>!b.dead);
  for(const f of fires){f.t-=dt;f.tk-=dt;if(f.tk<=0){f.tk=.5;M.forEach(m=>{if(m.hp>0&&D(m.x,m.y,f.x,f.y)<f.r+(m.boss?8:0))hurt(m,12,Math.atan2(m.y-f.y,m.x-f.x),'fire')});if(D(P.x,P.y,f.x,f.y)<f.r)hurtP(5);burst(f.x+R(-f.r,f.r)*.7,f.y+R(-f.r,f.r)*.4,2,30,'#ff8a20',0)}}fires=fires.filter(f=>f.t>0);
  for(const f of flares){f.t-=dt;f.tk-=dt;if(f.tk<=0){f.tk=2.5;noise(f.x,f.y,300)}if(Math.random()<dt*18)burst(f.x,f.y,1,40,'#ffd070',0)}flares=flares.filter(f=>f.t>0)}}
