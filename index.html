@@ -1769,7 +1769,7 @@ function ttPay(){const c=[];for(let s=0;s<2;s++)if(P.w[s])c.push({t:'w',s,n:P.w[
   if(o.t=='w'){k=P.w[o.s].k;P.w[o.s]=null;P.mag[o.s]=0;P.res[o.s]=0}
   else if(o.t=='t'){k=o.k;TS(k,TC(k)-1)}
   else{k=o.o.k;if(o.o.n>1)o.o.n--;else P.bag.splice(P.bag.indexOf(o.o),1)}
-  P.rl=0;ttToss(ttGround(k));fixSlot();burst(P.x,P.y,16,90,'#a01018',1);banner('THE BREACH TAKES ITS TITHE','You dropped: '+o.n+'. It lies nearby, if you dare.','#d02030')}
+  P.rl=0;fixSlot();ttVeil(k,o.n)}
  else banner('THE BREACH FINDS NOTHING','You carry nothing it wants. This time.','#a09080')}
 function ttTick(dt){if(!P||P.dead||RD){TTH=null;return}if(TTH&&TTH.P!==P)TTH=null;
  P.tt=(P.tt||0)+dt;if(P.ttn===undefined)P.ttn=RQ.get('event')=='tithe'?4:RQ.get('event')?1e9:R(55,85);
@@ -1781,6 +1781,34 @@ function ttTick(dt){if(!P||P.dead||RD){TTH=null;return}if(TTH&&TTH.P!==P)TTH=nul
  if(left<=8&&!T0.w){T0.w=1;ttBell(.3,170)}
  if(T0.h>=TT_HOLD){TTH=null;P.ttn=P.tt+R(100,140);ttBell(.3,330);burst(T0.x,T0.y,24,80,'#8fe0a0',0);banner('THE BREACH IS SATISFIED','The bell falls silent. You owe nothing.','#8fe0a0')}
  else if(left<=0){TTH=null;P.ttn=P.tt+R(100,140);ttBell(.55,110);ttPay()}}
+
+// ---- Tithe: bone vines tear through a veil crack, whip the hunter and drag an item back through
+let TTV=null;
+function ttVeil(k,nm){const a=R(0,6.283),r=R(64,84);let cx=P.x+Math.cos(a)*r,cy=P.y+Math.sin(a)*r;cx=cl(cx,24,WW-24);cy=cl(cy,24,WH-24);
+ TTV={P,k,nm,cx,cy,t:0,hit:0,ang:Math.atan2(P.y-cy,P.x-cx)+1.5708,vs:[0,1,2].map(i=>({o:(i-1)*.55,d:i*.07,ph:R(0,6)}))};ttBell(.5,60);shake=Math.max(shake,6)}
+{const _ut=update;update=function(dt){_ut(dt);if(mode!='play'||!TTV||TTV.P!==P){TTV=null;return}const v=TTV;v.t+=dt;
+ if(!v.hit&&v.t>=.85){v.hit=1;shake=Math.max(shake,12);ttBell(.45,95);burst(P.x,P.y,22,110,'#a01018',1);banner('THE BREACH TAKES ITS TITHE','Bone vines drag your '+v.nm+' through the veil.','#d02030')}
+ if(v.t>2.7)TTV=null}}
+function ttvDraw(){const v=TTV;if(!v||v.P!==P)return;const t=v.t,x=v.cx-cam.x,y=v.cy-cam.y,px=P.x-cam.x,py=P.y-cam.y-4;
+ const op=cl(t/.45,0,1),cs=t<2.1?1:cl(1-(t-2.1)/.6,0,1),L=34*op*cs,ca=v.ang;
+ ctx.save();
+ if(L>.5){const gg=ctx.createRadialGradient(x,y,2,x,y,L+16);gg.addColorStop(0,'rgba(190,60,255,.55)');gg.addColorStop(1,'rgba(190,60,255,0)');ctx.fillStyle=gg;ctx.beginPath();ctx.arc(x,y,L+16,0,7);ctx.fill();
+  const pts=[];for(let i=-4;i<=4;i++)pts.push([x+Math.cos(ca)*L*i/4+Math.cos(ca+1.57)*(hs(i+v.cx)-.5)*7,y+Math.sin(ca)*L*i/4+Math.sin(ca+1.57)*(hs(i+v.cx)-.5)*7]);
+  for(const [w,c] of [[6,'rgba(120,20,160,.5)'],[3,'#c050ff'],[1,'#fff0ff']]){ctx.strokeStyle=c;ctx.lineWidth=w;ctx.beginPath();pts.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.stroke()}}
+ // lash out (.45-.85), hold, drag back (1.0-1.9)
+ const out=cl((t-.45)/.4,0,1),back=cl((t-1)/.9,0,1),pr=t<1?out:1-back*back*(3-2*back);
+ if(t>.45&&pr>.01){v.vs.forEach(vn=>{const q=cl((pr*1.15)-vn.d,0,1);if(q<=0)return;const tx0=px+vn.o*10,ty0=py+vn.o*6,e=q*q*(3-2*q),ex=x+(tx0-x)*e,ey=y+(ty0-y)*e,dx=ex-x,dy=ey-y,dl=Math.hypot(dx,dy)||1,nx=-dy/dl,ny=dx/dl,sw=Math.sin(t*14+vn.ph)*5*(1-e*.6)+vn.o*14*(1-e);
+  const pt=u=>{const b=Math.sin(u*Math.PI)*sw;return[x+dx*u+nx*b,y+dy*u+ny*b]};
+  ctx.strokeStyle='#4a0a14';ctx.lineWidth=3;ctx.beginPath();for(let i=0;i<=16;i++){const m=pt(i/16);i?ctx.lineTo(m[0],m[1]):ctx.moveTo(m[0],m[1])}ctx.stroke();
+  ctx.strokeStyle='#a01828';ctx.lineWidth=1;ctx.stroke();
+  const n=Math.max(2,Math.floor(dl/6));for(let i=0;i<=n;i++){const u=i/n,m=pt(u),w=2.6-u*1.2;ctx.fillStyle=i%2?'#e8dcc0':'#cdbf9c';ctx.fillRect(m[0]-w/2,m[1]-w/2,w,w);if(i%3==0){ctx.fillStyle='#e8dcc0';ctx.fillRect(m[0]+nx*2-.5,m[1]+ny*2-.5,1.5,1.5);ctx.fillRect(m[0]-nx*2-.5,m[1]-ny*2-.5,1.5,1.5)}}
+  const tp=pt(1);ctx.fillStyle='#f4ecd6';ctx.beginPath();ctx.moveTo(tp[0]+dx/dl*4,tp[1]+dy/dl*4);ctx.lineTo(tp[0]+nx*2,tp[1]+ny*2);ctx.lineTo(tp[0]-nx*2,tp[1]-ny*2);ctx.fill();
+  if(t>=.85&&t<1.1){ctx.fillStyle='#d02030';for(let i=0;i<5;i++)ctx.fillRect(tp[0]+(hs(i+vn.ph)-.5)*14,tp[1]+(hs(i*3+vn.ph)-.5)*14,2,2)}});
+  // stolen item rides the vines back into the crack
+  if(t>=.85){const u=1-back*back*(3-2*back),ix=x+(px-x)*u,iy=y+(py-y)*u-Math.sin(u*Math.PI)*6,sc=1-Math.max(0,back-.7)*2.2;if(sc>0.05&&back<1){ctx.save();ctx.globalAlpha=Math.min(1,sc);drawWpn(v.k,ix,iy,0,1.1*Math.max(.3,sc));ctx.restore()}}}
+ if(t>1.9&&t<2.2){ctx.globalAlpha=1-(t-1.9)/.3;ctx.fillStyle='#e8c0ff';ctx.beginPath();ctx.arc(x,y,8*(1-(t-1.9)/.3)+2,0,7);ctx.fill()}
+ ctx.restore();ctx.font='bold 10px monospace'}
+{const _bd2=bmDraw;bmDraw=function(){_bd2();ttvDraw()}}
 function ttDraw(){if(!TTH||TTH.P!==P||P.dead)return;const x=TTH.x-cam.x,y=TTH.y-cam.y,h=TTH.h/TT_HOLD,left=Math.max(0,TT_WIN-TTH.t),pl=.5+.5*Math.sin(T*(left<=8?10:4));
  ctx.save();if(x>-60&&x<VW+60&&y>-60&&y<VH+60){
   const g=ctx.createRadialGradient(x,y,4,x,y,TT_R+16);g.addColorStop(0,'rgba(240,200,90,'+(.1+.08*pl).toFixed(3)+')');g.addColorStop(1,'rgba(240,200,90,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,TT_R+16,0,7);ctx.fill();
