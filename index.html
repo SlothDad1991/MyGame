@@ -38,6 +38,7 @@ svg.str{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-i
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c0a0e}}
 :root[data-theme="dark"]{--bg:#0c0a0e}
 :root{--cs:min(32px,calc((100vw - 380px)/20))}@media (max-width:900px){:root{--cs:min(32px,max(18px,calc((100vw - 100px)/20)))}}
+.sellz{margin-top:12px;border:2px dashed #e0b040aa;border-radius:8px 16px 6px 14px;padding:10px 8px;text-align:center;font-size:22px;line-height:1.05;color:#e0b040;background:#00000033}.sellz.on{background:#e0b04033;border-style:solid;color:#ffe9a0}
 .stw{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:start;margin-top:8px}@media (max-width:900px){.stw{grid-template-columns:1fr}}
 .eq{display:flex;flex-direction:column;gap:10px}.eqt{display:flex;gap:10px;flex-wrap:wrap}
 .slot{position:relative;border:2px solid #e8e6d855;background:#140a0cc0;border-radius:4px;box-shadow:inset 0 0 14px #000}.slot>span{position:absolute;left:4px;top:1px;font-size:15px;opacity:.6;pointer-events:none}
@@ -294,7 +295,7 @@ const LORE=[
   ['Signal Flare',"Burns hot and bright for fourteen seconds. The dark pulls back around it, and the horde cannot help but go to it. Throw it away from yourself."],
   ["Saint's Ward",'A reliquary charm on a chain. Hold it tight and the hits land softer for ten seconds. It does not make you a saint.'],
   ['Blessed Charges',"A hand-thrown blessing that goes off with a bang. It drops anything small and lights up the whole dark. It also lights up you."],
-  ['Darksight',"Hold the old Warden's gaze and the dark thins. You will see the red eyes of the horde, and where the sigils are hiding."],
+  ['Tapping Into the Veil',"Tap into the veil and the dark thins. You will see the red eyes of the horde, and where the sigils are hiding."],
   ['The Ledger',"What your character carries dies with them. The stash is safe, and the backpack survives a clean escape. Spend the bounty before it spends you."],
   ['The Rule of the Hunt',"Burn the sigils. Kill the demon. Banish the corpse. Run for an exit and stand in its ring until it carries you off. Never stand still in the dark, except there."]]}
 ];
@@ -386,7 +387,7 @@ function loreTick(){
  if(P.tn>0)lk(3,3);
  if(P.xt){if(P.xt.flask>0)lk(3,4);if(P.xt.flare>0)lk(3,5);if(P.xt.ward>0)lk(3,6)}
  if(P.bm>0)lk(3,7);
- if(keys.KeyQ)lk(3,8);
+ if(CAPS)lk(3,8);
  if(lkQ){say(lkQ>1?lkQ+' new lore notes discovered (main menu > Lore)':'New lore note discovered (main menu > Lore)',4);lkQ=0}}
 {const _ul=update;update=function(dt){_ul(dt);loreTick()}}
 {const _sl=shoot;shoot=function(){const c=P&&P.cur,m0=c<2?P.mag[c]:0;_sl();if(P&&c<2&&P.mag[c]<m0)lk(1,6)}}
@@ -399,7 +400,7 @@ function loreStr(){const sl=document.querySelector('.slate');if(!sl)return;const
  sv.innerHTML='<path d="'+d+'" fill="none" stroke="#a02424" stroke-width="1.8" opacity=".9"/>';sl.insertBefore(sv,sl.firstChild)}
 addEventListener('resize',()=>{if(mode=='menu'&&scr=='lore')loreStr()});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(mode=='menu'&&scr=='lore')loreStr()});
-const HELP='WASD move · Shift sprint · Mouse aim/fire · RMB melee · R reload · Wheel or 1-5 switch weapons/tools · LMB uses tools · Loot weapons, ammo & tools in the buildings · Q darksight · Tab inventory (the backpack survives your escape) · M map · E interact (sigils, banish, loot) · stand in an exit ring to escape · N toggle ambient sound';
+const HELP='WASD move · Shift sprint · Mouse aim/fire · RMB melee · R reload · Wheel or 1-5 switch weapons/tools · LMB uses tools · Loot weapons, ammo & tools in the buildings · Caps Lock tap into the veil (toggle) · Tab inventory (the backpack survives your escape) · M map · E interact (sigils, banish, loot) · stand in an exit ring to escape · N toggle ambient sound';
 const back='<button data-v=hub>\u2190 Back</button>',backTo=v=>`<button data-v=${v}>\u2190 Back</button>`;
 function menu(m){const c=cost(),ok=c<=bank,tl=sel.tools.filter(Boolean).map(t=>TOOL[t.k].n.replace(' x2','')+' x'+t.n).join(', ')||'no tools';
  const col=(h,r)=>`<div class=col><h2>${h}</h2>${r}</div>`;let body;
@@ -589,7 +590,7 @@ function drawMob(m,x,y,f){const t=m.ty||'imp',sc=t=='skitter'?.75:t=='brute'?1.5
 const CT={s:{a:()=>stash,c:SC,r:SR,e:'#sg'},b:{a:()=>sel.bag,c:4,r:4,e:'#bg'}};
 function stashBody(){const sl=(id,lab,w,h)=>{const it=slotGet(id);return `<div class=slot data-sl=${id} style="width:calc(var(--cs)*${w});height:calc(var(--cs)*${h})"><span>${lab}</span>${it?`<div class=it data-sl=${id} data-ik=${it.k}></div>`:''}</div>`};
  const grid=(arr,ct)=>arr.map((o,i)=>{const[w,h]=isz(o.k);return `<div class=it data-ct=${ct} data-g=${i} data-ik=${o.k} style="left:calc(var(--cs)*${o.x});top:calc(var(--cs)*${o.y});width:calc(var(--cs)*${w});height:calc(var(--cs)*${h})"></div>`}).join('');
- return `<div class=stw><div class=eq><h2>Gear</h2>${sl('p','Primary',4,2)}<div class=eqt>${sl('s','Sidearm',2,2)}${sl('t0','Tool',2,2)}${sl('t1','Tool',2,2)}${sl('t2','Tool',2,2)}</div><h2>Backpack <small>(16 squares)</small></h2><div class=sgrid id=bg style="--gc:4;--gr:4">${grid(sel.bag,'b')}</div></div><div><h2>Stash</h2><div class=sgrid id=sg style="--gc:20;--gr:8">${grid(stash,'s')}</div></div></div><div class=foot><span>Cash: $${bank}</span><span style="opacity:.6">Shift-drag or right-click a stack to split it</span><button data-so=1>Auto-sort</button><button data-v=shop>Gunsmith</button>${back}</div>`}
+ return `<div class=stw><div class=eq><h2>Gear</h2>${sl('p','Primary',4,2)}<div class=eqt>${sl('s','Sidearm',2,2)}${sl('t0','Tool',2,2)}${sl('t1','Tool',2,2)}${sl('t2','Tool',2,2)}</div><h2>Backpack <small>(16 squares)</small></h2><div class=sgrid id=bg style="--gc:4;--gr:4">${grid(sel.bag,'b')}</div><div class=sellz id=sz>Sell: drag an item here for half its shop price</div></div><div><h2>Stash</h2><div class=sgrid id=sg style="--gc:20;--gr:8">${grid(stash,'s')}</div></div></div><div class=foot><span>Cash: $${bank}</span><span style="opacity:.6">Shift-drag or right-click a stack to split it</span><button data-so=1>Auto-sort</button><button data-v=shop>Gunsmith</button>${back}</div>`}
 function stashInit(){$('#menu').querySelectorAll('.it').forEach(el=>{const k=el.dataset.ik,sid=el.dataset.sl,ct=el.dataset.ct,o=sid?slotGet(sid):CT[ct].a()[+el.dataset.g];el.appendChild(itemCv(k,el.offsetWidth*2,el.offsetHeight*2));if(TOOL[k]){const b=document.createElement('b');b.textContent='x'+(o.n||1);el.appendChild(b)}el.onpointerdown=e=>{if(e.button)return;startDrag(e,el,k,sid,ct,el.dataset.g,o)};if(!sid&&TOOL[k])el.oncontextmenu=e=>{e.preventDefault();splitOne(ct,o)}})}
 function splitOne(ct,o){if(!o||!TOOL[o.k]||(o.n||1)<2)return;for(const c of [ct,ct=='b'?'s':'b']){const C=CT[c],a=C.a(),f=spotIn(a,C.c,C.r,o.k);if(f){o.n--;a.push({k:o.k,x:f[0],y:f[1],n:1});SAVE();menu();return}}note='No room to split that stack.';menu()}
 let drg=null;
@@ -1102,7 +1103,7 @@ function render(){
  clues.forEach(c=>{if(!c.got)light(c.x-cx,c.y-cy,26+3*Math.sin(T*6),.6)});items.forEach(it=>light(it.x-cx,it.y-cy,16,.5));bombs.forEach(b=>light(b.x-cx,b.y-cy,40,.7));fires.forEach(f=>light(f.x-cx,f.y-cy,40,.65));if(!fgOn())flares.forEach(f=>light(f.x-cx,f.y-cy,150+6*Math.sin(T*9),.92));if(P.wd>0)light(P.x-cx,P.y-cy,38,.35);Object.values(mp.rp).forEach(r=>light(r.x-cx,r.y-cy,40,.6));exts.forEach(e=>{light(e.x-cx,e.y-cy,60,.55);light(e.lx-cx,e.ly-cy,55+5*Math.sin(T*9+e.k),.7)});blds.forEach(b=>b.gl.forEach(q=>{const x=q.x-cx,y=q.y-cy;if(x>-90&&x<VW+90&&y>-90&&y<VH+90)light(x,y,q.r*(1+.08*Math.sin(T*5+q.p)),q.a)}));if(P.lf>0)visLight(px,py,0,6.2832,150*fgv(.3),72,.7);
  parts.forEach(p=>{if(!p.s&&p.c!='#aaa')light(p.x-cx,p.y-cy,14,.5)});
  rdLight();ctx.drawImage(dk,0,0);bmDraw();rdDraw();
- if(keys.KeyQ){M.forEach(m=>{if(m.hp>0&&D(m.x,m.y,P.x,P.y)<300){ctx.fillStyle='#ff2a3a';ctx.fillRect(m.x-cx-3,m.y-cy-9,2,2);ctx.fillRect(m.x-cx+1,m.y-cy-9,2,2)}});
+ if(CAPS){M.forEach(m=>{if(m.hp>0&&D(m.x,m.y,P.x,P.y)<300){ctx.fillStyle='#ff2a3a';ctx.fillRect(m.x-cx-3,m.y-cy-9,2,2);ctx.fillRect(m.x-cx+1,m.y-cy-9,2,2)}});
   clues.forEach(c=>{if(!c.got){const a=Math.atan2(c.y-P.y,c.x-P.x);ctx.fillStyle='#d8c890';ctx.beginPath();ctx.arc(px+Math.cos(a)*36,py+Math.sin(a)*36,2.5,0,7);ctx.fill()}})}
  if((found>=3||bossOpen)&&M[0].hp>0){const a=Math.atan2(M[0].hy-P.y,M[0].hx-P.x);const ax=px+Math.cos(a)*26,ay=py+Math.sin(a)*26;ctx.fillStyle='#d03040';ctx.beginPath();ctx.moveTo(ax+Math.cos(a)*5,ay+Math.sin(a)*5);ctx.lineTo(ax+Math.cos(a+2.5)*4,ay+Math.sin(a+2.5)*4);ctx.lineTo(ax+Math.cos(a-2.5)*4,ay+Math.sin(a-2.5)*4);ctx.closePath();ctx.fill()}
  if(P.hp<45){const g=ctx.createRadialGradient(VW/2,VH/2,120,VW/2,VH/2,380);g.addColorStop(0,'rgba(120,0,0,0)');g.addColorStop(1,`rgba(140,0,10,${.55+.15*Math.sin(T*6)})`);ctx.fillStyle=g;ctx.fillRect(0,0,VW,VH)}
@@ -1912,7 +1913,7 @@ const TUT=[
   ['Holy Water',"Heals <b>50 HP</b>. It does nothing at full health, so save it for when it hurts.",'tonic'],
   ['Blessed Charge',"A big explosion. Great for clearing a doorway full of imps, bad for standing next to.",'bomb'],
   ['Hellfire Flask',"Throws a burning pool that lasts 5 seconds. Block a corridor and let them run through it.",'flask'],
-  ['Flare & Ward',"The flare lights the dark and <b>lures imps</b>. Saint's Ward cuts damage by 60% for 10 seconds. The tripwire plants a blast trap, and "+kc('Q')+" is darksight.",'flare,ward']]},
+  ['Flare & Ward',"The flare lights the dark and <b>lures imps</b>. Saint's Ward cuts damage by 60% for 10 seconds. The tripwire plants a blast trap, and "+kc('Caps Lock')+" taps into the veil.",'flare,ward']]},
  {t:'Survive',sub:'The Breach is not fair. Know its tricks',e:[
   ['Loot everything',"Weapons, ammo and tools sit in the buildings. Press "+kc('E')+" to loot. "+kc('Tab')+" opens your inventory and the backpack survives your escape.",'loot'],
   ['Read the map',kc('M')+" opens the map. Exit rings are the only safe ground, so learn where they are before you need them.",'map'],
@@ -2203,4 +2204,46 @@ function titleArt(cv){
  return{stop(){alive=0;removeEventListener('resize',onR)},step(n,dt){for(let i=0;i<n;i++)step(dt||1/60);frame()}}}
 
 menu();requestAnimationFrame(loop);
+
+// ---------- MENU AUDIO: soft eerie drone + sparse music-box bells while in the menus, quiet ghostly clicks ----------
+const MUS=(()=>{let ac,mst,dly,nb,on=0,tm=null,nextB=0,nextH=0;const off=()=>{try{return localStorage.getItem('bh_amb')=='0'}catch(e){return 0}};
+ function start(){if(ac){if(ac.state!='running')ac.resume();return}const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;try{ac=new AC()}catch(e){ac=null;return}
+  mst=ac.createGain();mst.gain.value=0;mst.connect(ac.destination);
+  nb=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate);const d=nb.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  dly=ac.createDelay(2);dly.delayTime.value=.62;const fb=ac.createGain();fb.gain.value=.5;const lp=ac.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1800;dly.connect(lp);lp.connect(fb);fb.connect(dly);const dg=ac.createGain();dg.gain.value=.8;lp.connect(dg);dg.connect(mst);
+  // drone: A1 against a flat second for an uneasy beat, plus a slow breathing pad
+  [[55,'sine',.5],[55.45,'sine',.4],[58.27,'sine',.16],[110.2,'triangle',.12]].forEach(a=>{const o=ac.createOscillator(),g=ac.createGain();o.type=a[1];o.frequency.value=a[0];g.gain.value=a[2];o.connect(g);g.connect(mst);o.start()});
+  const pf=ac.createBiquadFilter();pf.type='lowpass';pf.frequency.value=320;pf.Q.value=2;const pg=ac.createGain();pg.gain.value=.07;pf.connect(pg);pg.connect(mst);pg.connect(dly);
+  [220,233.08,329.6].forEach((f,i)=>{const o=ac.createOscillator();o.type='sawtooth';o.frequency.value=f+i*.3;o.detune.value=i*5;o.connect(pf);o.start()});
+  const lf=ac.createOscillator(),lg=ac.createGain();lf.frequency.value=.07;lg.gain.value=170;lf.connect(lg);lg.connect(pf.frequency);lf.start();
+  const tl=ac.createOscillator(),tg=ac.createGain();tl.frequency.value=.11;tg.gain.value=.03;tl.connect(tg);tg.connect(pg.gain);tl.start();
+  tm=setInterval(tick,700)}
+ const SC=[440,466.16,523.25,622.25,659.25,349.23,311.13];
+ function bell(t){const f=SC[Math.random()*SC.length|0]*(Math.random()<.25?.5:1),g=ac.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.05,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+3.4);g.connect(mst);g.connect(dly);
+  [[1,1],[2.76,.25],[5.4,.08]].forEach(h=>{const o=ac.createOscillator(),q=ac.createGain();o.type='sine';o.frequency.value=f*h[0];q.gain.value=h[1];o.connect(q);q.connect(g);o.start(t);o.stop(t+3.5)})}
+ function breath(t){const s=ac.createBufferSource();s.buffer=nb;s.loop=true;const f=ac.createBiquadFilter();f.type='bandpass';f.Q.value=6;f.frequency.setValueAtTime(500+Math.random()*900,t);f.frequency.linearRampToValueAtTime(260+Math.random()*300,t+5);
+  const g=ac.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.022,t+2.4);g.gain.linearRampToValueAtTime(0,t+5);s.connect(f);f.connect(g);g.connect(mst);g.connect(dly);s.start(t,Math.random());s.stop(t+5.1)}
+ function tick(){if(!ac)return;const want=mode=='menu'&&!document.hidden&&!off()&&ac.state=='running',t=ac.currentTime;mst.gain.setTargetAtTime(want?.16:0,t,want?1.2:.5);on=want;if(!want){nextB=Math.max(nextB,t+2);nextH=Math.max(nextH,t+6);return}
+  if(t>nextB-.5){bell(Math.max(t+.05,nextB));nextB=t+3.5+Math.random()*6}if(t>nextH){breath(t+.1);nextH=t+9+Math.random()*10}}
+ function click(){if(!ac||ac.state!='running'||mode!='menu'||off())return;const t=ac.currentTime+.005,o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(62,t+.14);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.09,t+.006);g.gain.exponentialRampToValueAtTime(.0001,t+.16);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+.2);
+  const s=ac.createBufferSource();s.buffer=nb;const f=ac.createBiquadFilter();f.type='bandpass';f.frequency.value=700+Math.random()*500;f.Q.value=3;const n=ac.createGain();n.gain.setValueAtTime(.05,t);n.gain.exponentialRampToValueAtTime(.0001,t+.07);s.connect(f);f.connect(n);n.connect(ac.destination);s.start(t,Math.random()*1.5);s.stop(t+.09);
+  const gp=ac.createOscillator(),pg=ac.createGain(),fq=[311.13,369.99,415.3,466.16][Math.random()*4|0];gp.type='sine';gp.frequency.value=fq;gp.detune.value=Math.random()*14-7;pg.gain.setValueAtTime(0,t);pg.gain.linearRampToValueAtTime(.022,t+.02);pg.gain.exponentialRampToValueAtTime(.0001,t+1.3);gp.connect(pg);pg.connect(ac.destination);pg.connect(dly);gp.start(t);gp.stop(t+1.4)}
+ function ruffle(){if(!ac||ac.state!='running'||mode!='menu'||off())return;const t0=ac.currentTime+.005,n=7+(Math.random()*4|0);
+  for(let i=0;i<n;i++){const t=t0+i*.04+Math.random()*.05,d=.03+Math.random()*.07,s=ac.createBufferSource();s.buffer=nb;const f=ac.createBiquadFilter();f.type='bandpass';f.frequency.value=2200+Math.random()*3800;f.Q.value=.9;const h=ac.createBiquadFilter();h.type='highpass';h.frequency.value=900;const g=ac.createGain(),pk=(.07+Math.random()*.06)*(1-i/(n*1.4));g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(pk,t+.006);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(f);f.connect(h);h.connect(g);g.connect(ac.destination);s.start(t,Math.random()*1.7);s.stop(t+d+.02)}
+  const s2=ac.createBufferSource();s2.buffer=nb;const f2=ac.createBiquadFilter();f2.type='bandpass';f2.frequency.setValueAtTime(1500,t0);f2.frequency.linearRampToValueAtTime(3200,t0+.35);f2.Q.value=.6;const g2=ac.createGain();g2.gain.setValueAtTime(0,t0);g2.gain.linearRampToValueAtTime(.03,t0+.12);g2.gain.linearRampToValueAtTime(0,t0+.38);s2.connect(f2);f2.connect(g2);g2.connect(ac.destination);s2.start(t0,Math.random()*1.5);s2.stop(t0+.4)}
+ function cash(){if(!ac||ac.state!='running'||mode!='menu'||off())return;const t0=ac.currentTime+.005,n=18;
+  for(let i=0;i<n;i++){const t=t0+i*.021+Math.random()*.008,d=.02+Math.random()*.03,s=ac.createBufferSource();s.buffer=nb;const f=ac.createBiquadFilter();f.type='bandpass';f.frequency.value=3500+Math.random()*3500;f.Q.value=1.4;const h=ac.createBiquadFilter();h.type='highpass';h.frequency.value=1800;const g=ac.createGain(),pk=(.06+Math.random()*.05)*(1-i/(n*1.6));g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(pk,t+.003);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(f);f.connect(h);h.connect(g);g.connect(ac.destination);s.start(t,Math.random()*1.7);s.stop(t+d+.02)}
+  const s2=ac.createBufferSource();s2.buffer=nb;const f2=ac.createBiquadFilter();f2.type='bandpass';f2.frequency.value=4800;f2.Q.value=.5;const g2=ac.createGain();g2.gain.setValueAtTime(0,t0);g2.gain.linearRampToValueAtTime(.025,t0+.1);g2.gain.linearRampToValueAtTime(0,t0+.42);s2.connect(f2);f2.connect(g2);g2.connect(ac.destination);s2.start(t0,Math.random()*1.5);s2.stop(t0+.45)}
+ return{start,click,tick,ruffle,cash}})();
+['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{if(mode=='menu'){MUS.start();MUS.tick()}},true));
+addEventListener('click',e=>{if(mode!='menu')return;const t=e.target&&e.target.closest&&e.target.closest('#menu');if(!t)return;if(e.target.closest('button,.chalk,.tb,.fd,.paper,.it,[data-v],[data-l],[data-lo],[data-f],[data-k],[data-p],[data-s],[data-t],[data-w],[data-m],[data-xa],[data-bq],[data-y],[data-n],#go')){MUS.start();if(e.target.closest('[data-y]'))MUS.cash();else if(e.target.closest('[data-lo]'))MUS.ruffle();else MUS.click()}},true);
+
+// tapping into the veil is on while Caps Lock is on
+let CAPS=false;['keydown','keyup','mousedown','mousemove'].forEach(ev=>addEventListener(ev,e=>{try{CAPS=!!e.getModifierState('CapsLock')}catch(_){}},true));
+
+// ---------- SELLING: drag an item onto the sell box for half its shop price ----------
+const SELL_TXT='Sell: drag an item here for half its shop price',sellVal=d=>{const w=PRI[d.k]||SID[d.k]||TOOL[d.k]||{c:0};return Math.floor(w.c/2)*(TOOL[d.k]?(d.split?1:(d.o.n||1)):1)};
+{const _dm=dragMove;dragMove=function(e){_dm(e);const d=drg,z=$('#sz');if(!d||!z)return;const r=z.getBoundingClientRect(),on=e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;d.sell=on;z.classList.toggle('on',on);
+ if(on){d.t=null;d.hl.style.display='none';const q=(TOOL[d.k]?(d.split?1:(d.o.n||1)):1);z.textContent='Sell '+((PRI[d.k]||SID[d.k]||TOOL[d.k]||{}).n||d.k)+(q>1?' x'+q:'')+' for $'+sellVal(d)}else z.textContent=SELL_TXT}}
+{const _de=dragEnd;dragEnd=function(){const d=drg;if(d&&d.sell){drg=null;removeEventListener('pointermove',dragMove);d.gh.remove();d.hl.remove();const v=sellVal(d),nm=(PRI[d.k]||SID[d.k]||TOOL[d.k]||{}).n||d.k,q=TOOL[d.k]?(d.split?1:(d.o.n||1)):1;take(d);bank+=v;SAVE();MUS.cash();note='Sold '+nm+(q>1?' x'+q:'')+' for $'+v+'.';menu(note);note='';return}_de()}}
 </script></body></html>
