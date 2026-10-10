@@ -292,11 +292,11 @@ function lbTop(k){const all=Object.entries(LBD).map(([id,e])=>({id,n:e.n,v:e[k],
  all.sort((a,b)=>b.v-a.v||a.ts-b.ts);return all}
 function lbPub(c){try{if(c.connected)c.publish('hb1/lb/'+LBID,JSON.stringify(lbMine()),{retain:true,qos:0})}catch(e){}}
 function lbRefresh(){if(lbT)return;lbT=setTimeout(()=>{lbT=0;if(mode=='menu'&&scr=='lb')menu('')},350)}
-function lbOpen(){if(LBC.length||!window.mqtt)return;lbOT=Date.now();setTimeout(lbRefresh,8500);LBC=MQ.slice(0,2).map(u=>{const c=mqtt.connect(u,{clientId:'l'+LBID.slice(0,10)+(Math.random()*1e6|0),reconnectPeriod:4000,connectTimeout:8000,clean:true});
+function lbOpen(){if(LBC.length||!window.mqtt)return;lbOT=Date.now();setTimeout(lbRefresh,8500);LBC=MQ.map(u=>{const c=mqtt.connect(u,{clientId:'l'+LBID.slice(0,10)+(Math.random()*1e6|0),reconnectPeriod:4000,connectTimeout:8000,clean:true});
  c.on('connect',()=>{c.subscribe('hb1/lb/+');lbPub(c);lbRefresh()});c.on('message',(t,b)=>{lbRecv(t,b);lbRefresh()});c.on('error',()=>{});return c})}
 function lbClose(){if(!LBC.length)return;LBC.forEach(c=>{try{c.end(true)}catch(e){}});LBC=[]}
 // after every run: publish the new totals through a short-lived connection
-function lbPush(){if(!window.mqtt)return;MQ.slice(0,2).forEach(u=>{try{const c=mqtt.connect(u,{clientId:'p'+LBID.slice(0,10)+(Math.random()*1e6|0),reconnectPeriod:0,connectTimeout:8000,clean:true});
+function lbPush(){if(!window.mqtt)return;MQ.forEach(u=>{try{const c=mqtt.connect(u,{clientId:'p'+LBID.slice(0,10)+(Math.random()*1e6|0),reconnectPeriod:0,connectTimeout:8000,clean:true});
  c.on('connect',()=>{lbPub(c);setTimeout(()=>{try{c.end()}catch(e){}},1500)});c.on('error',()=>{try{c.end(true)}catch(e){}});setTimeout(()=>{try{c.end(true)}catch(e){}},15000)}catch(e){}})}
 const lbBody=()=>{const B=LBB[lbTab]||LBB[0],all=lbTop(B.k).filter(r=>r.v>0),fm=v=>(B.pre?'$':'')+v.toLocaleString(),RC=['#ffd23a','#c8ccd2','#cd7f32','#e8e6d8','#e8e6d8'];
  const rows=[0,1,2,3,4].map(i=>{const r=all[i];return r?`<div class="lbr${r.me?' you':''}"><b style="color:${RC[i]}">#${i+1}</b><span class=n style="color:${devCol(r.n,'#e8e6d8')}">${r.n}${r.me?' (you)':''}</span><span class=v>${fm(r.v)}</span></div>`:`<div class=lbr style="opacity:.4"><b>#${i+1}</b><span class=n>\u2014</span><span class=v></span></div>`}).join('');
