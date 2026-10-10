@@ -2472,7 +2472,7 @@ const pcSun=(x,y,r,a)=>{ctx.save();ctx.globalAlpha=a;const g=ctx.createRadialGra
  ctx.fillStyle='#fff4b0';ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.fillStyle='#ffd860';ctx.beginPath();ctx.arc(x,y,r*.7,0,7);ctx.fill();ctx.restore()};
 {const _u=update;update=function(dt){const tm=P&&P.tm;_u(dt);if(mode!='play'||!P)return;
  if(!PC.on&&!P.dead&&M.length&&M.every(m=>m.hp<=0)){PC.on=1;PC.t=0;try{sfx.stop();sfx.bonus()}catch(e){}banner('PEACE','Every demon in the parish is dead. The sun rises.'+(banished||bty?' Reach an exit!':' Banish the corpse, then reach an exit.'),'#ffe080')}
- if(PC.on){PC.t+=dt;EVN=null;TTH=null;FOG=null;HFR=null;mets=[];P.evp=[];P.hfD=1;P.fgD=1;P.clD=1;P.ttn=1e9;if(!RD&&tm!==undefined)P.tm=tm}}}
+ if(PC.on){PC.t+=dt;EVN=null;TTH=null;FOG=null;HFR=null;mets=[];P.evp=[];P.hfD=1;P.fgD=1;P.clD=1;P.ttn=1e9}}}
 {const _nd=newGame;newGame=function(){PC.on=0;PC.t=0;_nd()}}
 {const _rl=rdLight;rdLight=function(){_rl();if(!PC.on)return;const a=Math.min(1,PC.t/6);dx.globalCompositeOperation='destination-out';dx.fillStyle='rgba(0,0,0,'+a.toFixed(3)+')';dx.fillRect(0,0,VW,VH)}}
 {const _bd=bmDraw;bmDraw=function(){_bd();if(!PC.on||P.dead)return;const a=Math.min(1,PC.t/6);ctx.save();
@@ -2480,7 +2480,6 @@ const pcSun=(x,y,r,a)=>{ctx.save();ctx.globalAlpha=a;const g=ctx.createRadialGra
  const g=ctx.createRadialGradient(VW-46,50,10,VW-46,50,460);g.addColorStop(0,'rgba(255,244,180,'+(.32*a).toFixed(3)+')');g.addColorStop(1,'rgba(255,220,120,0)');ctx.fillStyle=g;ctx.fillRect(0,0,VW,VH);
  ctx.restore();pcSun(VW-46,50,14,a)}}
 {const _dm=drawMap;drawMap=function(){_dm();if(!PC.on)return;ctx.save();ctx.fillStyle='rgba(255,214,130,.07)';ctx.fillRect(14,12,612,336);ctx.restore();pcSun(594,318,11,1)}}
-{const _rp=rdHud;rdHud=function(){if(!PC.on||P.dead||RD)return _rp();ctx.font='bold 8px monospace';tx('THE REAPER IS HELD AT BAY',VW/2,12,'#c8b070','center');ctx.font='bold 17px monospace';tx('PEACE',VW/2,29,'#ffe9a0','center');ctx.font='bold 10px monospace';chDraw()}}
 // ---------- CHEAT CODES: type them in the chat box (Enter, /code, Enter). They are never shown in chat or sent to other hunters. ----------
 const CHEAT={god:0};
 const CHEATS={
@@ -2551,7 +2550,7 @@ function mcBuild(){if(MC.root)return;
  mcBtn(q('#mch'),act(useTonic));
  mcBtn(q('#mcm'),act(()=>{showMap=!showMap;mouse.l=mouse.r=0}));
  mcBtn(q('#mcg'),act(()=>{ivd=null;invOpen=!invOpen;showMap=0;mouse.l=mouse.r=0;refocus()}));
- mcBtn(q('#mct'),act(()=>{const t=prompt('Chat message (or a /cheat code):');if(t){CHAT.txt=String(t);chSend()}}))}
+ mcBtn(q('#mct'),act(()=>{const t=prompt('Chat message:');if(t){CHAT.txt=String(t);chSend()}}))}
 function mcSync(){if(INPUT=='mobile'&&!MC.root)mcBuild();if(!MC.root)return;const on=INPUT=='mobile'&&mode=='play'&&P&&!P.dead;MC.root.style.display=on?'block':'none';if(!on){MC.mx=MC.my=MC.mag=0;MC.fire=MC.punch=0}}
 setInterval(mcSync,120);if(INPUT=='mobile')mcBuild();
 if(typeof scr!='undefined'&&scr=='title'&&mode=='menu')menu();
