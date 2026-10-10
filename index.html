@@ -645,7 +645,7 @@ function gibUpd(dt){
 // ---- player death: gibs + spectate whoever killed you ----
 let lastK=null;
 function palFor(sk){const K=SKINS[sk]||SKINS.warden||{};return{c:K.hood||'#2b2433',c2:K.mask||'#d8d0c0',bk:K.beak||'',hm:1,l:[K.coat||'#4a4640',K.coat2||'#5a564e',K.hood||'#3a3732','#8a1c1c']}}
-function die(){if(P.dead)return;const k=lastK;lastK=null;P.dead=1;P.cx=P.x;P.cy=P.y;
+function die(){if(P.dead)return;let k=lastK;lastK=null;if(mp.on&&mpBy!=null&&!(k&&k.p==mpBy))k={p:mpBy,s:'bomb'};P.dead=1;P.cx=P.x;P.cy=P.y;
  try{const kp=k&&k.m?k.m:k&&k.p!=null&&mp.on?mp.rp[k.p]:null,ka=kp?Math.atan2(P.y-kp.y,P.x-kp.x):null;gore({x:P.x,y:P.y,ty:'imp'},ka,70,k&&k.s?k.s:'melee',palFor(sel.skin));pool(P.x,P.y,18,8);splat(P.x,P.y,50,26);shake=Math.max(shake,9)}catch(e){}
  if(mp.on&&!P.dsent){P.dsent=1;P.dsending=1;try{mpDie()}finally{P.dsending=0}}
  P.spt=k&&k.m&&k.m.hp>0?{m:k.m}:k&&k.p!=null?{p:k.p}:null;P.sx=P.cx;P.sy=P.cy;P.sa2=0;P.x=P.y=-5000;
@@ -676,7 +676,8 @@ function drawMob(m,x,y,f){const t=m.ty||'imp',sc=t=='skitter'?.75:t=='brute'?1.5
 const LESSER={
  cerberus:{n:'Cerberus Hound',i:'\u{1F415}',d:'Blind three-headed hound. Hunts by sound alone.',
   hp:200,          // placeholder tuning
-  sp:48,hsp:118,   // roam speed / hunt speed (hunt = player sprint speed, 118)
+  sp:48,hsp:118,   // roam speed / lunge+noise-hunt speed (= player sprint speed, 118)
+  wsp:68,lt:1.6,lk:200, // once locked on: chase at hunter WALK speed (68) after the opening lunge (max lt seconds, ends on first contact); loses you beyond lk px
   dm:34,cd:1.2,    // bite damage / cooldown
   r:16.5,          // collision radius for mv() (sprite drawn at 1.5x)
   rg:30,           // bite reach (1.5x)
@@ -732,13 +733,13 @@ function roamLesser(m,dt){m.fl-=dt;m.cd-=dt;const o=LESSER[m.ty],out=lessOut;m.s
  // ---- bumped into a player who is standing still: never bites, just backs off ----
  for(const q of still){if(D(m.x,m.y,q.x,q.y)<o.r+10){const a=Math.atan2(m.y-q.y,m.x-q.x);mv(m,Math.cos(a)*70*dt,Math.sin(a)*70*dt,o.r);if(m.st=='hunt'){sniff()}else if(m.st=='roam'&&!(m.bmp>T)){m.bmp=T+1.5;pick()}}}
  // ---- bite: chase and bite a moving target; lose interest if it freezes or gets away ----
- if(m.st!='bite'&&prey&&m.cd<=1){m.st='bite';m.pr=prey;m.hun=0;m.stk=0}
+ if(m.st!='bite'&&prey&&m.cd<=1){m.st='bite';m.pr=prey;m.hun=0;m.stk=0;m.lun=1;m.lt=0}
  if(m.st=='bite'){const q=m.pr;
-  if(!q||!(q.hp>0)||q.dead||!out(q.x,q.y)||D(m.x,m.y,q.x,q.y)>o.sm*1.6){sniff();m.pr=null}
+  if(!q||!(q.hp>0)||q.dead||!out(q.x,q.y)||D(m.x,m.y,q.x,q.y)>o.lk){sniff();m.pr=null}
   else{if(!lessActive(q)){sniff(R(2.5,4));m.pr=null}           // went still (no move/noise ~1s) -> it loses you
    else{const d=D(m.x,m.y,q.x,q.y);m.sn=m.cd>o.cd-.3?2.6:1.2;
-    if(d<o.rg+8){turn(q.x,q.y,9);if(m.cd<=0&&lessActive(q)){TG=q;MCUR=m;hurtTG(o.dm);m.cd=o.cd;m.sn=2.6}}
-    else{const r=go(q.x,q.y,o.hsp,7,0);if(r==2){m.pr=null;m.st='roam';pick()}}}}
+    if(d<o.rg+8){m.lun=0;turn(q.x,q.y,9);if(m.cd<=0&&lessActive(q)){TG=q;MCUR=m;hurtTG(o.dm);m.cd=o.cd;m.sn=2.6}}
+    else{if(m.lun&&(m.lt+=dt)>o.lt)m.lun=0;const r=go(q.x,q.y,m.lun?o.hsp:o.wsp,7,0);if(r==2){m.pr=null;m.st='roam';pick()}}}}
   if(m.st=='bite')return}
  // ---- sniff: stand still and sweep the heads about; a heard noise or a smelled mover ends it ----
  if(m.st=='sniff'){m.sf-=dt;m.sn=1.6;m.a+=Math.sin(T*2.4)*dt*.9*m.sd;
@@ -1680,7 +1681,7 @@ function mpHandle(o){const r=mp.rp,f=o.f,nm=hn(f);mp.ls[f]=Date.now();if(o.v!==3
  else if(o.t=='unseal')bossUnseal(0,f);
  else if(o.t=='sh')o.b.forEach(b=>mpb.push({x:b[0],y:b[1],vx:b[2],vy:b[3],l:b[4],d:b[5],wk:b[6],by:f}));
  else if(o.t=='hit'){if(o.k=='mob'&&o.i!=null){const mm=M.find(q=>q.id===o.i);if(!mm||mm.hp<=0||D(mm.x,mm.y,P.x,P.y)>170)return}if(mode=='play'&&P.hp>0){mpBy=o.k=='mob'?null:f;shake=3;hurtP(o.d,o.k=='mob'?{m:M.find(q=>q.id===o.i),s:'melee'}:{p:f,s:o.k});mpBy=null}}
- else if(o.t=='bx'){burst(o.x,o.y,40,170,'#ff9a30',0);shake=Math.max(shake,5);if(mode=='play'&&P.hp>0&&D(P.x,P.y,o.x,o.y)<55){mpBy=f;hurtP(60);mpBy=null}}
+ else if(o.t=='bx'){burst(o.x,o.y,40,170,'#ff9a30',0);shake=Math.max(shake,5);if(mode=='play'&&P.hp>0&&D(P.x,P.y,o.x,o.y)<55){mpBy=f;hurtP(60,{p:f,s:'bomb'});mpBy=null}}
  else if(o.t=='ms')mpGetSnap(o);
  else if(o.t=='mh'){if(!mpCli()){const m=M.find(q=>q.id===o.i);if(m&&m.hp>0){mpNP=1;mpHB=f;try{hurt(m,o.d,o.a,o.s)}finally{mpNP=0;mpHB=null}}}}
  else if(o.t=='ns'){if(!mpCli())noise(o.x,o.y,o.r)}
@@ -2559,8 +2560,8 @@ const pcSun=(x,y,r,a)=>{ctx.save();ctx.globalAlpha=a;const g=ctx.createRadialGra
  const g=ctx.createRadialGradient(VW-46,50,10,VW-46,50,460);g.addColorStop(0,'rgba(255,244,180,'+(.32*a).toFixed(3)+')');g.addColorStop(1,'rgba(255,220,120,0)');ctx.fillStyle=g;ctx.fillRect(0,0,VW,VH);
  ctx.restore();pcSun(VW-46,50,14,a)}}
 {const _dm=drawMap;drawMap=function(){_dm();if(!PC.on)return;ctx.save();ctx.fillStyle='rgba(255,214,130,.07)';ctx.fillRect(14,12,612,336);ctx.restore();pcSun(594,318,11,1)}}
-// ---------- CHEAT CODES: type them in the chat box (Enter, /code, Enter). They are never shown in chat or sent to other hunters. ----------
-const CHEAT={god:0};
+// ---------- CHEAT CODES: type them in the chat box (Enter, /code, Enter). They are never shown in chat. In multiplayer the world cheats (moon, fog, rain, tithe, collapse, time, reaper) are also sent to the other hunters. ----------
+const CHEAT={god:0},CHBC=['moon','fog','rain','tithe','collapse','time','reaper'];
 const CHEATS={
  peace:['kill every demon (the sun comes out)',()=>{M.forEach(m=>{if(m.hp>0)hurt(m,99999,R(0,6.28),'bomb')})}],
  kill:['kill all the small monsters, leave the archdemon',()=>{M.forEach(m=>{if(m.hp>0&&!m.boss&&!m.lesser)hurt(m,99999,R(0,6.28),'bomb')})}],
@@ -2590,7 +2591,8 @@ function chCheat(txt){if(!devOK())return;try{const a=txt.slice(1).trim().toLower
  if(k=='help'||k=='cheats'||k==''){say('Cheats: '+Object.keys(CHEATS).map(c=>'/'+c).join(' '),9);return}
  const c=CHEATS[k];if(!c){say('Unknown cheat: /'+k+'  (try /help)',2.5);return}
  if(P.dead){say('Cheats need you alive',2);return}
- c[1](a);if(k!='god'&&k!='tools'&&k!='help')say('Cheat: /'+k,1.5)}catch(e){say('Cheat failed',2)}}
+ c[1](a);if(mp.on&&CHBC.includes(k))mpSend({t:'cheat',k,a:a.slice(0,3)});if(k!='god'&&k!='tools'&&k!='help')say('Cheat: /'+k,1.5)}catch(e){say('Cheat failed',2)}}
+{const _mc=mpHandle;mpHandle=function(o){if(o&&o.t=='cheat'&&CHBC.includes(o.k)&&mode=='play'&&P&&!P.dead&&hasDev(hn(o.f))){try{CHEATS[o.k][1](Array.isArray(o.a)?o.a.map(x=>String(x).slice(0,8)):[])}catch(e){}}_mc(o)}}
 {const _hc=hurtP;hurtP=function(d,k){if(CHEAT.god&&!(k&&k.s=='reaper'))return;_hc(d,k)}}
 {const _ncs=newGame;newGame=function(){CHEAT.god=0;LESSER_MAP=0;_ncs()}}
 // ---------- INPUT CHOICE (PC / Mobile) + TOUCH CONTROLS ----------
