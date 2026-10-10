@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Hellbreach</title><script src="https://unpkg.com/mqtt@4.3.7/dist/mqtt.min.js"></script>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"><title>Hellbreach</title><script src="https://unpkg.com/mqtt@4.3.7/dist/mqtt.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Pirata+One&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0c0a0e;--chalk:#e8e6d8;--red:#c0392b;--wood:#2e1519;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -24,8 +24,7 @@ h2{margin:6px 0;font-size:30px;border-bottom:2px dashed #e8e6d866}
 button{font:700 30px 'Caveat',cursive;background:var(--red);color:#fff;border:3px solid #e8e6d8;border-radius:10px 24px 8px 20px;padding:2px 22px;cursor:pointer;transform:rotate(-1deg)}
 button:disabled{opacity:.35;cursor:not-allowed}
 .hint{font-size:17px;opacity:.7;text-align:center;margin-top:6px}
-svg.str{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
-.hub{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:center;margin-top:8px}
+.hub{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px;align-items:center;margin-top:8px}
 .stage{border:3px solid #e8e6d833;border-radius:10px;background:radial-gradient(ellipse at 50% 80%,#4a1c18,#140808 78%);padding:8px 8px 4px;text-align:center;box-shadow:inset 0 0 40px #000}
 .stage canvas{display:block;margin:0 auto;width:100%;max-width:300px;image-rendering:pixelated}
 .cap{font-size:20px;opacity:.85;padding:2px 0 4px}
@@ -409,7 +408,7 @@ function loreStr(){const sl=document.querySelector('.slate');if(!sl)return;const
  sv.innerHTML='<path d="'+d+'" fill="none" stroke="#a02424" stroke-width="1.8" opacity=".9"/>';sl.insertBefore(sv,sl.firstChild)}
 addEventListener('resize',()=>{if(mode=='menu'&&scr=='lore')loreStr()});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(mode=='menu'&&scr=='lore')loreStr()});
-const HELP='WASD move · Shift sprint · Mouse aim/fire · RMB melee · R reload · Wheel or 1-5 switch weapons/tools · LMB uses tools · Loot weapons, ammo & tools in the buildings · Caps Lock tap into the veil (toggle) · Tab inventory (the backpack survives your escape) · M map · E interact (sigils, banish, loot) · stand in an exit ring to escape · N toggle ambient sound';
+const HELP='WASD move · Shift sprint · Mouse aim/fire · RMB melee · R reload · Wheel or 1-5 switch weapons/tools · LMB uses tools · Loot weapons, ammo & tools in the buildings · Caps Lock tap into the veil (toggle) · Tab inventory (the backpack survives your escape) · M map · E interact (sigils, banish, loot) · stand in an exit ring to escape · Enter chat (type, Enter to send, Esc to cancel) · N toggle ambient sound';
 const back='<button data-v=hub>\u2190 Back</button>',backTo=v=>`<button data-v=${v}>\u2190 Back</button>`;
 function menu(m){const c=cost(),ok=c<=bank,tl=sel.tools.filter(Boolean).map(t=>TOOL[t.k].n.replace(' x2','')+' x'+t.n).join(', ')||'no tools';
  const col=(h,r)=>`<div class=col><h2>${h}</h2>${r}</div>`;let body;
@@ -432,7 +431,7 @@ function menu(m){const c=cost(),ok=c<=bank,tl=sel.tools.filter(Boolean).map(t=>T
   body=`<div class=slate><div class=tabs>${LORE.map((s,i)=>`<div class="tb ${i==lorTab?'on':''}" data-l=${i}>${s.t.replace(' Lore','')}</div>`).join('')}</div><h2 class=lt>${S.t}</h2><p class=sub>${op?'Folder open. Close it to pick another.':S.sub}</p>`+(op?`<div class=fopen><div class=ftab>${op[0]}</div><div class=fback><div class=fsheet><div class="pol sp"><canvas data-la="${lorTab}.${lorOpen}" width=224 height=126></canvas></div><h3>${op[0]}</h3><p>${op[1]}</p></div></div></div>`:`<div class=fds>${S.e.map((n0,i)=>{const kn=lkHas(lorTab,i);return `<div class="fd${kn?'':' lk'}" ${kn?'data-lo='+i:''} style="--r:${(((i*37)%7)-3)*.8}deg"><div class=ft></div><div class=fl>${kn?n0[0]:'???'}</div></div>`}).join('')}</div>`)+`</div><div class=foot><span>${nf} of ${S.e.length} folders found${op?'':' \u2014 click one to open it'}</span>${op?'<button data-lo=-1>\u2190 Close folder</button>':back}</div>`} else if(scr=='help')body=`<div class=lore><h2>Controls</h2><ul>${HELP.split(' \u00b7 ').map(l=>`<li>${l}</li>`).join('')}</ul></div><div class=foot><span></span>${back}</div>`;
  else body=`<div class=hub><div class=stage><canvas id=pc width=256 height=288></canvas><div class=cap>${pname?pname+' \u2014 ':''}${PRI[sel.pri].n} \u00b7 ${SID[sel.side].n} \u00b7 ${tl}</div></div><div class=opts><button id=go ${ok?'':'disabled'}>Enter the Breach</button>${ok?'':'<p class=msg style="font-size:20px">Can\'t afford this loadout.</p>'}<div class=chalk data-v=name>Hunter Name<small>${pname||'Unnamed \u2014 tap to set'}</small></div><div class=chalk data-v=l_skin>Skins<small>${SKINS[sel.skin].n}</small></div><div class=chalk data-v=stash>Stash & Armory<small>${stash.length} items stored</small></div><div class=chalk data-v=missions>Ledgers<small>${ledSub()}</small></div><div class=chalk data-v=lore>Lore</div><div class=chalk data-v=help>Controls</div><div class=chalk data-v=title>Main Menu</div></div></div><div class=foot><span>Cash: $${bank} &nbsp;|&nbsp; Loadout: $${c}</span><span>Ledger: ${ledFoot()}</span></div>`;
 ;const drawIcons=()=>document.querySelectorAll('canvas[data-ic]').forEach(c=>{const o=ctx;ctx=c.getContext('2d');try{ctx.clearRect(0,0,34,18);drawWpn(c.dataset.ic,5,9,0,1)}finally{ctx=o}});
- $('#menu').style.display='block';$('#menu').innerHTML=`<div class=board><svg class=str viewBox="0 0 100 100" preserveAspectRatio="none"><polyline points="18,14 50,22 82,12 66,60 30,70" fill="none" stroke="#a02424" stroke-width=".5" opacity=".8"/></svg><h1>\u2620 The Hellbreach Ledger \u2620</h1>${m?`<p class=msg>${m}</p>`:''}${body}</div>`;drawIcons();if(scr=='name'){const pn=$('#pn');if(pn){const sv=()=>{pname=cleanName(pn.value);SAVE()};pn.oninput=sv;['keydown','keyup','keypress'].forEach(ev=>pn.addEventListener(ev,e=>e.stopPropagation()));pn.addEventListener('keydown',e=>{if(e.key=='Enter'){sv();scr='hub';menu('')}});pn.focus();pn.setSelectionRange(pn.value.length,pn.value.length)}}if(scr=='stash')stashInit();if(scr=='lore'){loreStr();setTimeout(loreStr,120);loreArt()}}
+ $('#menu').style.display='block';$('#menu').innerHTML=`<div class=board><i hidden></i><h1>\u2620 The Hellbreach Ledger \u2620</h1>${m?`<p class=msg>${m}</p>`:''}${body}</div>`;drawIcons();if(scr=='name'){const pn=$('#pn');if(pn){const sv=()=>{pname=cleanName(pn.value);SAVE()};pn.oninput=sv;['keydown','keyup','keypress'].forEach(ev=>pn.addEventListener(ev,e=>e.stopPropagation()));pn.addEventListener('keydown',e=>{if(e.key=='Enter'){sv();scr='hub';menu('')}});pn.focus();pn.setSelectionRange(pn.value.length,pn.value.length)}}if(scr=='stash')stashInit();if(scr=='lore'){loreStr();setTimeout(loreStr,120);loreArt()}}
 $('#menu').onclick=e=>{const t=e.target.closest('[data-so],[data-l],[data-lo],[data-v],[data-xa],[data-bq],[data-m],[data-f],[data-y],[data-n],[data-w],[data-u],[data-q],[data-r],[data-k],[data-p],[data-s],[data-t],#go');if(!t)return;const d=t.dataset;
  if(d.bq){pq=Math.max(1,Math.min(PQMAX,pq+(d.bq=='+'?1:-1)))}else if(d.xa){const i=d.xa[0]=='s'?1:0,w=xaW(i);if(w){const n=xa[i]+(d.xa[1]=='+'?1:-1);if(n<0||n>XAMAX)return;if(d.xa[1]=='+'&&cost()+xaP(w)>bank){note='Not enough cash.'}else xa[i]=n}}else if(d.so!==undefined)note=sortStash();else if(d.l!==undefined){lorTab=+d.l;lorOpen=-1}else if(d.lo!==undefined)lorOpen=+d.lo;else if(d.v){lorOpen=-1;scr=d.v;if(/^shop_/.test(d.v))shopScr=d.v}else if(d.m){mi=+d.m;const Lx=LEDGERS[mi];if(Lx&&lst(Lx.id).i<Lx.tasks.length){AL=Lx.id;SAVE()}}else if(d.f){curFam=d.f;const f=FAMS[d.f];if(own.includes(d.f)){if(Object.values(SKINS).filter(v=>v.f==d.f).length>1)scr='l_var';else{sel.skin=f.def;SAVE()}}else{pend={t:'f',k:d.f};scr='buy'}}
  else if(d.k){const v=SKINS[d.k];if(own.includes(d.k)){sel.skin=d.k;SAVE()}else{pend={t:'k',k:d.k};scr='buy'}}
@@ -1259,7 +1258,7 @@ function render(){
  const w=P.w[P.cur];tx(P.cur<2&&w?`${w.n}  ${P.mag[P.cur]}/${P.res[P.cur]}${P.rl>0?' (reload)':''}`:'',VW-8,VH-24,'#e8e6d8','right');
  ctx.font='bold 8px monospace';for(let i=0;i<2+NTS;i++){const x=VW/2-163+i*66,y=VH-22;ctx.fillStyle=i==P.cur?'#7a2a2ab0':'#000a';ctx.fillRect(x,y,62,16);if(i==P.cur){ctx.strokeStyle='#e8e6d8';ctx.lineWidth=1;ctx.strokeRect(x+.5,y+.5,61,15)}
   const lb=i<2?(P.w[i]?P.w[i].n.slice(0,7):i==P.cur?'Fists':''):(P.ts[i-2]?TL[P.ts[i-2].k]+' '+P.ts[i-2].n:'');if(lb)tx((i+1)+' '+lb,x+3,y+11,'#e8e6d8')}ctx.font='bold 10px monospace';
- tx(banished?'Reach extraction!':bty?(bty.h===mp.me?'Reach extraction!':bty.h==null?'Grab the dropped bounty! (see map)':hn(bty.h)+' holds the bounty (see map)'):corpse?'Banish the corpse (hold E)':(found>=3||bossOpen)?`Hunt ${BOSS[boss].n} (red X)`:`Sigils ${found}/3 (E to burn) - the lair is sealed`,8,14,'#d8c890');tx(mis.t=='none'?'':mis.done?'Ledger task done - extract to claim':mis.fail?'Ledger task failed this run':'Ledger: '+hudm(),8,26,mis.done?'#8fe0a0':mis.fail?'#a06a60':'#c0a070');if(P.carry)tx('Bounty: $'+P.carry,8,38,'#e0b040');if(P.wd>0)tx("Saint's Ward "+Math.ceil(P.wd)+'s',8,50,'#f0d070');tx('[M] Map',VW-8,14,'#d8c890','right');if(mp.on)tx('Hunters alive: '+(1+Object.keys(mp.rp).length),VW-8,26,'#d89090','right');
+ tx(PC.on&&(banished||bty||!corpse)?'PEACE - the sun is out. Reach extraction!':banished?'Reach extraction!':bty?(bty.h===mp.me?'Reach extraction!':bty.h==null?'Grab the dropped bounty! (see map)':hn(bty.h)+' holds the bounty (see map)'):corpse?'Banish the corpse (hold E)':(found>=3||bossOpen)?`Hunt ${BOSS[boss].n} (red X)`:`Sigils ${found}/3 (E to burn) - the lair is sealed`,8,14,'#d8c890');tx(mis.t=='none'?'':mis.done?'Ledger task done - extract to claim':mis.fail?'Ledger task failed this run':'Ledger: '+hudm(),8,26,mis.done?'#8fe0a0':mis.fail?'#a06a60':'#c0a070');if(P.carry)tx('Bounty: $'+P.carry,8,38,'#e0b040');if(P.wd>0)tx("Saint's Ward "+Math.ceil(P.wd)+'s',8,50,'#f0d070');tx('[M] Map',VW-8,14,'#d8c890','right');if(mp.on)tx('Hunters alive: '+(1+Object.keys(mp.rp).length),VW-8,26,'#d89090','right');
  rdHud();if(P.ep>0)tx('Escaping in '+Math.ceil(EXD-P.ep)+'...',VW/2,VH/2+34,'#8fe0a0','center');
  if(P.pk)tx('[E] take '+(P.pk.s?SID:PRI)[P.pk.k].n,VW/2,VH/2+48,'#ffd27a','center');if(msgT>0)tx(msg,VW/2,48,'#fff','center');drawDead()}
 // ---------- MAP ----------
@@ -1282,7 +1281,7 @@ function drawMap(){
  ctx.fillStyle='#7a0c14';for(let i=0;i<9;i++){const x=40+hs(i+20)*540|0,l=6+hs(i)*24|0;ctx.fillRect(x,12,2,l);ctx.beginPath();ctx.arc(x+1,12+l,2.2,0,7);ctx.fill()}
  ctx.fillStyle='rgba(90,8,14,.75)';ctx.beginPath();ctx.ellipse(34,338,22,6,.1,0,7);ctx.fill();ctx.beginPath();ctx.ellipse(48,341,10,3,0,0,7);ctx.fill();
  // title
- ctx.font="700 22px Caveat,'Comic Sans MS',cursive";tx('\u2620 The Breach, Scrawled in Blood \u2620',VW/2,28,'#e8e6d8','center');
+ ctx.font="700 22px Caveat,'Comic Sans MS',cursive";tx(PC.on?'\u2600 The Breach, At Peace \u2600':'\u2620 The Breach, Scrawled in Blood \u2620',VW/2,28,PC.on?'#ffe9a0':'#e8e6d8','center');
  // map area
  ctx.fillStyle='rgba(0,0,0,.28)';ctx.fillRect(ox,oy,mw,mh);
  ctx.strokeStyle='rgba(232,230,216,.7)';ctx.lineWidth=1.5;ctx.setLineDash([6,3]);crect(ox,oy,mw,mh,900,1.2);ctx.setLineDash([]);
@@ -1336,7 +1335,7 @@ function drawMap(){
  const known=(found>=3||bossOpen);ctx.strokeStyle=known?'#e0505a':'rgba(224,80,90,.4)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(lx+1,row(5)-9);ctx.lineTo(lx+10,row(5));ctx.moveTo(lx+10,row(5)-9);ctx.lineTo(lx+1,row(5));ctx.stroke();tx(known?B.n:'???',lx+18,row(5),known?'#ff6a6a':'#8a6a6a');
 ctx.fillStyle='#e0b040';ctx.beginPath();ctx.arc(lx+5.5,row(6)-4,4.5,0,7);ctx.fill();tx('Bounty',lx+18,row(6),'#e0b040');
  ctx.strokeStyle='#ff8a2a';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(lx+5.5,row(7)-9);ctx.lineTo(lx+10,row(7)-4);ctx.lineTo(lx+5.5,row(7));ctx.lineTo(lx+1,row(7)-4);ctx.closePath();ctx.stroke();tx('Lesser (test)',lx+18,row(7),'#ffa050');
-const note=banished?['Demon banished.','Run to the exit!']:bty?(bty.h===mp.me?['You hold the','bounty. Run!']:['The bounty is','marked in gold.']):bs.hp<=0?['It is dead.','Banish the corpse.']:(found>=3||bossOpen)?['The breach is','marked in red.']:['Burn all 3 sigils','to reveal the breach.'];
+const note=PC.on?(banished||bty?['Peace. The sun','is out. Run!']:corpse?['Peace. Banish','the corpse.']:['Peace. Reach','an exit.']):banished?['Demon banished.','Run to the exit!']:bty?(bty.h===mp.me?['You hold the','bounty. Run!']:['The bounty is','marked in gold.']):bs.hp<=0?['It is dead.','Banish the corpse.']:(found>=3||bossOpen)?['The breach is','marked in red.']:['Burn all 3 sigils','to reveal the breach.'];
  ctx.font="700 14px Caveat,cursive";note.forEach((l,i)=>tx(l,lx,row(7)+14+i*15,'#d06a5a'));
  ctx.font="700 13px Caveat,cursive";tx('[M] or [Esc] to close',VW/2-20,342,'#d8c890','center');
  ctx.restore()}
@@ -2433,4 +2432,139 @@ const SELL_TXT='Sell: drag an item here for half its shop price',sellVal=d=>{con
 {const _dm=dragMove;dragMove=function(e){_dm(e);const d=drg,z=$('#sz');if(!d||!z)return;const r=z.getBoundingClientRect(),on=e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;d.sell=on;z.classList.toggle('on',on);
  if(on){d.t=null;d.hl.style.display='none';const q=(TOOL[d.k]?(d.split?1:(d.o.n||1)):1);z.textContent='Sell '+((PRI[d.k]||SID[d.k]||TOOL[d.k]||{}).n||d.k)+(q>1?' x'+q:'')+' for $'+sellVal(d)}else z.textContent=SELL_TXT}}
 {const _de=dragEnd;dragEnd=function(){const d=drg;if(d&&d.sell){drg=null;removeEventListener('pointermove',dragMove);d.gh.remove();d.hl.remove();const v=sellVal(d),nm=(PRI[d.k]||SID[d.k]||TOOL[d.k]||{}).n||d.k,q=TOOL[d.k]?(d.split?1:(d.o.n||1)):1;take(d);bank+=v;SAVE();MUS.cash();note='Sold '+nm+(q>1?' x'+q:'')+' for $'+v+'.';menu(note);note='';return}_de()}}
+
+// ---------- TEXT CHAT: Enter opens, type, Enter sends. Messages stack on the left of the screen; shared with other hunters in multiplayer ----------
+const CHAT={on:0,txt:'',log:[],last:0,MAX:80,SHOW:12,LIFE:12,W:230};
+const chMc=document.createElement('canvas').getContext('2d');
+function chWrap(s){chMc.font='bold 9px monospace';const out=[];let cur='';for(const w of s.split(' ')){let t=cur?cur+' '+w:w;if(chMc.measureText(t).width<=CHAT.W){cur=t;continue}if(cur)out.push(cur);cur=w;while(chMc.measureText(cur).width>CHAT.W&&cur.length>1){let i=cur.length-1;while(i>1&&chMc.measureText(cur.slice(0,i)).width>CHAT.W)i--;out.push(cur.slice(0,i));cur=cur.slice(i)}}if(cur)out.push(cur);return out}
+function chAdd(name,msg,col){const lines=chWrap(String(msg));const t=performance.now();lines.forEach((l,i)=>CHAT.log.push({n:i?'':name,m:l,c:col,t}));if(CHAT.log.length>60)CHAT.log.splice(0,CHAT.log.length-60)}
+const chClean=s=>String(s==null?'':s).replace(/[\u0000-\u001f\u007f]/g,'').replace(/\s+/g,' ').trim().slice(0,CHAT.MAX);
+function chClose(){CHAT.on=0;CHAT.txt=''}
+function chSend(){const m=chClean(CHAT.txt);chClose();if(!m)return;if(m[0]=='/'){chCheat(m);return}const now=performance.now();if(now-CHAT.last<400)return;CHAT.last=now;
+ const nm=pname||(mp.on?'Hunter '+(mp.me+1):'You');chAdd(nm,m,'#ffd27a');if(mp.on)mpSend({t:'chat',m,nm:cleanName(pname)})}
+addEventListener('keydown',e=>{if(mode!='play'||!P)return;
+ if(!CHAT.on){if(e.code=='Enter'&&!e.repeat&&!P.dead&&!showMap&&!invOpen&&!(e.ctrlKey||e.metaKey||e.altKey)){CHAT.on=1;CHAT.txt='';keys={};mouse.l=mouse.r=0;e.preventDefault();e.stopImmediatePropagation()}return}
+ e.stopImmediatePropagation();e.preventDefault();
+ if(e.code=='Enter'||e.code=='NumpadEnter'){if(!e.repeat)chSend()}
+ else if(e.code=='Escape')chClose();
+ else if(e.code=='Backspace')CHAT.txt=CHAT.txt.slice(0,-1);
+ else if(e.key&&e.key.length==1&&!e.ctrlKey&&!e.metaKey&&CHAT.txt.length<CHAT.MAX)CHAT.txt+=e.key;
+ keys={}},true);
+{const _mh=mpHandle;mpHandle=function(o){if(o&&o.t=='chat'){const m=chClean(o.m);if(m)chAdd(hn(o.f),m,'#d89090')}_mh(o)}}
+{const _ng=newGame;newGame=function(){CHAT.log.length=0;chClose();_ng()}}
+{const _end=end;end=function(w){chClose();return _end(w)}}
+function chDraw(){if(mode!='play'||!P)return;const now=performance.now(),open=CHAT.on&&!P.dead;
+ const vis=CHAT.log.filter(l=>open||now-l.t<CHAT.LIFE*1000).slice(-CHAT.SHOW);
+ ctx.save();ctx.font='bold 9px monospace';ctx.textAlign='left';const lh=11,bot=VH-62,x=8;
+ vis.forEach((l,i)=>{const y=bot-(vis.length-1-i)*lh,age=(now-l.t)/1000,a=open?1:Math.min(1,(CHAT.LIFE-age)/2);ctx.globalAlpha=Math.max(0,a);
+  const nw=l.n?ctx.measureText(l.n+': ').width:0,w=nw+ctx.measureText(l.m).width;ctx.fillStyle='rgba(0,0,0,.45)';ctx.fillRect(x-3,y-9,w+6,lh);
+  if(l.n){tx(l.n+': ',x,y,l.c);tx(l.m,x+nw,y,'#e8e6d8')}else tx(l.m,x,y,'#e8e6d8')});
+ ctx.globalAlpha=1;
+ if(open){const y=bot+6,bw=CHAT.W+12;ctx.fillStyle='rgba(0,0,0,.7)';ctx.fillRect(x-3,y,bw,14);ctx.strokeStyle='#e8e6d8';ctx.lineWidth=1;ctx.strokeRect(x-2.5,y+.5,bw-1,13);
+  let s=CHAT.txt;while(s.length>1&&ctx.measureText(s).width>CHAT.W-6)s=s.slice(1);tx(s+(Math.floor(now/450)%2?'_':''),x+2,y+10,'#fff')}
+ else if(!vis.length&&mp.on){tx('[Enter] chat',x,bot+16,'rgba(216,200,144,.5)')}
+ ctx.restore();ctx.font='bold 10px monospace'}
+{const _rh=rdHud;rdHud=function(){_rh();chDraw()}}
+// ---------- PEACE: kill every demon on the map and the sun comes out ----------
+const PC={on:0,t:0};
+const pcSun=(x,y,r,a)=>{ctx.save();ctx.globalAlpha=a;const g=ctx.createRadialGradient(x,y,r*.4,x,y,r*4);g.addColorStop(0,'rgba(255,240,170,.8)');g.addColorStop(1,'rgba(255,220,120,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r*4,0,7);ctx.fill();
+ ctx.strokeStyle='rgba(255,236,150,.85)';ctx.lineWidth=1.5;ctx.beginPath();for(let i=0;i<12;i++){const an=i*.5236+T*.2;ctx.moveTo(x+Math.cos(an)*(r+3),y+Math.sin(an)*(r+3));ctx.lineTo(x+Math.cos(an)*(r+(i%2?7:11)),y+Math.sin(an)*(r+(i%2?7:11)))}ctx.stroke();
+ ctx.fillStyle='#fff4b0';ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.fillStyle='#ffd860';ctx.beginPath();ctx.arc(x,y,r*.7,0,7);ctx.fill();ctx.restore()};
+{const _u=update;update=function(dt){const tm=P&&P.tm;_u(dt);if(mode!='play'||!P)return;
+ if(!PC.on&&!P.dead&&M.length&&M.every(m=>m.hp<=0)){PC.on=1;PC.t=0;try{sfx.stop();sfx.bonus()}catch(e){}banner('PEACE','Every demon in the parish is dead. The sun rises.'+(banished||bty?' Reach an exit!':' Banish the corpse, then reach an exit.'),'#ffe080')}
+ if(PC.on){PC.t+=dt;EVN=null;TTH=null;FOG=null;HFR=null;mets=[];P.evp=[];P.hfD=1;P.fgD=1;P.clD=1;P.ttn=1e9;if(!RD&&tm!==undefined)P.tm=tm}}}
+{const _nd=newGame;newGame=function(){PC.on=0;PC.t=0;_nd()}}
+{const _rl=rdLight;rdLight=function(){_rl();if(!PC.on)return;const a=Math.min(1,PC.t/6);dx.globalCompositeOperation='destination-out';dx.fillStyle='rgba(0,0,0,'+a.toFixed(3)+')';dx.fillRect(0,0,VW,VH)}}
+{const _bd=bmDraw;bmDraw=function(){_bd();if(!PC.on||P.dead)return;const a=Math.min(1,PC.t/6);ctx.save();
+ ctx.fillStyle='rgba(255,214,130,'+(.16*a).toFixed(3)+')';ctx.fillRect(0,0,VW,VH);
+ const g=ctx.createRadialGradient(VW-46,50,10,VW-46,50,460);g.addColorStop(0,'rgba(255,244,180,'+(.32*a).toFixed(3)+')');g.addColorStop(1,'rgba(255,220,120,0)');ctx.fillStyle=g;ctx.fillRect(0,0,VW,VH);
+ ctx.restore();pcSun(VW-46,50,14,a)}}
+{const _dm=drawMap;drawMap=function(){_dm();if(!PC.on)return;ctx.save();ctx.fillStyle='rgba(255,214,130,.07)';ctx.fillRect(14,12,612,336);ctx.restore();pcSun(594,318,11,1)}}
+{const _rp=rdHud;rdHud=function(){if(!PC.on||P.dead||RD)return _rp();ctx.font='bold 8px monospace';tx('THE REAPER IS HELD AT BAY',VW/2,12,'#c8b070','center');ctx.font='bold 17px monospace';tx('PEACE',VW/2,29,'#ffe9a0','center');ctx.font='bold 10px monospace';chDraw()}}
+// ---------- CHEAT CODES: type them in the chat box (Enter, /code, Enter). They are never shown in chat or sent to other hunters. ----------
+const CHEAT={god:0};
+const CHEATS={
+ peace:['kill every demon (the sun comes out)',()=>{M.forEach(m=>{if(m.hp>0)hurt(m,99999,R(0,6.28),'bomb')})}],
+ kill:['kill all the small monsters, leave the archdemon',()=>{M.forEach(m=>{if(m.hp>0&&!m.boss&&!m.lesser)hurt(m,99999,R(0,6.28),'bomb')})}],
+ heal:['full health and stamina',()=>{P.hp=100;P.st=100;P.exh=0}],
+ god:['toggle invulnerability',()=>{CHEAT.god=!CHEAT.god;say(CHEAT.god?'God mode on':'God mode off',2)}],
+ ammo:['refill every magazine and reserve',()=>{[0,1].forEach(i=>{const w=P.w[i];if(w){P.mag[i]=w.m;P.res[i]=w.m*6}})}],
+ tools:['max out every tool',()=>{for(let r=0;r<3;r++)TKS.forEach(k=>giveTool(k))}],
+ cash:['add bounty cash (/cash 500)',a=>{P.carry+=Math.max(1,Math.min(1e6,parseInt(a[0])||1000))}],
+ sigils:['burn all 3 sigils and unseal the lair',()=>{clues.forEach(c=>{if(!c.got){c.got=1;found++}});found=3;bossUnseal(1)}],
+ boss:['teleport next to the archdemon',()=>{const b=M[0];if(!b)return;let x=b.x,y=b.y+60;if(hit(x,y,4)){x=b.x;y=b.y}P.x=x;P.y=y}],
+ exit:['teleport to the nearest open exit',()=>{let b=null,bd=1e9;exts.forEach(e=>{if(e.sealed)return;const d=D(P.x,P.y,e.x,e.y);if(d<bd){bd=d;b=e}});if(b){P.x=b.x;P.y=b.y}else say('No open exit',2)}],
+ camp:['teleport back to camp',()=>{P.x=camp.x;P.y=camp.y}],
+ spawn:['spawn monsters nearby (/spawn 10)',a=>{evSpawn(Math.max(1,Math.min(40,parseInt(a[0])||8)))}],
+ moon:['start the Blood Moon',()=>{if(PC.on)return;EVN=null;P.evp=[['bloodmoon',0]]}],
+ fog:['start the Fog',()=>{if(PC.on)return;EVN=null;HFR=null;TTH=null;FOG=null;P.fgD=0;P.fgT=0}],
+ rain:['start Hellfire Rain',()=>{if(PC.on)return;EVN=null;FOG=null;TTH=null;HFR=null;P.hfD=0;P.hfT=0}],
+ tithe:['toll the Tithe bell',()=>{if(PC.on)return;EVN=null;FOG=null;HFR=null;TTH=null;P.ttn=0}],
+ collapse:['seal one extraction point',()=>{if(PC.on)return;P.clD=0;P.clT=0}],
+ time:['set seconds before the Reaper (/time 30)',a=>{P.tm=Math.max(1,parseInt(a[0])||60)}],
+ reaper:['summon the Reaper now',()=>{if(!RD)P.tm=.05}]
+};
+function chCheat(txt){try{const a=txt.slice(1).trim().toLowerCase().split(/\s+/),k=a.shift();
+ if(k=='help'||k=='cheats'||k==''){say('Cheats: '+Object.keys(CHEATS).map(c=>'/'+c).join(' '),9);return}
+ const c=CHEATS[k];if(!c){say('Unknown cheat: /'+k+'  (try /help)',2.5);return}
+ if(P.dead){say('Cheats need you alive',2);return}
+ c[1](a);if(k!='god'&&k!='tools'&&k!='help')say('Cheat: /'+k,1.5)}catch(e){say('Cheat failed',2)}}
+{const _hc=hurtP;hurtP=function(d,k){if(CHEAT.god&&!(k&&k.s=='reaper'))return;_hc(d,k)}}
+{const _ncs=newGame;newGame=function(){CHEAT.god=0;_ncs()}}
+// ---------- INPUT CHOICE (PC / Mobile) + TOUCH CONTROLS ----------
+// Main menu > Input picks PC (keyboard + mouse) or Mobile. Mobile shows a movement circle on the left and Look / Fire / Punch circles on the right,
+// plus a few small buttons for the other actions (interact, reload, swap, heal, map, bag, chat).
+let INPUT='pc';try{const v=localStorage.getItem('bh_input');INPUT=v=='mobile'||v=='pc'?v:((window.matchMedia&&matchMedia('(pointer:coarse)').matches)?'mobile':'pc')}catch(e){}
+TT_ITEMS.push({get l(){return 'Input: '+(INPUT=='mobile'?'Mobile':'PC')},v:'inp'});
+const MC={root:null,mx:0,my:0,mag:0,aa:0,am:.6,fire:0,punch:0};
+function setInput(v){INPUT=v;try{localStorage.setItem('bh_input',v)}catch(e){}if(v=='mobile')mcBuild();mcSync()}
+function mcStick(el,cb,end){let id=null;const kn=el.querySelector('i'),f=e=>{const r=el.getBoundingClientRect(),R0=r.width/2,dx=e.clientX-(r.left+R0),dy=e.clientY-(r.top+R0),d=Math.hypot(dx,dy)||1,m=Math.min(1,d/R0),nx=dx/d,ny=dy/d;kn.style.transform='translate('+(nx*m*R0*.5)+'px,'+(ny*m*R0*.5)+'px)';cb(nx*m,ny*m,m)};
+ el.addEventListener('pointerdown',e=>{if(id!==null)return;e.preventDefault();id=e.pointerId;try{el.setPointerCapture(id)}catch(_){}el.classList.add('dn');f(e)});
+ el.addEventListener('pointermove',e=>{if(e.pointerId===id)f(e)});
+ const u=e=>{if(e.pointerId!==id)return;id=null;kn.style.transform='';el.classList.remove('dn');end()};el.addEventListener('pointerup',u);el.addEventListener('pointercancel',u)}
+function mcBtn(el,down,up){el.addEventListener('pointerdown',e=>{e.preventDefault();try{el.setPointerCapture(e.pointerId)}catch(_){}el.classList.add('dn');if(down)down()});
+ const u=()=>{if(!el.classList.contains('dn'))return;el.classList.remove('dn');if(up)up()};el.addEventListener('pointerup',u);el.addEventListener('pointercancel',u)}
+function mcBuild(){if(MC.root)return;
+ const st=document.createElement('style');st.textContent=`#g{touch-action:none}
+#mc{position:fixed;inset:0;z-index:50;pointer-events:none;display:none;font-family:'Caveat','Comic Sans MS',cursive;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none}
+#mc *{touch-action:none;-webkit-tap-highlight-color:transparent}
+#mc .mcb{position:absolute;pointer-events:auto;box-sizing:border-box;border-radius:50%;border:2px solid rgba(232,230,216,.55);background:rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;color:rgba(232,230,216,.9);font-weight:700}
+#mc .mcb b{font-size:17px;pointer-events:none}
+#mc .mcb i{position:absolute;left:50%;top:50%;width:46%;height:46%;margin:-23% 0 0 -23%;border-radius:50%;background:rgba(232,230,216,.28);border:2px solid rgba(232,230,216,.5);pointer-events:none}
+#mc .mcb.dn{background:rgba(255,255,255,.24)}
+#mcj{left:calc(22px + env(safe-area-inset-left,0px));bottom:calc(22px + env(safe-area-inset-bottom,0px));width:132px;height:132px}
+#mcc{position:absolute;right:env(safe-area-inset-right,0px);bottom:env(safe-area-inset-bottom,0px);width:260px;height:260px;pointer-events:none}
+#mcl{left:154px;top:158px;width:84px;height:84px}
+#mcf{left:75px;top:151px;width:68px;height:68px;background:rgba(192,57,43,.22);border-color:rgba(255,120,100,.75)}
+#mcp{left:151px;top:83px;width:60px;height:60px;background:rgba(224,160,48,.2);border-color:rgba(240,190,90,.75)}
+#mcc .sm{width:36px;height:36px;font-size:17px}`;document.head.appendChild(st);
+ const r=document.createElement('div');r.id='mc';
+ r.innerHTML='<div class=mcb id=mcj><i></i></div><div id=mcc><div class=mcb id=mcl><i></i><b>LOOK</b></div><div class=mcb id=mcf><i></i><b>FIRE</b></div><div class=mcb id=mcp><i></i><b>PUNCH</b></div>'+[['E','mce'],['R','mcr'],['⇄','mcw'],['+','mch'],['M','mcm'],['☰','mcg'],['✉','mct']].map((a,k,A)=>{const th=(175+100*k/(A.length-1))*Math.PI/180;return '<div class="mcb sm" id='+a[1]+' style="left:'+(196+146*Math.cos(th)-18).toFixed(1)+'px;top:'+(200+146*Math.sin(th)-18).toFixed(1)+'px"><b>'+a[0]+'</b></div>'}).join('')+'</div>';
+ document.body.appendChild(r);MC.root=r;const q=s=>r.querySelector(s),act=f=>()=>{if(mode=='play'&&P&&!P.dead)f()};
+ mcStick(q('#mcj'),(x,y,m)=>{MC.mx=x;MC.my=y;MC.mag=m},()=>{MC.mx=MC.my=MC.mag=0});
+ mcStick(q('#mcl'),(x,y,m)=>{if(m>.06){MC.aa=Math.atan2(y,x)}MC.am=m},()=>{});
+ mcStick(q('#mcf'),(x,y,m)=>{MC.fire=1;if(m>.06)MC.aa=Math.atan2(y,x);MC.am=Math.max(.5,m)},()=>{MC.fire=0});
+ mcStick(q('#mcp'),(x,y,m)=>{MC.punch=1;if(m>.06)MC.aa=Math.atan2(y,x);MC.am=Math.max(.5,m)},()=>{MC.punch=0});
+ mcBtn(q('#mce'),act(()=>{keys.KeyE=1}),()=>{keys.KeyE=0});
+ mcBtn(q('#mcr'),act(reload));
+ mcBtn(q('#mcw'),act(()=>{for(let k=1;k<=2+NTS;k++){const n=(P.cur+k)%(2+NTS);if(has(n)){P.cur=n;P.rl=0;break}}}));
+ mcBtn(q('#mch'),act(useTonic));
+ mcBtn(q('#mcm'),act(()=>{showMap=!showMap;mouse.l=mouse.r=0}));
+ mcBtn(q('#mcg'),act(()=>{ivd=null;invOpen=!invOpen;showMap=0;mouse.l=mouse.r=0;refocus()}));
+ mcBtn(q('#mct'),act(()=>{const t=prompt('Chat message (or a /cheat code):');if(t){CHAT.txt=String(t);chSend()}}))}
+function mcSync(){if(INPUT=='mobile'&&!MC.root)mcBuild();if(!MC.root)return;const on=INPUT=='mobile'&&mode=='play'&&P&&!P.dead;MC.root.style.display=on?'block':'none';if(!on){MC.mx=MC.my=MC.mag=0;MC.fire=MC.punch=0}}
+setInterval(mcSync,120);if(INPUT=='mobile')mcBuild();
+if(typeof scr!='undefined'&&scr=='title'&&mode=='menu')menu();
+// touch input drives the same keys / mouse the PC controls use
+{const _um=update;update=function(dt){if(INPUT=='mobile'&&mode=='play'&&P&&!P.dead&&!invOpen&&!showMap){
+  keys.KeyA=MC.mx<-.35?1:0;keys.KeyD=MC.mx>.35?1:0;keys.KeyW=MC.my<-.35?1:0;keys.KeyS=MC.my>.35?1:0;keys.ShiftLeft=MC.mag>.92?1:0;
+  const px=P.x-cam.x,py=P.y-cam.y,d=50+110*MC.am;mouse.x=px+Math.cos(MC.aa)*d;mouse.y=py+Math.sin(MC.aa)*d;mouse.l=MC.fire?1:0;mouse.r=MC.punch?1:0}
+ _um(dt)}}
+// the browser's emulated mouse events from taps must not fire the gun or move the aim while playing (inventory and death screen still use them)
+['mousedown','mousemove','mouseup'].forEach(ev=>addEventListener(ev,e=>{if(INPUT!='mobile'||mode!='play'||!P||invOpen||showMap||P.dead)return;e.stopImmediatePropagation()},true));
+// the Input screen on the main menu
+function inpShow(){const M=$('#menu');M.classList.remove('ttl');M.style.display='block';if(TART){TART.stop();TART=null}
+ M.innerHTML=`<div class=board><h1>☠ Input ☠</h1><p class=msg style="font-size:22px;margin:6px 0 10px">Choose how you want to play</p><div class=cols style="grid-template-columns:1fr 1fr"><div class="chalk ${INPUT=='pc'?'on':''}" data-inp=pc>PC<small>Keyboard and mouse. WASD to move, mouse to aim and fire, right click to punch.</small></div><div class="chalk ${INPUT=='mobile'?'on':''}" data-inp=mobile>Mobile<small>Touch screen. A movement circle on the left; Look, Fire and Punch circles on the right, plus small buttons for interact, reload, swap, heal, map, bag and chat. Best in landscape.</small></div></div><div class=foot><span>Selected: ${INPUT=='mobile'?'Mobile':'PC'}</span><button data-v=title>← Back</button></div></div>`}
+{const _mi=menu;menu=function(m){if(scr=='inp'){inpShow();return}_mi(m)}}
+$('#menu').addEventListener('click',e=>{const t=e.target.closest('[data-inp]');if(!t)return;setInput(t.dataset.inp);menu()});
 </script></body></html>
