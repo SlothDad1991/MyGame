@@ -28,11 +28,12 @@ button:disabled{opacity:.35;cursor:not-allowed}
 .stage{border:3px solid #e8e6d833;border-radius:10px;background:radial-gradient(ellipse at 50% 80%,#4a1c18,#140808 78%);padding:8px 8px 4px;text-align:center;box-shadow:inset 0 0 40px #000}
 .stage canvas{display:block;margin:0 auto;width:100%;max-width:300px;image-rendering:pixelated}
 .cap{font-size:20px;opacity:.85;padding:2px 0 4px}
+.lcol .chalk{font-size:30px;padding:6px 16px;margin:12px 0 0}.achw{position:relative}.achg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px;margin-top:6px}.ach{border:2px solid #e8e6d855;border-radius:6px 14px 5px 12px;padding:6px 12px 8px;line-height:1.05;background:#0000002a}.ach.mx{border-color:#ffd23a99;background:#ffd23a14}.ach .an{display:flex;justify-content:space-between;align-items:baseline;font-size:26px}.ach .pips b{font-size:24px;margin-left:2px}.ach small{display:block;font-size:17px;opacity:.8}.ach .pr{opacity:.95}.ach .tl{font-size:15px;opacity:1;margin-top:2px}.ach .bar{height:8px;margin:5px 0 3px;border:1px solid #e8e6d855;border-radius:5px;background:#0006;overflow:hidden}.ach .bar i{display:block;height:100%}
 .ic{float:right;width:102px;height:54px;image-rendering:pixelated;margin:0 0 0 8px}.opts.list h2{margin-top:0}.opts.list .chalk{font-size:26px;padding:4px 14px;margin:8px 0}.opts .chalk{font-size:30px;padding:6px 16px;margin:12px 0}
 .opts #go{width:100%;font-size:38px;padding:6px;margin:4px 0 8px}
 #pn{display:block;width:100%;box-sizing:border-box;font:400 34px 'Caveat','Comic Sans MS',cursive;color:var(--chalk);background:#00000055;border:2px solid #e8e6d888;border-radius:6px 14px 5px 12px;padding:6px 12px;margin:10px 0 14px;outline:none}#pn:focus{border-color:#ffa23c;box-shadow:0 0 12px #ff6a2a55}#pn::placeholder{color:#e8e6d855}
 .lore p,.lore li{font-size:22px;line-height:1.1;margin:4px 0}.lore ul{columns:2;padding-left:20px;margin:4px 0}
-@media (max-width:640px){.hub{grid-template-columns:1fr}.lore ul{columns:1}}
+@media (max-width:640px){.achg{grid-template-columns:1fr}.hub{grid-template-columns:1fr}.lore ul{columns:1}}
 .nt.lk{opacity:.5;filter:grayscale(1) brightness(.85)}.nt.lk h3{letter-spacing:.2em}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c0a0e}}
 :root[data-theme="dark"]{--bg:#0c0a0e}
@@ -153,7 +154,7 @@ const FAMS={hunter:{n:'The Hunter',d:'The plain issue kit. Always yours.',c:0,de
  wolf:{n:'Wolfhide Stalker',d:'Pelt, paint and fangs. The wild hunts the breach.',c:800,def:'wolf'}};
 const pit=q=>q.t=='f'?FAMS[q.k]:q.t=='w'?(SID[q.k]||PRI[q.k]||TOOL[q.k]):SKINS[q.k];
 let pname='';const cleanName=v=>String(v==null?'':v).replace(/[^\w .'\-]/g,'').replace(/\s+/g,' ').trim().slice(0,14);
-let LS={},AL=null,shopScr='shop',traps=[],own=['hunter','plain'],curFam='hunter',note='',pend=null,stash=[],invOpen=0;
+let LS={},AST={},ANT={},RS={},AL=null,shopScr='shop',traps=[],own=['hunter','plain'],curFam='hunter',note='',pend=null,stash=[],invOpen=0;
 const ISZ={rifle:[4,2],shotgun:[4,2],repeater:[3,2],crossbow:[3,2],pistol:[2,2],revolver:[2,2],tonic:[1,1],bomb:[2,1],pepperbox:[3,2],musket:[4,2],flamer:[3,2],handcannon:[2,2],whisper:[2,2],flask:[1,1],flare:[1,1],ward:[1,1],tripwire:[1,1]},SC=20,SR=8,MAXST=3,NTS=3,EXD=10/* seconds standing in an exit ring to escape */,isz=k=>ISZ[k]||[1,1];
 const fitsIn=(arr,C,R_,x,y,w,h,ex)=>x>=0&&y>=0&&x+w<=C&&y+h<=R_&&!arr.some(o=>{if(o===ex)return 0;const z=isz(o.k);return x<o.x+z[0]&&x+w>o.x&&y<o.y+z[1]&&y+h>o.y});
 const spotIn=(arr,C,R_,k,ex)=>{const[w,h]=isz(k);for(let y=0;y<=R_-h;y++)for(let x=0;x<=C-w;x++)if(fitsIn(arr,C,R_,x,y,w,h,ex))return[x,y];return null};
@@ -165,10 +166,25 @@ const slotSet=(id,it)=>{if(id=='p')sel.pri=it?it.k:'none';else if(id=='s')sel.si
 const dsc=k=>TOOL[k]?TOOL[k].d:st(SID[k]||PRI[k]);
 const SPX={rifle:[21,6.5,6],shotgun:[20,5,6],repeater:[19,5.5,7],crossbow:[19,5.5,17],pistol:[10,3,6],revolver:[17,6,7],tonic:[9,4.5,5],bomb:[12,6,5],pepperbox:[15,6,7],musket:[24,7,6],flamer:[21,6.5,7],handcannon:[16,5.5,7],whisper:[15,6,6],flask:[11,5.5,5],flare:[13,6,4],ward:[10,4,8]};
 function itemCv(k,W,H){const c=document.createElement('canvas');c.width=W;c.height=H;c.style.cssText='width:100%;height:100%;image-rendering:pixelated;pointer-events:none';const[l,cx,h]=SPX[k]||[10,5,5],sc=Math.min(W*.86/l,H*.8/h),o=ctx;ctx=c.getContext('2d');try{drawWpn(k,W/2-cx*sc,H/2-.5*sc,0,sc)}finally{ctx=o}return c}
-const SAVE=run=>{try{localStorage.setItem('bh_save',JSON.stringify({nm:pname,bank,own,led:LS,al:AL,skin:sel.skin,stash,pri:sel.pri,side:sel.side,bag:sel.bag,tools:sel.tools,run:run?1:0}))}catch(e){}};
-try{const d=JSON.parse((localStorage.getItem('bh_save')||'null').replace(/"smg"/g,'"pepperbox"'));if(d&&Array.isArray(d.own)){own=[...new Set(['hunter','plain',...d.own.filter(k=>FAMS[k]||SKINS[k])])];bank=Math.max(120,d.bank|0);if(d.led)LS=d.led;AL=d.al||null;sel.skin=SKINS[d.skin]&&own.includes(d.skin)?d.skin:'plain';pname=cleanName(d.nm);
+const SAVE=run=>{try{localStorage.setItem('bh_save',JSON.stringify({nm:pname,bank,own,led:LS,al:AL,skin:sel.skin,stash,pri:sel.pri,side:sel.side,bag:sel.bag,tools:sel.tools,ast:AST,ant:ANT,run:run?1:0}))}catch(e){}};
+try{const d=JSON.parse((localStorage.getItem('bh_save')||'null').replace(/"smg"/g,'"pepperbox"'));if(d&&Array.isArray(d.own)){own=[...new Set(['hunter','plain',...d.own.filter(k=>FAMS[k]||SKINS[k])])];bank=Math.max(120,d.bank|0);if(d.led)LS=d.led;if(d.ast&&typeof d.ast=='object'){for(const k in d.ast){const v=+d.ast[k];if(isFinite(v)&&v>=0)AST[k]=v}}if(d.ant&&typeof d.ant=='object'){for(const k in d.ant){const v=d.ant[k]|0;if(v>0&&v<4)ANT[k]=v}}AL=d.al||null;sel.skin=SKINS[d.skin]&&own.includes(d.skin)?d.skin:'plain';pname=cleanName(d.nm);
  const ok=k=>k&&k!='none'&&(PRI[k]||SID[k]);stash=[];(d.stash||[]).forEach(o=>{const k=typeof o=='string'?o:o&&o.k;if(!(ok(k)||TOOL[k]))return;const z=isz(k);if(typeof o=='object'&&Number.isInteger(o.x)&&Number.isInteger(o.y)&&fits(o.x,o.y,z[0],z[1]))stash.push({k,x:o.x,y:o.y,n:o.n||(TOOL[k]?2:0)});else addItem(k,o&&o.n)});
  if(d.run){sel.pri='none';sel.side='none';sel.bag=[];sel.tools=[null,null,null]}else{if(PRI[d.pri])sel.pri=d.pri;if(SID[d.side])sel.side=d.side;sel.bag=[];(Array.isArray(d.bag)?d.bag:d.bag?[d.bag]:[]).forEach(o=>{const k=typeof o=='string'?o:o&&o.k;if(!(ok(k)||TOOL[k]))return;const z=isz(k);if(typeof o=='object'&&Number.isInteger(o.x)&&Number.isInteger(o.y)&&fitsIn(sel.bag,4,4,o.x,o.y,z[0],z[1]))sel.bag.push({k,x:o.x,y:o.y,n:o.n||(TOOL[k]?1:0)});else addTo(sel.bag,4,4,k,o&&o.n)});if(Array.isArray(d.tools))sel.tools=[0,1,2].map(i=>{const t=d.tools[i];if(!t)return null;const k=typeof t=='string'?t:t.k;return TOOL[k]?{k,n:Math.min(MAXST,t.n||2)}:null})}}}catch(e){}
+// ---------- DEV names: only a name containing DEV unlocks the chat cheats, and adding DEV to a name needs the password ----------
+const pwh=t=>{let h=2166136261;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)},PW_HASH='vsgt4';
+let DEVAUTH=0;try{DEVAUTH=localStorage.getItem('bh_dv')===PW_HASH?1:0}catch(e){}
+const hasDev=n=>/dev/i.test(String(n||'')),devOK=()=>!!DEVAUTH&&hasDev(pname),devCol=(n,c)=>hasDev(n)?'#5fe3ff':c;
+const devCheck=t=>pwh('hb:'+String(t==null?'':t).trim())===PW_HASH;
+function devAsk(cb){const old=document.getElementById('devpw');if(old)old.remove();
+ const o=document.createElement('div');o.id='devpw';o.style.cssText="position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;font-family:'Caveat','Comic Sans MS',cursive;color:#e8e6d8";
+ o.innerHTML="<div style=\"background:#2a0f13;border:3px solid #5a2228;border-radius:10px;padding:18px 22px;width:min(320px,86vw);text-align:center;box-shadow:0 0 30px #000\"><div style=\"font-size:26px;margin-bottom:6px\">DEV password</div><div style=\"font-size:18px;opacity:.85;margin-bottom:10px\">Enter the password to use DEV in your name.</div><input id=devpwi type=password inputmode=numeric autocomplete=off spellcheck=false style=\"width:100%;box-sizing:border-box;font:inherit;font-size:24px;text-align:center;padding:6px;border-radius:6px;border:2px solid #8a4a50;background:#14070a;color:#fff\"><div id=devpwm style=\"min-height:22px;font-size:18px;color:#ff8a7a;margin:6px 0\"></div><div style=\"display:flex;gap:10px;justify-content:center\"><button id=devpwo style=\"font:inherit;font-size:22px;padding:4px 18px;border-radius:8px;border:2px solid #ffb0a0;background:#c0392b;color:#fff;cursor:pointer\">OK</button><button id=devpwc style=\"font:inherit;font-size:22px;padding:4px 18px;border-radius:8px;border:2px solid #8a7a70;background:#3a2a2a;color:#e8e6d8;cursor:pointer\">Cancel</button></div></div>";
+ document.body.appendChild(o);const inp=o.querySelector('#devpwi'),msg=o.querySelector('#devpwm');let done=0;
+ const fin=ok=>{if(done)return;done=1;o.remove();cb(ok)};
+ const go=()=>{if(devCheck(inp.value))fin(true);else{msg.textContent='Wrong password.';inp.value='';inp.focus();setTimeout(()=>fin(false),700)}};
+ ['keydown','keyup','keypress'].forEach(ev=>inp.addEventListener(ev,e=>e.stopPropagation()));
+ inp.addEventListener('keydown',e=>{if(e.key=='Enter')go();else if(e.key=='Escape')fin(false)});
+ o.querySelector('#devpwo').onclick=go;o.querySelector('#devpwc').onclick=()=>fin(false);setTimeout(()=>inp.focus(),30)}
+if(hasDev(pname)&&!DEVAUTH)pname=cleanName(pname.replace(/dev/gi,''));
 // ---------- MISSIONS ----------
 const WKEYS=['rifle','shotgun','repeater','crossbow','pistol','revolver','pepperbox','musket','flamer','handcannon','whisper','melee','bomb'];
 const wph=k=>k=='melee'?'melee attacks':k=='bomb'?'blessed charges':'the '+(PRI[k]||SID[k]).n;
@@ -232,6 +248,39 @@ const ledList=()=>LEDGERS.map((L,k)=>{const s=lst(L.id),dn=s.i>=L.tasks.length;r
 function ledStory(){const L=LEDGERS[mi]||LEDGERS[0],s=lst(L.id),k=L.tasks.length;
  return `<div class=chalk>${L.t}<small>${L.h}</small></div><div class=chalk>How it works<small>Tap a Ledger to make it active. Progress is banked when you extract alive; dying loses that run's progress.</small></div>`+L.tasks.map((T,i)=>{const dn=i<s.i,cur=i==s.i,pr=cur&&['kills','wkills','bdmg','esc'].includes(T.t)?` (${s.p}/${T.n})`:'';
   return `<div class="paper ${cur?'on':''}" style="cursor:default">${dn?'\u2714':cur?'\u25B6':'\u25CB'} ${dn||cur?T.h:'???'}${i==k-1?' \u2014 skin: '+SKINS[L.skin].n:''}<br><small>${dn||cur?tText(T)+pr+'<br>'+T.s:'Locked'}</small><br>Reward $${T.bo}${i==k-1?' + the skin':''}</div>`}).join('')}
+
+// ---------- ACHIEVEMENTS: 3 tiers each (Bronze / Silver / Gold). Lifetime stats live in AST; a run's stats (RS) are banked when the run ends, win or lose ----------
+const TN=['Bronze','Silver','Gold'],TCOL=['#cd7f32','#c8ccd2','#ffd23a'];
+const loreTot=()=>LORE.reduce((a,x)=>a+x.e.length,0),skinTot=()=>Object.keys(SKINS).length;
+const ACH=[
+ {id:'horde',n:'Horde Breaker',s:'horde',g:[25,100,500],d:n=>`Kill ${n} demons of the horde`},
+ {id:'lesser',n:'Beast Hunter',s:'lessers',g:[1,5,20],d:n=>`Kill ${n} lesser demon${n>1?'s':''}`},
+ {id:'boss',n:'Archdemon Slayer',s:'bosses',g:[1,5,15],d:n=>`Kill ${n} archdemon${n>1?'s':''}`},
+ {id:'wound',n:'Open Wounds',s:'bdmg',g:[500,5000,25000],d:n=>`Deal ${n.toLocaleString()} damage to archdemons`},
+ {id:'ban',n:'Banisher',s:'banish',g:[1,5,20],d:n=>`Banish ${n} archdemon corpse${n>1?'s':''}`},
+ {id:'sigil',n:'Sigil Burner',s:'sigils',g:[3,30,150],d:n=>`Burn ${n} sigils`},
+ {id:'esc',n:'Survivor',s:'esc',g:[3,15,50],d:n=>`Escape the breach alive ${n} times`},
+ {id:'bty',n:'Bounty Hunter',s:'bounty',g:[1,5,15],d:n=>`Escape alive after banishing an archdemon, ${n} time${n>1?'s':''}`},
+ {id:'cash',n:'Blood Money',s:'cash',g:[1000,10000,50000],d:n=>`Carry $${n.toLocaleString()} out of the breach`},
+ {id:'mel',n:'Steel Hand',s:'mel',g:[10,50,200],d:n=>`Kill ${n} demons with melee`},
+ {id:'gun',n:'Gunslinger',s:'gun',g:[25,150,600],d:n=>`Kill ${n} demons with guns`},
+ {id:'fire',n:'Pyromaniac',s:'fire',g:[10,50,200],d:n=>`Kill ${n} demons with fire and explosives`},
+ {id:'dead',n:'Hard Lessons',s:'deaths',g:[1,10,50],d:n=>`Die in the breach ${n} time${n>1?'s':''}`},
+ {id:'lore',n:'Lorekeeper',s:'lore',g:()=>{const T=loreTot();return[Math.ceil(T*.25),Math.ceil(T*.6),T]},d:n=>`Find ${n} lore folders`},
+ {id:'skin',n:'Wardrobe',s:'skins',g:()=>{const T=skinTot();return[3,Math.ceil(T*.6),T]},d:n=>`Own ${n} skins`},
+ {id:'led',n:'Ledger Keeper',s:'led',g:[4,12,20],d:n=>`Complete ${n} Ledger tasks`}];
+const achG=a=>typeof a.g=='function'?a.g():a.g;
+function achVal(k){return k=='lore'?LKS.size:k=='skins'?Object.keys(SKINS).filter(x=>own.includes(x)).length:k=='led'?LEDGERS.reduce((a,L)=>a+Math.min(lst(L.id).i,L.tasks.length),0):(AST[k]||0)}
+const achTier=a=>{const v=achVal(a.s);return achG(a).filter(g=>v>=g).length};
+function achCommit(w){try{const A=(k,v)=>{AST[k]=(AST[k]||0)+v};for(const k in RS)A(k,RS[k]);RS={};if(w){A('esc',1);A('cash',P.carry|0);if(banished)A('bounty',1)}else A('deaths',1);if(banished)A('banish',1);A('sigils',found|0)}catch(e){}}
+function achNotify(){const out=[];let ch=0;ACH.forEach(a=>{const t=achTier(a);if(t>(ANT[a.id]|0)){ANT[a.id]=t;ch=1;out.push(a.n+' \u2014 '+TN[t-1])}});if(ch)SAVE();return out.length?'\u2605 Achievement unlocked: '+out.slice(0,3).join(' | ')+(out.length>3?' | +'+(out.length-3)+' more':''):''}
+{const _pg=prog;prog=function(m,dd,src,dead){try{if(P&&typeof RS=='object'){const A=(k,v)=>{RS[k]=(RS[k]||0)+v};
+ if(m.boss){A('bdmg',dd);if(dead&&!m._ak){m._ak=1;A('bosses',1)}}
+ else if(dead&&!m._ak){m._ak=1;if(m.lesser)A('lessers',1);else A('horde',1);
+  if(src=='melee'||src=='fists')A('mel',1);else if(['flamer','fire','bomb','tripwire','flask'].includes(src))A('fire',1);else if(PRI[src]||SID[src]||src=='crossbow')A('gun',1)}}}catch(e){}return _pg(m,dd,src,dead)}}
+const achTotals=()=>{let e=0;ACH.forEach(a=>e+=achTier(a));return[e,ACH.length*3]};
+const achBody=()=>{const[e,N]=achTotals();return `<div class=achw><h2 class=lt>Achievements</h2><p class=sub>${e} of ${N} tiers earned</p><div class=achg>`+ACH.map(a=>{const g=achG(a),v=achVal(a.s),t=g.filter(x=>v>=x).length,nx=t<3?g[t]:g[2],prev=t?g[t-1]:0,pc=t>=3?100:Math.max(0,Math.min(100,(v-prev)/(nx-prev)*100));
+ return `<div class="ach${t>=3?' mx':''}"><div class=an>${a.n}<span class=pips>${[0,1,2].map(i=>`<b style="${i<t?'color:'+TCOL[i]+';text-shadow:0 0 6px '+TCOL[i]:'color:#e8e6d833'}">\u2605</b>`).join('')}</span></div><small>${a.d(nx)}</small><div class=bar><i style="width:${pc}%;background:${TCOL[Math.min(t,2)]}"></i></div><small class=pr>${t>=3?'Mastered \u2014 '+v.toLocaleString():v.toLocaleString()+' / '+nx.toLocaleString()+' \u2014 next: '+TN[t]}</small><small class=tl>${g.map((x,i)=>`<span style="color:${i<t?TCOL[i]:'#e8e6d888'}">${TN[i]} ${x.toLocaleString()}</span>`).join(' \u00b7 ')}</small></div>`}).join('')+`</div></div>`};
 let showMap=0,camp={x:60,y:WH-60};
 const edgePt=()=>{const m=60,w=WW-2*m,h=WH-2*m;let t=R(0,2*(w+h));if(t<w)return{x:m+t,y:m};t-=w;if(t<h)return{x:WW-m,y:m+t};t-=h;if(t<w)return{x:WW-m-t,y:WH-m};t-=w;return{x:m,y:WH-m-t}};
 const say=(s,t)=>{msg=s;msgT=t||3};
@@ -410,7 +459,7 @@ addEventListener('resize',()=>{if(mode=='menu'&&scr=='lore')loreStr()});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(mode=='menu'&&scr=='lore')loreStr()});
 const HELP='WASD move · Shift sprint · Mouse aim/fire · RMB melee · R reload · Wheel or 1-5 switch weapons/tools · LMB uses tools · Loot weapons, ammo & tools in the buildings · Caps Lock tap into the veil (toggle) · Tab inventory (the backpack survives your escape) · M map · E interact (sigils, banish, loot) · stand in an exit ring to escape · Enter chat (type, Enter to send, Esc to cancel) · N toggle ambient sound';
 const back='<button data-v=hub>\u2190 Back</button>',backTo=v=>`<button data-v=${v}>\u2190 Back</button>`;
-function menu(m){const c=cost(),ok=c<=bank,tl=sel.tools.filter(Boolean).map(t=>TOOL[t.k].n.replace(' x2','')+' x'+t.n).join(', ')||'no tools';
+function menu(m){try{const an=achNotify();if(an)m=(m?m+' ':'')+an}catch(e){}const c=cost(),ok=c<=bank,tl=sel.tools.filter(Boolean).map(t=>TOOL[t.k].n.replace(' x2','')+' x'+t.n).join(', ')||'no tools';
  const col=(h,r)=>`<div class=col><h2>${h}</h2>${r}</div>`;let body;
  const stage=()=>`<div class=stage><canvas id=pc width=256 height=288></canvas><div class=cap>${SKINS[sel.skin].n} \u00b7 ${PRI[sel.pri].n} \u00b7 ${SID[sel.side].n} \u00b7 ${tl}</div></div>`,fo=b=>`<div class=foot><span>Cash: $${bank} &nbsp;|&nbsp; Loadout: $${c}</span>${b}</div>`,pg=(h,list,b)=>`<div class=hub>${stage()}<div class="opts list"><h2>${h}</h2>${list}</div></div>${fo(b)}`;
  if(scr=='load')body=`<div class=hub>${stage()}<div class=opts><div class=chalk data-v=l_skin>Player Skin<small>${SKINS[sel.skin].n}</small></div></div></div>${fo(back)}`;
@@ -426,12 +475,17 @@ function menu(m){const c=cost(),ok=c<=bank,tl=sel.tools.filter(Boolean).map(t=>T
  else if(scr=='l_pri')body=pg('Primary Weapon',Object.entries(PRI).map(([k,w])=>`<div class="chalk ${sel.pri==k?'on':''}" data-p=${k}><canvas class=ic data-ic=${k} width=34 height=18></canvas>${w.n} \u2014 $${w.c}<small>${st(w)}</small></div>`).join(''),backTo('load'));
  else if(scr=='l_side')body=pg('Sidearm',Object.entries(SID).map(([k,w])=>`<div class="chalk ${sel.side==k?'on':''}" data-s=${k}>${k=='none'?'':`<canvas class=ic data-ic=${k} width=34 height=18></canvas>`}${w.n} \u2014 $${w.c}<small>${st(w)}</small></div>`).join(''),backTo('load'));
  else if(scr=='l_tools')body=pg('Tools (max 2)',Object.entries(TOOL).map(([k,t])=>`<div class="chalk ${sel.tools.includes(k)?'on':''}" data-t=${k}><canvas class=ic data-ic=${k} width=34 height=18></canvas>${t.n} \u2014 $${t.c}<small>${t.d}</small></div>`).join(''),backTo('load'));
+ else if(scr=='ach')body=`${achBody()}<div class=foot><span>Bronze, Silver and Gold tiers for each feat</span>${back}</div>`;
  else if(scr=='missions')body=`<div class=cols>${col('Ledgers',ledList())}${col((LEDGERS[mi]||LEDGERS[0]).t,ledStory())}</div><div class=foot><span>Active: ${ledFoot()}</span>${back}</div>`;
  else if(scr=='lore'){const S=LORE[lorTab]||LORE[0],op=lorOpen>=0&&lkHas(lorTab,lorOpen)?S.e[lorOpen]:null,nf=S.e.filter((q,i)=>lkHas(lorTab,i)).length;
   body=`<div class=slate><div class=tabs>${LORE.map((s,i)=>`<div class="tb ${i==lorTab?'on':''}" data-l=${i}>${s.t.replace(' Lore','')}</div>`).join('')}</div><h2 class=lt>${S.t}</h2><p class=sub>${op?'Folder open. Close it to pick another.':S.sub}</p>`+(op?`<div class=fopen><div class=ftab>${op[0]}</div><div class=fback><div class=fsheet><div class="pol sp"><canvas data-la="${lorTab}.${lorOpen}" width=224 height=126></canvas></div><h3>${op[0]}</h3><p>${op[1]}</p></div></div></div>`:`<div class=fds>${S.e.map((n0,i)=>{const kn=lkHas(lorTab,i);return `<div class="fd${kn?'':' lk'}" ${kn?'data-lo='+i:''} style="--r:${(((i*37)%7)-3)*.8}deg"><div class=ft></div><div class=fl>${kn?n0[0]:'???'}</div></div>`}).join('')}</div>`)+`</div><div class=foot><span>${nf} of ${S.e.length} folders found${op?'':' \u2014 click one to open it'}</span>${op?'<button data-lo=-1>\u2190 Close folder</button>':back}</div>`} else if(scr=='help')body=`<div class=lore><h2>Controls</h2><ul>${HELP.split(' \u00b7 ').map(l=>`<li>${l}</li>`).join('')}</ul></div><div class=foot><span></span>${back}</div>`;
- else body=`<div class=hub><div class=stage><canvas id=pc width=256 height=288></canvas><div class=cap>${pname?pname+' \u2014 ':''}${PRI[sel.pri].n} \u00b7 ${SID[sel.side].n} \u00b7 ${tl}</div></div><div class=opts><button id=go ${ok?'':'disabled'}>Enter the Breach</button>${ok?'':'<p class=msg style="font-size:20px">Can\'t afford this loadout.</p>'}<div class=chalk data-v=name>Hunter Name<small>${pname||'Unnamed \u2014 tap to set'}</small></div><div class=chalk data-v=l_skin>Skins<small>${SKINS[sel.skin].n}</small></div><div class=chalk data-v=stash>Stash & Armory<small>${stash.length} items stored</small></div><div class=chalk data-v=missions>Ledgers<small>${ledSub()}</small></div><div class=chalk data-v=lore>Lore</div><div class=chalk data-v=help>Controls</div><div class=chalk data-v=title>Main Menu</div></div></div><div class=foot><span>Cash: $${bank} &nbsp;|&nbsp; Loadout: $${c}</span><span>Ledger: ${ledFoot()}</span></div>`;
+ else body=`<div class=hub><div class=lcol><div class=stage><canvas id=pc width=256 height=288></canvas><div class=cap>${pname?pname+' \u2014 ':''}${PRI[sel.pri].n} \u00b7 ${SID[sel.side].n} \u00b7 ${tl}</div></div><div class=chalk data-v=name>Hunter Name<small>${pname||'Unnamed \u2014 tap to set'}</small></div></div><div class=opts><button id=go ${ok?'':'disabled'}>Enter the Breach</button>${ok?'':'<p class=msg style="font-size:20px">Can\'t afford this loadout.</p>'}<div class=chalk data-v=l_skin>Skins<small>${SKINS[sel.skin].n}</small></div><div class=chalk data-v=stash>Stash & Armory<small>${stash.length} items stored</small></div><div class=chalk data-v=missions>Ledgers<small>${ledSub()}</small></div><div class=chalk data-v=ach>Achievements<small>${achTotals()[0]} of ${achTotals()[1]} tiers earned</small></div><div class=chalk data-v=lore>Lore</div><div class=chalk data-v=help>Controls</div><div class=chalk data-v=title>Main Menu</div></div></div><div class=foot><span>Cash: $${bank} &nbsp;|&nbsp; Loadout: $${c}</span><span>Ledger: ${ledFoot()}</span></div>`;
 ;const drawIcons=()=>document.querySelectorAll('canvas[data-ic]').forEach(c=>{const o=ctx;ctx=c.getContext('2d');try{ctx.clearRect(0,0,34,18);drawWpn(c.dataset.ic,5,9,0,1)}finally{ctx=o}});
- $('#menu').style.display='block';$('#menu').innerHTML=`<div class=board><i hidden></i><h1>\u2620 Hellbreach \u2620</h1>${m?`<p class=msg>${m}</p>`:''}${body}</div>`;drawIcons();if(scr=='name'){const pn=$('#pn');if(pn){const sv=()=>{pname=cleanName(pn.value);SAVE()};pn.oninput=sv;['keydown','keyup','keypress'].forEach(ev=>pn.addEventListener(ev,e=>e.stopPropagation()));pn.addEventListener('keydown',e=>{if(e.key=='Enter'){sv();scr='hub';menu('')}});pn.focus();pn.setSelectionRange(pn.value.length,pn.value.length)}}if(scr=='stash')stashInit();if(scr=='lore'){loreStr();setTimeout(loreStr,120);loreArt()}}
+ $('#menu').style.display='block';$('#menu').innerHTML=`<div class=board><i hidden></i><h1>\u2620 Hellbreach \u2620</h1>${m?`<p class=msg>${m}</p>`:''}${body}</div>`;drawIcons();if(scr=='name'){const pn=$('#pn');if(pn){const sv=()=>{const v=cleanName(pn.value);if(hasDev(v)&&!DEVAUTH)return;pname=v;SAVE()},
+   cm=then=>{const v=cleanName(pn.value);if(!hasDev(v)||DEVAUTH){pname=v;SAVE();if(then)then();return}
+    devAsk(ok=>{if(ok){DEVAUTH=1;try{localStorage.setItem('bh_dv',PW_HASH)}catch(e){}pname=v;SAVE();if(then)then()}else{const w=cleanName(v.replace(/dev/gi,''));pn.value=w;pname=w;SAVE();pn.focus()}})};
+   pn.oninput=sv;{const sb=document.querySelector('#menu .opts button[data-v=hub]');if(sb)sb.addEventListener('click',e=>{const v=cleanName(pn.value);if(hasDev(v)&&!DEVAUTH){e.stopPropagation();cm(()=>{scr='hub';menu('')})}else cm()})}
+   ['keydown','keyup','keypress'].forEach(ev=>pn.addEventListener(ev,e=>e.stopPropagation()));pn.addEventListener('keydown',e=>{if(e.key=='Enter')cm(()=>{scr='hub';menu('')})});pn.focus();pn.setSelectionRange(pn.value.length,pn.value.length)}}if(scr=='stash')stashInit();if(scr=='lore'){loreStr();setTimeout(loreStr,120);loreArt()}}
 $('#menu').onclick=e=>{const t=e.target.closest('[data-so],[data-l],[data-lo],[data-v],[data-xa],[data-bq],[data-m],[data-f],[data-y],[data-n],[data-w],[data-u],[data-q],[data-r],[data-k],[data-p],[data-s],[data-t],#go');if(!t)return;const d=t.dataset;
  if(d.bq){pq=Math.max(1,Math.min(PQMAX,pq+(d.bq=='+'?1:-1)))}else if(d.xa){const i=d.xa[0]=='s'?1:0,w=xaW(i);if(w){const n=xa[i]+(d.xa[1]=='+'?1:-1);if(n<0||n>XAMAX)return;if(d.xa[1]=='+'&&cost()+xaP(w)>bank){note='Not enough cash.'}else xa[i]=n}}else if(d.so!==undefined)note=sortStash();else if(d.l!==undefined){lorTab=+d.l;lorOpen=-1}else if(d.lo!==undefined)lorOpen=+d.lo;else if(d.v){lorOpen=-1;scr=d.v;if(/^shop_/.test(d.v))shopScr=d.v}else if(d.m){mi=+d.m;const Lx=LEDGERS[mi];if(Lx&&lst(Lx.id).i<Lx.tasks.length){AL=Lx.id;SAVE()}}else if(d.f){curFam=d.f;const f=FAMS[d.f];if(own.includes(d.f)){if(Object.values(SKINS).filter(v=>v.f==d.f).length>1)scr='l_var';else{sel.skin=f.def;SAVE()}}else{pend={t:'f',k:d.f};scr='buy'}}
  else if(d.k){const v=SKINS[d.k];if(own.includes(d.k)){sel.skin=d.k;SAVE()}else{pend={t:'k',k:d.k};scr='buy'}}
@@ -633,7 +687,7 @@ const LESSER={
   lore:[4,1]       // LORE tab 4 (Lesser Demon Lore), entry 1; entry 2 'Hold Your Breath' is its stand-still tip
  }
 };
-const LESSER_MAP=0;   // 1 = show lesser demons on the map (testing)
+let LESSER_MAP=0;   // 1 = show lesser demons on the map (testing; the /lesserdemon cheat turns it on)
 const mkCerberus=(x,y)=>{const o=LESSER.cerberus;return{x,y,hp:o.hp,mh:o.hp,st:'roam',wt:0,cd:0,fl:0,wk:0,a:R(0,6.28),ty:'cerberus',lesser:1,hx:x,hy:y,hr:0}};
 // Hit test that matches the drawn sprite (1.5x): oval body plus the three heads out front. Used by bullets and melee.
 function cerbHit(m,x,y,pad){pad=pad||0;const k=1.5,dx=x-m.x,dy=y-m.y,c=Math.cos(m.a||0),sn=Math.sin(m.a||0),lx=(dx*c+dy*sn)/k,ly=(-dx*sn+dy*c)/k,p=pad/k;
@@ -769,7 +823,7 @@ function dragEnd(){const d=drg;if(!d)return;drg=null;removeEventListener('pointe
 function newGame(){
  boss=Object.keys(BOSS)[Math.random()*Object.keys(BOSS).length|0];showMap=0;genGround();walls=[];blds=[];
  camp=edgePt();exts=[];for(let t=0;exts.length<2&&t<500;t++){const p=edgePt();if(D(p.x,p.y,camp.x,camp.y)>1000&&exts.every(e=>D(p.x,p.y,e.x,e.y)>800))exts.push(p)}
-mis=ledgerTask();trees=[];M=[];bul=[];eb=[];bombs=[];lobs=[];fires=[];flares=[];parts=[];traps=[];gibs=[];drops=[];spurts=[];found=0;bossOpen=0;seals=[];banished=0;corpse=null;bty=null;bn=null;
+RS={};mis=ledgerTask();trees=[];M=[];bul=[];eb=[];bombs=[];lobs=[];fires=[];flares=[];parts=[];traps=[];gibs=[];drops=[];spurts=[];found=0;bossOpen=0;seals=[];banished=0;corpse=null;bty=null;bn=null;
  for(let t=0;blds.length<7&&t<2500;t++){const w=R(210,300)|0,h=R(150,210)|0,x=R(120,WW-w-120)|0,y=R(120,WH-h-120)|0,b={x,y,w,h};planWing(b);const e=bExt(b);
   if(blds.some(o=>{const q=bExt(o);return e.x<q.x+q.w+50&&e.x+e.w+50>q.x&&e.y<q.y+q.h+50&&e.y+e.h+50>q.y})||D(cl(camp.x,e.x,e.x+e.w),cl(camp.y,e.y,e.y+e.h),camp.x,camp.y)<220)continue;blds.push(b)}
  blds.forEach((b,i)=>{b.ty=i%7;b.cx=b.x+b.w/2;b.cy=b.y+b.h/2;WK=b.ty;buildWalls(b);WK=-1});
@@ -796,7 +850,7 @@ function melee(){P.mc=.6;P.sa=.18;const a=P.face;let h=0;M.forEach(m=>{const nr=
 function hurt(m,d,a,src){const dd=Math.min(d,Math.max(m.hp,0));m.hp-=d;prog(m,dd,src,m.hp<=0);m.fl=.1;burst(m.x,m.y,10,90,m.ty=='bloat'?'#7ad04a':'#8a0f18',1,a);spray(m.x,m.y,6,a,4+Math.min(16,d/3|0),120,m.ty=='bloat');if(Math.random()<.5&&src!='fire'&&src!='flamer')splat(m.x,m.y,2,6,m.ty=='bloat');m.st='chase';if(m.boss)m.al=2.5;m.ga=a;m.gd=d;m.gs=src;if(m.hp<=0)kill(m)}
 function kill(m){const fr=['flamer','fire','bomb','tripwire','flask'].includes(m.gs),ac=m.ty=='bloat';gore(m,m.ga,m.gd,m.gs);if(!fr)splat(m.x,m.y,m.boss?30:14,m.boss?30:14,ac);burst(m.x,m.y,m.boss?30:14,110,ac?'#7ad04a':'#ff6a1a',1);m.hp=-1;if(m.ty=='bloat')boom(m);if(m.boss){corpse={x:m.x,y:m.y};say('The demon falls! Hold E on the corpse to banish it for the bounty.'+(mis.fail?' Ledger task failed.':''),6)}}
 function hurtP(d,k){if(P.dead)return;if(k)lastK=k;if(P.wd>0)d*=.4;P.hp-=d;P.hf=.25;shake=5;burst(P.x,P.y,8,80,'#a01018',1);spray(P.x,P.y,6,null,10+Math.min(14,d/3|0),110);splat(P.x,P.y,3,6);if(P.hp<=0)die()}
-function end(w){mode='menu';scr='hub';const lm=w?ledgerCommit():'';if(w){bank+=P.carry;sel.pri=P.w[0]?P.w[0].k:'none';sel.side=P.w[1]?P.w[1].k:'none';sel.bag=P.bag;sel.tools=P.ts.map(x=>x?{k:x.k,n:x.n}:null);}else{sel.pri='none';sel.side='none';sel.bag=[];sel.tools=[null,null,null]}invOpen=0;genMissions();{const c=curL();mi=Math.max(0,LEDGERS.findIndex(l=>c&&l.id==c.id))}bank=Math.max(bank,120);SAVE();menu(w?(lm+(P.carry?`Escaped with the bounty! +$${P.carry}`:'You escaped... empty-handed.')):'You died. Everything your character carried is lost. Your stash is safe.'+(()=>{const r=RWD;RWD='';return r})())}
+function end(w){mode='menu';scr='hub';const lm=w?ledgerCommit():'';achCommit(w);if(w){bank+=P.carry;sel.pri=P.w[0]?P.w[0].k:'none';sel.side=P.w[1]?P.w[1].k:'none';sel.bag=P.bag;sel.tools=P.ts.map(x=>x?{k:x.k,n:x.n}:null);}else{sel.pri='none';sel.side='none';sel.bag=[];sel.tools=[null,null,null]}invOpen=0;genMissions();{const c=curL();mi=Math.max(0,LEDGERS.findIndex(l=>c&&l.id==c.id))}bank=Math.max(bank,120);SAVE();menu(w?(lm+(P.carry?`Escaped with the bounty! +$${P.carry}`:'You escaped... empty-handed.')):'You died. Everything your character carried is lost. Your stash is safe.'+(()=>{const r=RWD;RWD='';return r})())}
 addEventListener('keydown',e=>{if(e.code=='Tab'&&mode=='play')e.preventDefault();if(e.repeat)return;keys[e.code]=1;if(mode!='play')return;const c=e.code;if(P.dead){if(c=='Enter'||c=='KeyL')end(0);return}
  if(c=='KeyM'){showMap=!showMap;mouse.l=mouse.r=0}if(c=='KeyI'||c=='Tab'){ivd=null;invOpen=!invOpen;showMap=0;mouse.l=mouse.r=0;refocus()}if(c=='Escape')showMap=0;
  if(c=='KeyR')reload();if(c>='Digit1'&&c<='Digit'+(2+NTS))setSlot(+c[5]-1);
@@ -1339,7 +1393,7 @@ const note=PC.on?(banished||bty?['Peace. The sun','is out. Run!']:corpse?['Peace
  ctx.font="700 14px Caveat,cursive";note.forEach((l,i)=>tx(l,lx,row(7)+14+i*15,'#d06a5a'));
  ctx.font="700 13px Caveat,cursive";tx('[M] or [Esc] to close',VW/2-20,342,'#d8c890','center');
  ctx.restore()}
-function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(mode=='play'){if(!showMap&&!invOpen)update(dt);else if(mp.on)mpPause(dt);if(mode=='play'){render();if(showMap)drawMap();if(invOpen)drawInv();drawBanner()}}else if(mode=='menu')drawHero();requestAnimationFrame(loop)}
+function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(mode=='play'){if(P&&P.dead)invOpen=0;if(!showMap&&!invOpen)update(dt);else if(mp.on||(invOpen&&!showMap))mpPause(dt);if(mode=='play'){render();if(showMap)drawMap();if(invOpen)drawInv();drawBanner()}}else if(mode=='menu')drawHero();requestAnimationFrame(loop)}
 // ---------- AUDIO (procedural WebAudio, no files) ----------
 const sfx=(()=>{
 let ac,mst,verb,nb,amb=null,vc=0,ambT=8,lt={};
@@ -1442,6 +1496,9 @@ const V={
   // three throats: each call stacks three detuned growls (one per head)
   alert(o,t,r){for(let i=0;i<3;i++){const k=[1,1.18,.86][i],d=i*.09;growl(o,t+d,.5,230*k*r,110*k*r,{rough:55+i*14,form:[600+i*120,1300],g:.34,dist:8});O(o,t+d,.16,{type:'sawtooth',f:520*k*r,f2:240*k,g:.14,a:.005,fm:70,fmf:30,dist:4})}
    N(o,t,.35,{type:'bandpass',f:1800,f2:700,q:1.2,g:.18,a:.01});O(o,t,.3,{f:70,f2:40,g:.4})},
+  // lock-on roar: three throats open at once, longer and far heavier than the alert growl
+  roar(o,t,r){for(let i=0;i<3;i++){const k=[1,1.2,.82][i],d=i*.07;growl(o,t+d,1.5,175*k*r,68*k*r,{rough:48+i*12,form:[520+i*110,1200],g:.42,dist:10});O(o,t+d,.5,{type:'sawtooth',f:380*k*r,f2:150*k,g:.16,a:.01,fm:60,fmf:26,dist:5})}
+   N(o,t,.9,{type:'bandpass',f:2000,f2:600,q:1,g:.24,a:.02});N(o,t+.04,.3,{type:'lowpass',f:900,f2:200,g:.3,a:.002});O(o,t,.9,{f:64,f2:34,g:.5,a:.01})},
   snarl(o,t,r){for(let i=0;i<3;i++){const k=[1,1.12,.9][i];growl(o,t+i*.05,.8,120*k*r,78*k*r,{rough:34+i*9,form:[480+i*90,1100],g:.32,dist:7})}
    N(o,t,.6,{type:'bandpass',f:2400,q:1.5,g:.1,a:.08});O(o,t,.7,{f:62,f2:48,g:.3,a:.08})},
   idle(o,t,r){growl(o,t,1,92*r,66*r,{rough:24,form:[360,820],g:.3,dist:4});growl(o,t+.15,.8,104*r,72*r,{rough:28,form:[400,900],g:.18,dist:4});
@@ -1455,7 +1512,7 @@ function mob(m,kind){
  if(!ready())return;
  const ty=m.boss?boss:(m.ty||'imp'),tb=V[ty];if(!tb)return;const fn=tb[kind]||tb.snarl;if(!fn)return;
  if(!gate('v'+kind+(m.boss?'b':''),m.boss?.5:kind=='die'?.04:.12))return;
- const sp=spat(m.x,m.y,m.boss?900:m.lesser?(kind=='idle'||kind=='sniff'?420:640):kind=='idle'?300:460);if(!sp)return;
+ const sp=spat(m.x,m.y,m.boss?900:m.lesser?(kind=='idle'||kind=='sniff'?420:kind=='roar'?780:640):kind=='idle'?300:460);if(!sp)return;
  fn(bus(m.boss?1:.9,m.boss?.55:.3,sp),ac.currentTime+.01,R(.9,1.12))}
 // ---- weapons ----
 const GN={
@@ -1483,7 +1540,7 @@ function cerb(m,dt){if(!ac)return;
  if(d>700||m.hp<=0){m._p=m.st;m._wk=m.wk;m._cd=m.cd;return}
  if(m._wk===undefined){m._wk=m.wk;m._cd=m.cd}
  const hot=m.st=='hunt'||m.st=='bite',was=m._p=='hunt'||m._p=='bite';
- if(hot&&!was&&T-(m._at||-9)>4){m._at=T;m.vt=R(2,3.5);mob(m,'alert')}
+ if(hot&&!was&&T-(m._at||-9)>4){m._at=T;m.vt=R(3,4.5);mob(m,'roar');if(d<260)shake=Math.max(shake,4)}
  else{if(m.st=='sniff'&&m._p!='sniff')m.vt=0;
   m.vt=(m.vt===undefined?R(1,4):m.vt)-dt;
   if(m.vt<=0){if(hot){m.vt=R(2.5,4.5);mob(m,'snarl')}else if(m.st=='sniff'){m.vt=R(1.1,1.9);mob(m,'sniff')}else{m.vt=R(6,12);if(Math.random()<.7)mob(m,'idle')}}}
@@ -1636,20 +1693,42 @@ function mpHandle(o){const r=mp.rp,f=o.f,nm=hn(f);mp.ls[f]=Date.now();if(o.v!==3
  else if(o.t=='left'){const hb=bty&&bty.h===f;if(hb)bty=null;delete r[f];mp.out[f]=1;say(nm+' escaped'+(hb?' with the bounty!':'.'),hb?6:3)}}
 function mpStop(){mp.on=0;mp.room=null;mp.rp={};mp.onS=null;mpb=[];clearInterval(mpTimer);mp.cl.forEach(c=>{try{c.end(true)}catch(e){}});mp.cl=[]}
 function mpOverlay(txt){if(!mpOv){mpOv=document.createElement('div');mpOv.style.cssText='position:fixed;inset:0;z-index:99;background:rgba(6,2,4,.93);color:#e8e6d8;font:22px Caveat,monospace;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center';document.body.appendChild(mpOv)}mpOv.innerHTML='<div style="font-size:34px;color:#d06a5a">Entering the breach...</div><div>'+txt+'</div>'+(mp.cancel?'<button id="mpCancel" style="margin-top:10px;padding:8px 26px;font:22px Caveat,monospace;color:#e8e6d8;background:#3a1418;border:2px solid #d06a5a;border-radius:6px;cursor:pointer">Stop searching</button>':'');const cb=mpOv.querySelector('#mpCancel');if(cb)cb.onclick=()=>{if(mp.cancel)mp.cancel()}}
-function mpSearch(go){if(mpBusy)return;mpBusy=1;mpStop();let done=0;const rs=()=>Math.random()*4294967296>>>0,t0=Date.now(),seen={};
- const fin=(n,idx,seed)=>{if(done)return;done=1;mpBusy=0;mp.cancel=null;clearInterval(mpTimer);clearTimeout(kill);if(mpOv){mpOv.remove();mpOv=null}if(n>1){mp.on=1;mp.me=idx;mp.n=n}else mpStop();go(seed,n)};
+// ---------- HUNTER ROSTER: shown for ~10s after the matchmaking countdown, before the match starts ----------
+const RSTIME=10;
+const mpProfile=()=>({nm:pname,sk:sel.skin,pr:sel.pri,sd:sel.side,ts:sel.tools.filter(Boolean).map(t=>[t.k,t.n|0])});
+function mpProf(p,i){p=p&&typeof p=='object'?p:{};return{nm:cleanName(p.nm)||'Hunter '+(i+1),sk:SKINS[p.sk]?p.sk:'warden',pr:PRI[p.pr]?p.pr:'none',sd:SID[p.sd]?p.sd:'none',ts:(Array.isArray(p.ts)?p.ts:[]).filter(t=>Array.isArray(t)&&TOOL[t[0]]).slice(0,3).map(t=>[t[0],Math.max(1,Math.min(9,t[1]|0))])}}
+function mpPortrait(cv,r){const x=cv.getContext('2d'),o=ctx,sk=sel.skin;ctx=x;sel.skin=SKINS[r.sk]?r.sk:'warden';
+ try{const g=x.createRadialGradient(128,226,4,128,226,170);g.addColorStop(0,'rgba(255,190,90,.30)');g.addColorStop(1,'rgba(255,190,90,0)');x.fillStyle=g;x.fillRect(0,0,256,288);
+  x.fillStyle='rgba(0,0,0,.3)';x.beginPath();x.ellipse(128,228,84,16,0,0,7);x.fill();
+  x.save();x.scale(8,8);warden(16,25,.35,0,0,r.pr,0,r.sd!='none'&&r.pr!=r.sd?r.sd:null);x.restore()}catch(e){}finally{ctx=o;sel.skin=sk}}
+function mpRoster(ros,me,cb){const ov=document.createElement('div');
+ ov.style.cssText='position:fixed;inset:0;z-index:99;background:rgba(6,2,4,.97);color:#e8e6d8;font:22px Caveat,monospace;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:12px;overflow:auto';
+ const h=document.createElement('div');h.style.cssText='font-size:40px;color:#d06a5a';h.textContent='Hunters Entering the Breach';
+ const tm=document.createElement('div');tm.style.cssText='font-size:26px';
+ const gr=document.createElement('div');gr.style.cssText='display:flex;flex-wrap:wrap;gap:14px;justify-content:center;max-width:1000px';
+ ros.forEach((r,i)=>{const c=document.createElement('div');c.style.cssText='width:154px;border:2px solid '+(i==me?'#ffd9d0':'#e8e6d855')+';border-radius:8px 16px 6px 14px;background:'+(i==me?'#c0392b33':'#0006')+';padding:6px 6px 8px;box-sizing:border-box';
+  const cv=document.createElement('canvas');cv.width=256;cv.height=288;cv.style.cssText='display:block;margin:0 auto;width:132px;height:149px;image-rendering:pixelated;border-radius:6px;background:radial-gradient(ellipse at 50% 80%,#4a1c18,#140808 78%)';mpPortrait(cv,r);
+  const nm=document.createElement('div');nm.style.cssText='font-size:28px;line-height:1;margin:5px 0 3px;word-break:break-word;color:'+devCol(r.nm,'#f0e6d0');nm.textContent=r.nm+(i==me?' (you)':'');
+  const ld=document.createElement('div');ld.style.cssText='font-size:18px;line-height:1.1;opacity:.88';
+  [['Skin',SKINS[r.sk].n],['Primary',PRI[r.pr].n],['Sidearm',SID[r.sd].n],['Tools',r.ts.length?r.ts.map(t=>TOOL[t[0]].n.replace(' x2','')+' x'+t[1]).join(', '):'none']].forEach(l=>{const d=document.createElement('div');d.textContent=l[0]+': '+l[1];ld.appendChild(d)});
+  c.appendChild(cv);c.appendChild(nm);c.appendChild(ld);gr.appendChild(c)});
+ ov.appendChild(h);ov.appendChild(gr);ov.appendChild(tm);document.body.appendChild(ov);
+ const t0=Date.now(),upd=()=>{const l=Math.max(0,Math.ceil(RSTIME-(Date.now()-t0)/1000));tm.textContent='The descent begins in '+l+'s';return l};upd();
+ const iv=setInterval(()=>{if(upd()<=0){clearInterval(iv);ov.remove();cb()}},250)}
+function mpSearch(go){if(mpBusy)return;mpBusy=1;mpStop();let done=0;const rs=()=>Math.random()*4294967296>>>0,t0=Date.now(),seen={},myP=mpProfile();
+ const fin=(n,idx,seed,ros)=>{if(done)return;done=1;mpBusy=0;mp.cancel=null;clearInterval(mpTimer);clearTimeout(kill);if(mpOv){mpOv.remove();mpOv=null}if(n>1){if(ros){mpBusy=1;mpRoster(ros,idx,()=>{mpBusy=0;mp.on=1;mp.me=idx;mp.n=n;go(seed,n)});return}mp.on=1;mp.me=idx;mp.n=n}else mpStop();go(seed,n)};
  const kill=setTimeout(()=>fin(1,0,rs()),90000);
  const show=(n,rem)=>mpOverlay('Searching for hunters... '+n+'/'+MPMAX+'<br><small>The descent begins in '+Math.max(0,Math.ceil(rem))+'s, or when six hunters are gathered.</small><br><small style="opacity:.5">relays connected: '+mp.cl.filter(c=>c.connected).length+'/'+MQ.length+'</small>');
  if(!window.mqtt){return fin(1,0,rs())}
- const begin=o=>{if(done)return;if(o.bk&&BOSS[o.bk])boss=o.bk;const idx=o.m.indexOf(mp.id);if(o.m.length>1){mp.room=o.room;mp.subs.push('hb1/room/'+o.room);mp.cl.forEach(c=>c.connected&&c.subscribe('hb1/room/'+o.room))}mp.me=idx;fin(o.m.length,idx,o.seed)};
+ const begin=o=>{if(done)return;if(o.bk&&BOSS[o.bk])boss=o.bk;const idx=o.m.indexOf(mp.id);if(o.m.length>1){mp.room=o.room;mp.subs.push('hb1/room/'+o.room);mp.cl.forEach(c=>c.connected&&c.subscribe('hb1/room/'+o.room))}mp.me=idx;fin(o.m.length,idx,o.seed,o.m.length>1?o.m.map((id,i)=>mpProf(id===mp.id?myP:o.pf&&o.pf[id],i)):null)};
  mp.cancel=()=>{if(done)return;done=1;mpBusy=0;mp.cancel=null;clearInterval(mpTimer);clearTimeout(kill);if(mpOv){mpOv.remove();mpOv=null}mpStop()};
  mp.subs=['hb1/search'];mpConnect();show(1,MPWAIT);
- mp.onS=o=>{if(done||o.id===mp.id)return;if(o.t=='start'){if(o.m.includes(mp.id))begin(o);else o.m.forEach(i=>delete seen[i]);return}const x=seen[o.id];seen[o.id]={st:x?x.st:Date.now()-o.age*1000,last:Date.now()}};
- mpTimer=setInterval(()=>{if(done)return;const now=Date.now();mpPub('hb1/search',{id:mp.id,age:(now-t0)/1000});for(const i in seen)if(now-seen[i].last>6000)delete seen[i];
+ mp.onS=o=>{if(done||o.id===mp.id)return;if(o.t=='start'){if(o.m.includes(mp.id))begin(o);else o.m.forEach(i=>delete seen[i]);return}const x=seen[o.id];seen[o.id]={st:x?x.st:Date.now()-o.age*1000,last:Date.now(),p:o.p}};
+ mpTimer=setInterval(()=>{if(done)return;const now=Date.now();mpPub('hb1/search',{id:mp.id,age:(now-t0)/1000,p:myP});for(const i in seen)if(now-seen[i].last>6000)delete seen[i];
   const all=[{id:mp.id,st:t0},...Object.entries(seen).map(([id,v])=>({id,st:v.st}))].sort((a,b)=>Math.abs(a.st-b.st)<1500?(a.id<b.id?-1:1):a.st-b.st),grp=all.slice(0,MPMAX),lead=grp[0],rem=MPWAIT-(now-lead.st)/1000;
   show(grp.length,rem);
-  if(lead.id===mp.id&&(grp.length>=MPMAX||rem<=0)){const o={t:'start',m:grp.map(g=>g.id),room:rs().toString(36),seed:rs(),bk:boss};mpPub('hb1/search',o);begin(o)}},1000)}
-function rpDraw(L,cx,cy){Object.entries(mp.rp).forEach(([id,r])=>{if(r.hp<=0)return;L.push([r.y,()=>{const o=sel.skin;sel.skin=SKINS[r.sk]?r.sk:'warden';try{warden(r.x-cx,r.y-cy,r.a,0,r.wk,r.g,r.hf>0,r.h,r.sa)}finally{sel.skin=o}tx(hn(id),r.x-cx,r.y-cy-14,'#d89090','center')}])})}
+  if(lead.id===mp.id&&(grp.length>=MPMAX||rem<=0)){const o={t:'start',m:grp.map(g=>g.id),room:rs().toString(36),seed:rs(),bk:boss,pf:Object.fromEntries(grp.map(g=>[g.id,g.id===mp.id?myP:(seen[g.id]||{}).p||null]))};mpPub('hb1/search',o);begin(o)}},1000)}
+function rpDraw(L,cx,cy){Object.entries(mp.rp).forEach(([id,r])=>{if(r.hp<=0)return;L.push([r.y,()=>{const o=sel.skin;sel.skin=SKINS[r.sk]?r.sk:'warden';try{warden(r.x-cx,r.y-cy,r.a,0,r.wk,r.g,r.hf>0,r.h,r.sa)}finally{sel.skin=o}tx(hn(id),r.x-cx,r.y-cy-14,devCol(hn(id),'#d89090'),'center')}])})}
 // ---------- SHARED MONSTERS ----------
 // One hunter (mp.host) runs every monster and every monster attack. The others only mirror it:
 // the host streams snapshots, and everyone else sends their damage / noise to the host.
@@ -2440,8 +2519,8 @@ function chWrap(s){chMc.font='bold 9px monospace';const out=[];let cur='';for(co
 function chAdd(name,msg,col){const lines=chWrap(String(msg));const t=performance.now();lines.forEach((l,i)=>CHAT.log.push({n:i?'':name,m:l,c:col,t}));if(CHAT.log.length>60)CHAT.log.splice(0,CHAT.log.length-60)}
 const chClean=s=>String(s==null?'':s).replace(/[\u0000-\u001f\u007f]/g,'').replace(/\s+/g,' ').trim().slice(0,CHAT.MAX);
 function chClose(){CHAT.on=0;CHAT.txt=''}
-function chSend(){const m=chClean(CHAT.txt);chClose();if(!m)return;if(m[0]=='/'){chCheat(m);return}const now=performance.now();if(now-CHAT.last<400)return;CHAT.last=now;
- const nm=pname||(mp.on?'Hunter '+(mp.me+1):'You');chAdd(nm,m,'#ffd27a');if(mp.on)mpSend({t:'chat',m,nm:cleanName(pname)})}
+function chSend(){const m=chClean(CHAT.txt);chClose();if(!m)return;if(m[0]=='/'&&devOK()){chCheat(m);return}const now=performance.now();if(now-CHAT.last<400)return;CHAT.last=now;
+ const nm=pname||(mp.on?'Hunter '+(mp.me+1):'You');chAdd(nm,m,devCol(nm,'#ffd27a'));if(mp.on)mpSend({t:'chat',m,nm:cleanName(pname)})}
 addEventListener('keydown',e=>{if(mode!='play'||!P)return;
  if(!CHAT.on){if(e.code=='Enter'&&!e.repeat&&!P.dead&&!showMap&&!invOpen&&!(e.ctrlKey||e.metaKey||e.altKey)){CHAT.on=1;CHAT.txt='';keys={};mouse.l=mouse.r=0;e.preventDefault();e.stopImmediatePropagation()}return}
  e.stopImmediatePropagation();e.preventDefault();
@@ -2450,7 +2529,7 @@ addEventListener('keydown',e=>{if(mode!='play'||!P)return;
  else if(e.code=='Backspace')CHAT.txt=CHAT.txt.slice(0,-1);
  else if(e.key&&e.key.length==1&&!e.ctrlKey&&!e.metaKey&&CHAT.txt.length<CHAT.MAX)CHAT.txt+=e.key;
  keys={}},true);
-{const _mh=mpHandle;mpHandle=function(o){if(o&&o.t=='chat'){const m=chClean(o.m);if(m)chAdd(hn(o.f),m,'#d89090')}_mh(o)}}
+{const _mh=mpHandle;mpHandle=function(o){if(o&&o.t=='chat'){const m=chClean(o.m);if(m)chAdd(hn(o.f),m,devCol(hn(o.f),'#d89090'))}_mh(o)}}
 {const _ng=newGame;newGame=function(){CHAT.log.length=0;chClose();_ng()}}
 {const _end=end;end=function(w){chClose();return _end(w)}}
 function chDraw(){if(mode!='play'||!P)return;const now=performance.now(),open=CHAT.on&&!P.dead;
@@ -2501,15 +2580,19 @@ const CHEATS={
  tithe:['toll the Tithe bell',()=>{if(PC.on)return;EVN=null;FOG=null;HFR=null;TTH=null;P.ttn=0}],
  collapse:['seal one extraction point',()=>{if(PC.on)return;P.clD=0;P.clT=0}],
  time:['set seconds before the Reaper (/time 30)',a=>{P.tm=Math.max(1,parseInt(a[0])||60)}],
- reaper:['summon the Reaper now',()=>{if(!RD)P.tm=.05}]
+ reaper:['summon the Reaper now',()=>{if(!RD)P.tm=.05}],
+ lesserdemon:['spawn a lesser demon if none is alive, and show lesser demons on the map',()=>{if(mp.on&&mpCli()){say('Host only',2);return}
+  if(!M.some(m=>m.lesser&&m.hp>0)){let x,y,t=0;do{const a=R(0,6.28),r=R(300,600);x=cl(P.x+Math.cos(a)*r,80,WW-80);y=cl(P.y+Math.sin(a)*r,80,WH-80)}while((hit(x,y,16)||blds.some(b=>{const e=bExt(b);return x>e.x-40&&x<e.x+e.w+40&&y>e.y-40&&y<e.y+e.h+40}))&&t++<300);
+   if(t>300){say('No open ground found, try again',2);return}M.push(mkCerberus(x,y))}
+  LESSER_MAP=1}]
 };
-function chCheat(txt){try{const a=txt.slice(1).trim().toLowerCase().split(/\s+/),k=a.shift();
+function chCheat(txt){if(!devOK())return;try{const a=txt.slice(1).trim().toLowerCase().split(/\s+/),k=a.shift();
  if(k=='help'||k=='cheats'||k==''){say('Cheats: '+Object.keys(CHEATS).map(c=>'/'+c).join(' '),9);return}
  const c=CHEATS[k];if(!c){say('Unknown cheat: /'+k+'  (try /help)',2.5);return}
  if(P.dead){say('Cheats need you alive',2);return}
  c[1](a);if(k!='god'&&k!='tools'&&k!='help')say('Cheat: /'+k,1.5)}catch(e){say('Cheat failed',2)}}
 {const _hc=hurtP;hurtP=function(d,k){if(CHEAT.god&&!(k&&k.s=='reaper'))return;_hc(d,k)}}
-{const _ncs=newGame;newGame=function(){CHEAT.god=0;_ncs()}}
+{const _ncs=newGame;newGame=function(){CHEAT.god=0;LESSER_MAP=0;_ncs()}}
 // ---------- INPUT CHOICE (PC / Mobile) + TOUCH CONTROLS ----------
 // Main menu > Input picks PC (keyboard + mouse) or Mobile. Mobile shows a movement circle on the left and Look / Fire / Punch circles on the right,
 // plus a few small buttons for the other actions (interact, reload, swap, heal, map, bag, chat).
@@ -2559,6 +2642,27 @@ function mcBuild(){if(MC.root)return;
 function mcSync(){if(INPUT=='mobile'&&!MC.root)mcBuild();if(!MC.root)return;const on=INPUT=='mobile'&&mode=='play'&&P&&!P.dead;MC.root.style.display=on?'block':'none';if(!on){MC.mx=MC.my=MC.mag=0;MC.fire=MC.punch=MC.spr=0}}
 setInterval(mcSync,120);if(INPUT=='mobile')mcBuild();
 if(typeof scr!='undefined'&&scr=='title'&&mode=='menu')menu();
+// ---------- STASH: on touch, a quick tap sends an item to its equip slot, and a tap on an equipped item sends it back to the stash (dragging still works) ----------
+function tapMove(d){const k=d.k,o=d.o,n0=o.n||1;let ch=0;
+ const putIn=(c,n)=>{const C=CT[c],a=C.a();let rest=n;if(TOOL[k])for(const t of a){if(rest<=0)break;if(t.k==k&&(t.n||1)<MAXST){const mv=Math.min(MAXST-(t.n||1),rest);t.n=(t.n||1)+mv;rest-=mv}}
+  if(rest>0){const f=spotIn(a,C.c,C.r,k);if(f){a.push({k,x:f[0],y:f[1],n:TOOL[k]?rest:0});rest=0}}return rest};
+ if(d.sid){let r=putIn('s',n0);if(r>0)r=putIn('b',r);if(r<n0){if(r>0)slotSet(d.sid,{k,n:r});else slotSet(d.sid,null);ch=1}else note='No room in the stash or backpack.'}
+ else{const sa=CT[d.ct].a(),idx=sa.indexOf(o);if(idx<0)return menu();
+  const ids=PRI[k]&&k!='none'?['p']:SID[k]&&k!='none'?['s']:TOOL[k]?['t0','t1','t2']:[];
+  if(!ids.length)note='That cannot be equipped.';
+  else{let done=0;
+   if(TOOL[k])for(const id of ids){const cur=slotGet(id);if(cur&&cur.k==k&&(cur.n||1)<MAXST){const mv=Math.min(MAXST-(cur.n||1),n0);slotSet(id,{k,n:(cur.n||1)+mv});if(n0-mv>0)o.n=n0-mv;else sa.splice(idx,1);done=1;break}}
+   if(!done){const id=ids.find(i=>!slotGet(i)&&accepts(i,k));if(id){slotSet(id,{k,n:n0});sa.splice(idx,1);done=1}}
+   if(!done&&!TOOL[k]){const id=ids[0],old=slotGet(id);sa.splice(idx,1);const C=CT[d.ct],z=isz(old.k);let q=fitsIn(sa,C.c,C.r,o.x,o.y,z[0],z[1])?[o.x,o.y]:spotIn(sa,C.c,C.r,old.k),tgt=sa;
+    if(!q){const oc=d.ct=='b'?'s':'b',O=CT[oc];tgt=O.a();q=spotIn(tgt,O.c,O.r,old.k)}
+    if(q){tgt.push({k:old.k,x:q[0],y:q[1],n:0});slotSet(id,{k,n:0});done=1}else{sa.splice(idx,0,o);note='No room to swap those.'}}
+   if(!done&&TOOL[k]){if(d.ct=='s'){const r=putIn('b',n0);if(r<n0){if(r>0)o.n=r;else sa.splice(idx,1);done=1}else note='Tool slots are full and the backpack has no room.'}else note='Tool slots are full.'}
+   if(done)ch=1}}
+ if(ch)SAVE();menu()}
+{const _sd=startDrag;startDrag=function(e){_sd.apply(this,arguments);if(drg)drg.st={x:e.clientX,y:e.clientY,t:performance.now()}}}
+{const _dt=dragEnd;dragEnd=function(e){const d=drg;
+ if(d&&d.st&&!d.split&&!d.sell&&e&&e.type=='pointerup'&&(e.pointerType=='touch'||INPUT=='mobile')&&Math.hypot(e.clientX-d.st.x,e.clientY-d.st.y)<10&&performance.now()-d.st.t<700){drg=null;removeEventListener('pointermove',dragMove);d.gh.remove();d.hl.remove();tapMove(d);return}
+ _dt.apply(this,arguments)}}
 // touch input drives the same keys / mouse the PC controls use
 function mcAuto(dt){let tg=null,near=0;
  if(!MC.fire&&!MC.punch&&!CHAT.on&&P.cur<=1){const w=P.w[P.cur],gun=!!(w&&w.d&&P.rl<=0&&P.mag[P.cur]>0);let best=1e9;
